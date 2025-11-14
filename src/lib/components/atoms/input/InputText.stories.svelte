@@ -22,14 +22,25 @@
 
 <!-- More on writing stories with args: https://storybook.js.org/docs/writing-stories/args -->
 <Story
-  name="Default"
+  name="Default Input"
   args={{ label: "Username", placeholder: "Enter your username" }}
 />
+
+<Story
+  name="Large Input"
+  args={{
+    label: "Full Name",
+    placeholder: "Enter your full name",
+    size: "large",
+  }}
+/>
+
 <Story
   name="With Error"
   args={{
     label: "Email",
     placeholder: "Enter your email",
     error: "Invalid email address",
+    size: "small",
   }}
 />

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { cn } from "$lib/utils";
+
   interface Props {
     variant?: "primary" | "secondary" | "tertiary" | "default";
     size?: "small" | "medium" | "large";
@@ -30,7 +32,7 @@
       large: "text-lg",
     };
 
-    return `${base} ${variants[type]} ${sizes[sz]}`;
+    return cn(base, variants[type], sizes[sz]);
   }
 </script>
 
