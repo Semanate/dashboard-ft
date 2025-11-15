@@ -100,7 +100,7 @@
   {#if show}
     <div
       bind:this={calendarRef}
-      class="absolute mt-2 w-72 bg-white border border-gray-300 rounded-2xl shadow-lg p-3"
+      class="absolute mt-2 w-72 bg-white border border-gray-300 rounded-2xl shadow-lg p-3 transition delay-75 z-10"
     >
       <div class="flex justify-between items-center mb-2">
         <Button onclick={prevMonth} variant="ghost" size="small" label="">
