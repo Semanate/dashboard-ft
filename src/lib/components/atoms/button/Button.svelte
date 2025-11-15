@@ -2,16 +2,18 @@
   import { cn } from "$lib/utils";
 
   interface Props {
-    variant?: "primary" | "secondary" | "tertiary" | "default";
+    variant?: "primary" | "secondary" | "tertiary" | "default" | "ghost";
     size?: "small" | "medium" | "large";
     label: string;
     onclick?: () => void;
+    children?: any;
   }
 
   const {
     variant = "primary",
     size = "medium",
     label,
+    children,
     ...props
   }: Props = $props();
 
@@ -25,6 +27,7 @@
       tertiary:
         "bg-transparent text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
       default: "bg-white text-black hover:bg-gray-100 focus:ring-gray-500",
+      ghost: "bg-transparent hover:bg-gray-100 focus:ring-gray-500",
     };
     const sizes: Record<string, string> = {
       small: "text-sm",
@@ -38,4 +41,7 @@
 
 <button type="button" class={buttonClass()} {...props}>
   {label}
+  {#if children}
+    {@render children()}
+  {/if}
 </button>
