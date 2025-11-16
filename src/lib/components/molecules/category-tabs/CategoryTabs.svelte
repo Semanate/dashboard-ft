@@ -8,15 +8,12 @@
     onchange?: (idx: number) => void;
   }
 
-  const {
-    active: initialActive = 0,
+  let {
+    active = $bindable(0),
     categories,
     onSelect = () => {},
     onchange = () => {},
   }: Props = $props();
-
-  console.log("CategoryTabs categories:", initialActive);
-  let active = $state(initialActive);
 </script>
 
 <div class="flex gap-2 border-b border-b-gray-300 pb-2">

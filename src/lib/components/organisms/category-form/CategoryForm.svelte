@@ -40,13 +40,16 @@
   function updateField(categoryIndex: number, fieldName: string, value: any) {
     formData[categoryIndex][fieldName] = value;
   }
+  const onchange = (i: number) => (active = i);
 
   function next() {
     if (active < categories.length - 1) active++;
+    onchange(active);
   }
 
   function prev() {
     if (active > 0) active--;
+    onchange(active);
   }
 
   export function getValues() {
@@ -55,7 +58,7 @@
 </script>
 
 <div class="w-full space-y-6">
-  <CategoryTabs {categories} bind:active onchange={(i) => (active = i)} />
+  <CategoryTabs {categories} bind:active {onchange} />
 
   <div class="bg-white border rounded-md p-5 shadow-sm">
     {#each categories as cat, i}
