@@ -1,11 +1,24 @@
 <script lang="ts">
   import { ArrowLeft, ArrowRight } from "@lucide/svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
-  let label = $state("");
-  let placeholder = $state("Select date");
-  let value = $state<Date | null>(null);
-  let error = $state("");
-  let disabled = $state(false);
+
+  interface Props {
+    label?: string;
+    placeholder?: string;
+    error?: string;
+    disabled?: boolean;
+    value?: Date | null;
+  }
+
+  const {
+    label = "",
+    placeholder = "Select a date",
+    error = "",
+    disabled = false,
+    value: initialValue,
+  }: Props = $props();
+
+  let value: Date | null = $state(initialValue || null);
 
   let show = $state(false);
   let calendarRef: HTMLDivElement | null = null;

@@ -7,12 +7,14 @@
     label: string;
     onclick?: () => void;
     children?: any;
+    disabled?: boolean;
   }
 
   const {
     variant = "primary",
     size = "medium",
     label,
+    disabled = false,
     children,
     ...props
   }: Props = $props();
@@ -39,7 +41,7 @@
   }
 </script>
 
-<button type="button" class={buttonClass()} {...props}>
+<button type="button" class={buttonClass()} {disabled} {...props}>
   {label}
   {#if children}
     {@render children()}

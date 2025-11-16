@@ -1,10 +1,10 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
+  import { ShieldAlert, ShieldX } from "@lucide/svelte";
 
   interface Props {
     label?: string;
-    placeholder: string;
-    options: { label: string; value: any }[];
+    accept?: string;
     error?: string;
     variant?:
       | "default"
@@ -15,31 +15,35 @@
       | "warning"
       | "outline"
       | "ghost";
-    disabled: boolean;
-    size: "small" | "medium" | "large";
+    disabled?: boolean;
+    size?: "small" | "medium" | "large";
   }
-
-  let open = $state(false);
-  let value = $state(null);
+  let file: File | null = $state(null);
 
   const {
-    label,
-    placeholder,
-    disabled,
-    error,
-    options,
+    label = "",
+    accept = "",
     variant = "default",
     size = "medium",
+    error = "",
+    disabled = false,
   }: Props = $props();
+
+  function handleChange(e: Event) {
+    const target = e.target as HTMLInputElement;
+    file = target.files?.[0] ?? null;
+  }
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
-      "w-full border rounded-sm px-3 py-2 transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";
+      "w-full border rounded-md px-3 py-2 text-sm transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";
+
     const sizes: Record<string, string> = {
-      small: "text-sm h-8",
-      medium: "text-base h-10",
-      large: "text-lg h-12",
+      small: "text-sm h-10",
+      medium: "text-base h-12",
+      large: "text-lg h-14",
     };
+
     const variants: Record<string, string> = {
       default:
         "bg-white border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-400",
@@ -68,47 +72,40 @@
         : ""
     );
   }
-
-  function toggle() {
-    if (!disabled) open = !open;
-  }
-
-  function selectOption(opt: any) {
-    value = opt.value;
-    open = false;
-  }
 </script>
 
-<div class="relative w-full">
+<div class="w-full">
   {#if label}
-    <label class="block mb-1 text-sm text-gray-700 font-medium">{label}</label>
+    <p
+      class={cn(
+        "block mb-1 text-sm font-medium",
+        !error ? "text-gray-700" : "text-red-600"
+      )}
+    >
+      {label}
+    </p>
   {/if}
 
-  <div class={inputClass()} onclick={toggle}>
-    <span class={value ? "text-gray-900" : "text-gray-400"}>
-      {value ? options.find((opt) => opt.value === value)?.label : placeholder}
-    </span>
-
-    <span class="text-gray-500">▾</span>
-  </div>
+  <input
+    type="file"
+    {accept}
+    {disabled}
+    onchange={handleChange}
+    class={inputClass()}
+  />
 
   {#if error}
-    <p class="mt-1 text-sm text-red-600">{error}</p>
+    <div class="mt-1 flex items-center text-red-600">
+      <ShieldX class="mr-1" size="16" />
+      <span>{error}</span>
+    </div>
   {/if}
 
-  {#if open}
-    <div
-      class="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300
-             rounded shadow z-[9999] max-h-48 overflow-auto"
-    >
-      {#each options as opt}
-        <div
-          class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-          onclick={() => selectOption(opt)}
-        >
-          {opt.label}
-        </div>
-      {/each}
+  {#if file}
+    <p class="mt-1 text-sm text-gray-600">Archivo seleccionado: {file.name}</p>
+    <div class="mt-1 flex items-center text-red-600">
+      <ShieldAlert class="mr-1" size="16" />
+      <span>Recuerda que este archivo será revisado por nuestro equipo.</span>
     </div>
   {/if}
 </div>
