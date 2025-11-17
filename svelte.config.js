@@ -14,6 +14,7 @@ const config = {
       $atoms: "src/lib/components/atoms",
       $molecules: "src/lib/components/molecules",
       $organisms: "src/lib/components/organisms",
+      $views: "src/lib/components/views",
       $stores: "src/lib/stores",
       $types: "src/lib/types",
       $utils: "src/lib/utils",

@@ -55,6 +55,7 @@
   export function getValues() {
     return structuredClone(formData);
   }
+  console.log(categories, "categories");
 </script>
 
 <div class="w-full space-y-6">
