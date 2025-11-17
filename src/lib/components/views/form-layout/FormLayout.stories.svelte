@@ -1,5 +1,5 @@
 <script module>
-// @ts-nocheck
+  // @ts-nocheck
 
   import FormLayout from "./FormLayout.svelte";
   //   import ButtonWithLoading from "$lib/components/atoms/button/ButtonWithLoading.svelte";
@@ -19,6 +19,7 @@
         {
           name: "Experience Level",
           type: "select",
+          placeholder: "Select your experience level",
           options: [
             { label: "Junior", value: "junior" },
             { label: "Mid", value: "mid" },
@@ -29,6 +30,7 @@
         {
           name: "Remote Work Preference",
           type: "select",
+          placeholder: "Do you prefer remote work?",
           options: [
             { label: "Yes", value: "yes" },
             { label: "No", value: "no" },
@@ -43,6 +45,7 @@
         {
           name: "Department",
           type: "select",
+          placeholder: "Select your department",
           options: [
             { label: "Recruitment", value: "recruitment" },
             { label: "Employee Relations", value: "employee_relations" },
@@ -67,6 +70,7 @@
         {
           name: "Specialization",
           type: "select",
+          placeholder: "Select your specialization",
           options: [
             { label: "Digital Marketing", value: "digital" },
             { label: "Content Marketing", value: "content" },
@@ -79,6 +83,12 @@
           type: "text",
           placeholder: "Enter your portfolio URL",
           value: "",
+        },
+        {
+          name: "Available Start Date",
+          type: "date",
+          value: "",
+          placeholder: "Select a date",
         },
       ],
     },
@@ -99,6 +109,6 @@
 
 <Story name="Job Application Form">
   {#snippet template(args)}
-    <CategoryForm {...args}/>
+    <CategoryForm {...args} />
   {/snippet}
 </Story>
