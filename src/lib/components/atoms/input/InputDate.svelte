@@ -8,12 +8,14 @@
     error?: string;
     disabled?: boolean;
     value?: Date | null;
+    id: string;
   }
 
   const {
     label = "",
     placeholder = "Select a date",
     error = "",
+    id = "",
     disabled = false,
     value: initialValue,
   }: Props = $props();
@@ -97,6 +99,7 @@
            focus:ring-2 transition disabled:bg-gray-100"
     class:border-red-500={error}
     onclick={toggle}
+    id={id}
   >
     {#if selected}
       {dateFormatter.format(selected)}

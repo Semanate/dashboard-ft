@@ -3,6 +3,7 @@
 
   interface Props {
     label?: string;
+    id: string;
     placeholder: string;
     options: { label: string; value: any }[];
     error?: string;
@@ -28,6 +29,7 @@
     disabled,
     error,
     options,
+    id = "",
     variant = "default",
     size = "medium",
   }: Props = $props();
@@ -84,7 +86,7 @@
     <label class="block mb-1 text-sm text-gray-700 font-medium">{label}</label>
   {/if}
 
-  <div class={inputClass()} onclick={toggle}>
+  <div class={inputClass()} onclick={toggle} id={id}>
     <span class={value ? "text-gray-900" : "text-gray-400"}>
       {value ? options.find((opt) => opt.value === value)?.label : placeholder}
     </span>

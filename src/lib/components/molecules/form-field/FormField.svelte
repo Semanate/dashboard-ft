@@ -5,6 +5,7 @@
   import InputFile from "$lib/components/atoms/input/InputFile.svelte";
   import InputTextarea from "$lib/components/atoms/input/InputTextarea.svelte";
   interface Field {
+    id: string;
     type:
       | "text"
       | "select"
@@ -34,6 +35,7 @@
 <div class="w-full">
   {#if field.type === "text" || field.type === "password" || field.type === "email"}
     <InputText
+      id={field.id}
       label={field.label}
       type={field.type}
       placeholder={field.placeholder}
@@ -42,17 +44,24 @@
     />
   {:else if field.type === "select" && field.options}
     <InputSelect
+      id={field.id}
       label={field.label}
       options={field.options}
       bind:value
       error={field.error}
     />
   {:else if field.type === "date"}
-    <InputDate label={field.label} bind:value error={field.error} />
+    <InputDate
+      id={field.id}
+      label={field.label}
+      bind:value
+      error={field.error}
+    />
   {:else if field.type === "file"}
-    <InputFile label={field.label} bind:value error={field.error} />
+    <InputFile id={field.id} label={field.label} bind:value error={field.error}  />
   {:else if field.type === "textarea"}
     <InputTextarea
+      id={field.id}
       label={field.label}
       placeholder={field.placeholder}
       error={field.error}

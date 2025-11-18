@@ -6,6 +6,7 @@
     checked?: boolean;
     disabled?: boolean;
     error?: string;
+    id: string;
     variant?:
       | "default"
       | "primary"
@@ -25,6 +26,7 @@
     error = "",
     variant = "primary",
     size = "medium",
+    id = ""
   } = props;
 
   let checked = props.checked ?? false;
@@ -41,7 +43,8 @@
 
     const variants: Record<string, string> = {
       default: "border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-400",
-      primary: "border-primary-500 text-primary-600 focus:ring-2 focus:ring-primary-400",
+      primary:
+        "border-primary-500 text-primary-600 focus:ring-2 focus:ring-primary-400",
       secondary:
         "border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-500",
       danger: "border-red-500 text-red-600 focus:ring-2 focus:ring-red-400",
@@ -71,7 +74,8 @@
   )}
 >
   <input
-    id="input-check"
+    id={id ?? "input-check"}
+    name={id ?? "input-check"}
     type="checkbox"
     bind:checked
     {disabled}
@@ -90,7 +94,9 @@
     )}
   />
 
-  <label class="text-gray-800 hover:cursor-pointer" for="input-check">{label}</label>
+  <label class="text-gray-800 hover:cursor-pointer" for={id ?? "input-check"}
+    >{label}</label
+  >
 </div>
 
 {#if error}

@@ -4,6 +4,7 @@
   interface Props {
     title?: string;
     fields: Array<{
+      id: string;
       type: "text" | "select" | "date" | "file" | "textarea" | "checkbox" | "password" | "email";
       label: string;
       placeholder?: string;
@@ -23,6 +24,6 @@
   {/if}
 
   {#each fields as field}
-    <FormField {field} />
+    <FormField {field} key={field.id} />
   {/each}
 </div>

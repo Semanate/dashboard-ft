@@ -15,6 +15,7 @@
       | "warning"
       | "outline"
       | "ghost";
+    id: string;
     disabled?: boolean;
     size?: "small" | "medium" | "large";
   }
@@ -25,6 +26,7 @@
     accept = "",
     variant = "default",
     size = "medium",
+    id = "",
     error = "",
     disabled = false,
   }: Props = $props();
@@ -88,6 +90,7 @@
 
   <input
     type="file"
+    id={id}
     {accept}
     {disabled}
     onchange={handleChange}

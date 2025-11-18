@@ -3,6 +3,7 @@
 
   interface Props {
     label?: string;
+    id: string;
     placeholder?: string;
     error?: string;
     rows?: number;
@@ -75,6 +76,7 @@
 
   <textarea
     {rows}
+    id={id}
     class={textareaClass(size, variant, error, disabled)}
     bind:value
     {placeholder}

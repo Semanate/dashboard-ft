@@ -6,6 +6,7 @@
     placeholder?: string;
     type: "text" | "password" | "email" | "number" | "url" | "tel";
     error?: string;
+    id: string;
     size?: "small" | "medium" | "large";
     variant?:
       | "default"
@@ -28,6 +29,7 @@
     disabled = false,
     type = "text",
     size = "small",
+    id = "",
     variant = "default",
   }: Props = $props();
 
@@ -80,6 +82,8 @@
   {/if}
 
   <input
+    id={id}
+    name={id}
     aria-label={label}
     type={type}
     class={inputClass(size, variant, error, disabled)}

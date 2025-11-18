@@ -16,11 +16,12 @@
       <h1 class="text-3xl font-bold mb-2">Hola!</h1>
       <p class="text-gray-500 mb-6">Hey, Bienvenido a registrarse!</p>
 
-      <form class="space-y-4 w-full">
+      <form class="space-y-4 w-full" method="POST">
         <FormSection
           title=""
           fields={[
             {
+              id:"email",
               type: "email",
               label: "Correo Electrónico",
               placeholder: "Ingrese su correo electrónico",
@@ -28,6 +29,7 @@
               onChange: () => {},
             },
             {
+              id:"password",
               type: "password",
               label: "Contraseña",
               placeholder: "Ingrese su contraseña",
@@ -35,6 +37,7 @@
               onChange: () => {},
             },
             {
+              id:"confirm-password",
               type: "password",
               label: "Confirmar Contraseña",
               placeholder: "Reingrese su contraseña",
@@ -48,7 +51,7 @@
           class="flex justify-between flex-col items-start text-sm text-gray-500 gap-2"
         >
           <div class="flex items-center gap-2">
-            <InputCheck label="Acepto los términos y condiciones" />
+            <InputCheck id="terms" label="Acepto los términos y condiciones" />
           </div>
           <a href="#" class="hover:underline">Ya tengo cuenta?</a>
         </div>
