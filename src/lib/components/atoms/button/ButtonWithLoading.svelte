@@ -17,6 +17,7 @@
     size = "medium",
     loading = false,
     label,
+    class: classNames,
     children,
     ...props
   }: Props = $props();
@@ -26,7 +27,7 @@
       "flex flex-row items-center rounded px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 hover:cursor-pointer transition-colors duration-200";
     const variants: Record<string, string> = {
       primary:
-        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
+        "bg-primary/70 text-white hover:bg-primary-700 focus:ring-primary/20",
       secondary:
         "bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-500",
       tertiary:
@@ -40,20 +41,20 @@
       large: "text-lg",
     };
 
-    return cn(base, variants[type], sizes[sz]);
+    return cn(base, variants[type], sizes[sz], classNames ?? "");
   }
 </script>
 
 <button
   type={props.type ?? "button"}
-  class={buttonClass(variant, size) + " " + (props.class ?? "")}
+  class={buttonClass()}
   {...props}
   disabled={loading}
 >
   {#if loading}
     <LoaderCircle class="animate-spin mr-2" size="16" />
   {/if}
-  {label}
+  <p class="text-center">{label}</p>
 
   {#if children}
     {@render children()}

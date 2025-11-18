@@ -3,7 +3,6 @@
   import IMAGE_URL from "$lib/assets/Login-cuate.svg";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
-  import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
 </script>
 
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
@@ -22,35 +21,27 @@
           fields={[
             {
               type: "email",
-              label: "Correo Electrónico",
-              placeholder: "Ingrese su correo electrónico",
+              label: "Email",
+              placeholder: "Enter your email address",
               value: "",
               onChange: () => {},
             },
             {
               type: "password",
-              label: "Contraseña",
-              placeholder: "Ingrese su contraseña",
-              value: "",
-              onChange: () => {},
-            },
-            {
-              type: "password",
-              label: "Confirmar Contraseña",
-              placeholder: "Reingrese su contraseña",
+              label: "Password",
+              placeholder: "Enter your password",
               value: "",
               onChange: () => {},
             },
           ]}
         />
 
-        <div
-          class="flex justify-between flex-col items-start text-sm text-gray-500 gap-2"
-        >
+        <div class="flex justify-between items-center text-sm text-gray-500">
           <div class="flex items-center gap-2">
-            <InputCheck label="Acepto los términos y condiciones" />
+            <input type="checkbox" class="accent-primary" />
+            <span>Remember me</span>
           </div>
-          <a href="#" class="hover:underline">Ya tengo cuenta?</a>
+          <a href="#" class="hover:underline">Forgot password?</a>
         </div>
 
         <ButtonWithLoading
@@ -58,9 +49,16 @@
           label="Sign In"
           variant="primary"
           size="large"
-          class="w-full! bg-primary/90!  text-center! hover:bg-primary-700! justify-center!"
+          class="w-full"
         />
       </form>
+
+      <p class="mt-6 text-sm">
+        Don't have an account?
+        <a href="#" class="text-primary font-semibold hover:underline"
+          >Sign Up</a
+        >
+      </p>
     </div>
 
     <div

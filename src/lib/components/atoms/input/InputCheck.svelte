@@ -23,7 +23,7 @@
     label,
     disabled = false,
     error = "",
-    variant = "default",
+    variant = "primary",
     size = "medium",
   } = props;
 
@@ -31,7 +31,7 @@
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
-      "rounded border transition-all duration-150 outline-none focus:ring-2";
+      "rounded border transition-all duration-150 outline-none focus:ring-2 focus:outline-non focus:ring-transparent";
 
     const sizes: Record<string, string> = {
       small: "w-4 h-4",
@@ -41,7 +41,7 @@
 
     const variants: Record<string, string> = {
       default: "border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-400",
-      primary: "border-blue-500 text-blue-600 focus:ring-2 focus:ring-blue-400",
+      primary: "border-primary-500 text-primary-600 focus:ring-2 focus:ring-primary-400",
       secondary:
         "border-gray-300 text-gray-900 focus:ring-2 focus:ring-gray-500",
       danger: "border-red-500 text-red-600 focus:ring-2 focus:ring-red-400",
@@ -71,13 +71,14 @@
   )}
 >
   <input
+    id="input-check"
     type="checkbox"
-    bind:checked={checked}
-    disabled={disabled}
+    bind:checked
+    {disabled}
     class={cn(
       inputClass(),
       variant === "default" && "accent-gray-600",
-      variant === "primary" && "accent-blue-600",
+      variant === "primary" && "accent-primary-600",
       variant === "secondary" && "accent-gray-500",
       variant === "danger" && "accent-red-600",
       variant === "success" && "accent-green-600",
@@ -89,7 +90,7 @@
     )}
   />
 
-  <span class="text-gray-800">{label}</span>
+  <label class="text-gray-800 hover:cursor-pointer" for="input-check">{label}</label>
 </div>
 
 {#if error}
