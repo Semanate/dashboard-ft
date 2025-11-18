@@ -6,6 +6,7 @@ export const actions = {
         const form = await request.formData();
         const email = String(form.get('email'));
         const password = String(form.get('password'));
+        const confirmPassword = String(form.get('confirm-password'));
 
         console.log('Register action called with:', { email, password });
         // const { error } = await supabase.auth.signUp({
