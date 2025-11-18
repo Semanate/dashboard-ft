@@ -5,7 +5,15 @@
   import InputFile from "$lib/components/atoms/input/InputFile.svelte";
   import InputTextarea from "$lib/components/atoms/input/InputTextarea.svelte";
   interface Field {
-    type: "text" | "select" | "date" | "file" | "textarea";
+    type:
+      | "text"
+      | "select"
+      | "date"
+      | "email"
+      | "file"
+      | "textarea"
+      | "checkbox"
+      | "password";
     label: string;
     placeholder?: string;
     options?: Array<{ label: string; value: any }>;
@@ -24,9 +32,10 @@
 </script>
 
 <div class="w-full">
-  {#if field.type === "text"}
+  {#if field.type === "text" || field.type === "password" || field.type === "email"}
     <InputText
       label={field.label}
+      type={field.type}
       placeholder={field.placeholder}
       error={field.error}
       bind:value

@@ -4,6 +4,7 @@
   interface Props {
     label?: string;
     placeholder?: string;
+    type: "text" | "password" | "email" | "number" | "url" | "tel";
     error?: string;
     size?: "small" | "medium" | "large";
     variant?:
@@ -25,6 +26,7 @@
     error = "",
     value = "",
     disabled = false,
+    type = "text",
     size = "small",
     variant = "default",
   }: Props = $props();
@@ -79,6 +81,7 @@
 
   <input
     aria-label={label}
+    type={type}
     class={inputClass(size, variant, error, disabled)}
     {placeholder}
     {disabled}

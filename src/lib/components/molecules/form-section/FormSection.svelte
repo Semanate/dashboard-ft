@@ -4,7 +4,7 @@
   interface Props {
     title?: string;
     fields: Array<{
-      type: "text" | "select" | "date" | "file" | "textarea";
+      type: "text" | "select" | "date" | "file" | "textarea" | "checkbox" | "password" | "email";
       label: string;
       placeholder?: string;
       options?: Array<{ label: string; value: any }>;

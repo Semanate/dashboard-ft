@@ -5,9 +5,11 @@
     variant?: "primary" | "secondary" | "tertiary" | "default" | "ghost";
     size?: "small" | "medium" | "large";
     label: string;
+    type?: "button" | "submit" | "reset";
     onclick?: () => void;
     loading?: boolean;
     children?: any;
+    class?: string;
   }
 
   const {
@@ -23,7 +25,8 @@
     const base =
       "flex flex-row items-center rounded px-4 py-2 font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 hover:cursor-pointer transition-colors duration-200";
     const variants: Record<string, string> = {
-      primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+      primary:
+        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
       secondary:
         "bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-500",
       tertiary:
@@ -41,7 +44,12 @@
   }
 </script>
 
-<button type="button" class={buttonClass()} {...props} disabled={loading}>
+<button
+  type={props.type ?? "button"}
+  class={buttonClass(variant, size) + " " + (props.class ?? "")}
+  {...props}
+  disabled={loading}
+>
   {#if loading}
     <LoaderCircle class="animate-spin mr-2" size="16" />
   {/if}

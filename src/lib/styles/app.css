@@ -9,8 +9,14 @@
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@theme {
     --color-primary: #FFAC07;
-    --color-secondary: #00000;
+    --color-primary-500: #ffb733;
+    --color-primary-600: #ff9f05;
+    --color-primary-700: #e69506;
+    --color-secondary: #000000;
 }
 
 html {
