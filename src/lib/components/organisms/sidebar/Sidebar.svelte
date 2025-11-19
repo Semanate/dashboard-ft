@@ -7,14 +7,22 @@
   import type { User } from "@supabase/supabase-js";
 
   interface props {
-    menu: { label: string; icon: string; href: string; active: boolean }[];
+    menu: {
+      label: string;
+      icon: string;
+      href: string;
+      active: boolean;
+      disabled?: boolean;
+    }[];
     collapsed: boolean;
     user: User;
     variant: "light" | "dark";
   }
-  const { menu, collapsed: initialCollapsed, user, variant }: props = $props();
+  const { menu: menuItems, collapsed: initialCollapsed, user, variant }: props = $props();
   let collapsed = $state(initialCollapsed);
 
+  const menu = menuItems.filter((item) => !item.disabled);
+  
   const toggle = () => {
     collapsed = !collapsed;
   };
@@ -75,6 +83,7 @@
           label={item.label}
           active={item.active}
           href={item.href}
+          disabled={item.disabled}
           hiddenLabel={collapsed}
           className={collapsed ? "justify-center" : ""}
         />
