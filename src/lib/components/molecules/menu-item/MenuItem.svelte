@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from "$lib/components/atoms/icon/Icon.svelte";
   import { cn } from "$lib/utils";
+  import { fade } from "svelte/transition";
 
   interface MenuItemProps {
     label: string;
@@ -41,6 +42,6 @@
     <Icon name={icon} size={20} className="text-gray-600" />
   {/if}
   {#if !hiddenLabel}
-    <span>{label}</span>
+    <span transition:fade={{ duration: 120 }}>{label}</span>
   {/if}
 </a>

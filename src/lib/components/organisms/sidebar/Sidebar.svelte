@@ -2,6 +2,7 @@
   import MenuItem from "$lib/components/molecules/menu-item/MenuItem.svelte";
   import UserInfo from "$lib/components/molecules/user-info/UserInfo.svelte";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+  import { fade, slide, scale } from "svelte/transition";
 
   interface props {
     menu: { label: string; icon: string; href: string }[];
@@ -17,7 +18,8 @@
 
   function sidebarClasses() {
     return `
-      h-screen shadow-md flex flex-col transition-all duration-300 rounded-r-2xl rounded-l-none fade-in-out 
+      h-screen shadow-md flex flex-col transition-all duration-300 rounded-r-2xl rounded-l-none
+      fade-in-out transition-[width] duration-300 ease-in-out delay-75
       ${collapsed ? "w-20" : "w-64"}
       ${variant === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"}
     `;
@@ -27,7 +29,10 @@
 <div class={sidebarClasses()}>
   <!-- Header -->
   <div class="flex items-center justify-between p-4">
-    <span class={collapsed ? "hidden" : "font-bold text-lg"}>Mi Panel</span>
+    <span
+      class={collapsed ? "hidden" : "font-bold text-lg"}
+      transition:fade={{ duration: 200 }}>Mi Panel</span
+    >
 
     <ButtonWithIcon
       label=""
@@ -64,6 +69,7 @@
       src="https://img.icons8.com/ios-glyphs/30/000000/copyright.png"
       alt="copyright"
       class="mt-auto mx-auto my-4"
+      transition:fade={{ duration: 200 }}
     />
   {/if}
 </div>
