@@ -6,25 +6,35 @@
   interface props {
     menu: { label: string; icon: string; href: string }[];
     collapsed: boolean;
+    variant: "light" | "dark";
   }
-  const { menu, collapsed: initialCollapsed }: props = $props();
+  const { menu, collapsed: initialCollapsed, variant }: props = $props();
   let collapsed = $state(initialCollapsed);
 
   const toggle = () => {
     collapsed = !collapsed;
   };
+
+  function sidebarClasses() {
+    return `
+      h-screen shadow-md flex flex-col transition-all duration-300 rounded-r-2xl rounded-l-none fade-in-out 
+      ${collapsed ? "w-20" : "w-64"}
+      ${variant === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"}
+    `;
+  }
 </script>
 
-<div
-  class="h-screen bg-primary border-r shadow-md flex flex-col transition-all duration-300
-    {collapsed ? 'w-20' : 'w-64'}
-  "
->
+<div class={sidebarClasses()}>
   <!-- Header -->
   <div class="flex items-center justify-between p-4">
     <span class={collapsed ? "hidden" : "font-bold text-lg"}>Mi Panel</span>
 
-    <ButtonWithIcon label="Menu" iconButton="menu" onclick={toggle} />
+    <ButtonWithIcon
+      label=""
+      iconButton={collapsed ? "ChevronsRight" : "ChevronsLeft"}
+      onclick={toggle}
+      variant="ghost"
+    />
   </div>
 
   <!-- User Info -->
@@ -35,12 +45,25 @@
   <!-- Menu -->
   <nav class="mt-6 flex flex-col">
     {#each menu as item}
-      <MenuItem icon={item.icon} label={item.label} href={item.href} />
+      <MenuItem
+        icon={item.icon}
+        label={item.label}
+        href={item.href}
+        hiddenLabel={collapsed}
+        className={collapsed ? "justify-center" : ""}
+      />
     {/each}
   </nav>
 
   <!-- Footer -->
   {#if !collapsed}
     <div class="mt-auto p-4 text-sm text-gray-500">© 2025 Mi App</div>
+  {/if}
+  {#if collapsed}
+    <img
+      src="https://img.icons8.com/ios-glyphs/30/000000/copyright.png"
+      alt="copyright"
+      class="mt-auto mx-auto my-4"
+    />
   {/if}
 </div>
