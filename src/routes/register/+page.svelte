@@ -4,6 +4,9 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
   import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
+  import Alert from "$lib/components/atoms/alert/Alert.svelte";
+
+  export let form;
 </script>
 
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
@@ -21,7 +24,7 @@
           title=""
           fields={[
             {
-              id:"email",
+              id: "email",
               type: "email",
               label: "Correo Electrónico",
               placeholder: "Ingrese su correo electrónico",
@@ -29,7 +32,7 @@
               onChange: () => {},
             },
             {
-              id:"password",
+              id: "password",
               type: "password",
               label: "Contraseña",
               placeholder: "Ingrese su contraseña",
@@ -37,7 +40,7 @@
               onChange: () => {},
             },
             {
-              id:"confirm-password",
+              id: "confirm-password",
               type: "password",
               label: "Confirmar Contraseña",
               placeholder: "Reingrese su contraseña",
@@ -51,11 +54,16 @@
           class="flex justify-between flex-col items-start text-sm text-gray-500 gap-2"
         >
           <div class="flex items-center gap-2">
-            <InputCheck id="terms" label="Acepto los términos y condiciones" />
+            <InputCheck id="accept-terms" label="Acepto los términos y condiciones" />
           </div>
           <a href="#" class="hover:underline">Ya tengo cuenta?</a>
         </div>
 
+        {#if form?.code}
+          <div class="p-2 bg-red-50 text-red-600 rounded">
+            {form.message}
+          </div>
+        {/if}
         <ButtonWithLoading
           type="submit"
           label="Sign In"

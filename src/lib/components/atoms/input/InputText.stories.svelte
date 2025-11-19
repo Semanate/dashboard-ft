@@ -5,7 +5,7 @@
 
   // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
   const { Story } = defineMeta({
-    title: "Example/InputText",
+    title: "Atoms/InputText",
     component: InputText,
     tags: ["autodocs"],
     args: {
