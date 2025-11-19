@@ -7,6 +7,7 @@ export const actions = {
         const email = String(form.get('email'));
         const password = String(form.get('password'));
         const confirmPassword = String(form.get('confirm-password'));
+        const fullName = String(form.get('full-name'));
         const acceptTerms = form.get('accept-terms') === 'on';
 
         if (!acceptTerms) {
@@ -25,7 +26,13 @@ export const actions = {
 
         const { error } = await supabase.auth.signUp({
             email,
-            password
+            password,
+            options: {
+                data: {
+                    display_name: fullName,
+                    role: 'user'
+                }
+            }
         });
 
         if (error) {

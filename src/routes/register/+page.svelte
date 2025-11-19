@@ -47,6 +47,14 @@
               value: "",
               onChange: () => {},
             },
+            {
+              id: "full-name",
+              type: "text",
+              label: "Nombre Completo",
+              placeholder: "Ingrese su nombre completo",
+              value: "",
+              onChange: () => {},
+            },
           ]}
         />
 
@@ -54,7 +62,10 @@
           class="flex justify-between flex-col items-start text-sm text-gray-500 gap-2"
         >
           <div class="flex items-center gap-2">
-            <InputCheck id="accept-terms" label="Acepto los términos y condiciones" />
+            <InputCheck
+              id="accept-terms"
+              label="Acepto los términos y condiciones"
+            />
           </div>
           <a href="#" class="hover:underline">Ya tengo cuenta?</a>
         </div>
