@@ -54,7 +54,7 @@
 
   <!-- User Info -->
   {#if !collapsed}
-    <UserInfo name={user?.user_metadata?.name || "Usuario"} email={user?.email || "usuario@example.com"} />
+    <UserInfo name={user?.user_metadata?.display_name || "Usuario"} email={user?.email || "usuario@example.com"} />
   {/if}
 
   <!-- Menu -->
