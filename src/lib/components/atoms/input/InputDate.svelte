@@ -23,7 +23,7 @@
   let value: Date | null = $state(initialValue || null);
 
   let show = $state(false);
-  let calendarRef: HTMLDivElement | null = null;
+  let calendarRef: HTMLDivElement | null = $state(null);
 
   let locale = navigator.language || "en-US";
 
