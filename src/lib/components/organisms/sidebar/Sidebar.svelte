@@ -4,13 +4,15 @@
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import { fade, slide, scale } from "svelte/transition";
   import Tooltip from "$lib/components/atoms/tooltip/Tooltip.svelte";
+  import type { User } from "@supabase/supabase-js";
 
   interface props {
     menu: { label: string; icon: string; href: string }[];
     collapsed: boolean;
+    user: User;
     variant: "light" | "dark";
   }
-  const { menu, collapsed: initialCollapsed, variant }: props = $props();
+  const { menu, collapsed: initialCollapsed, user, variant }: props = $props();
   let collapsed = $state(initialCollapsed);
 
   const toggle = () => {
@@ -52,7 +54,7 @@
 
   <!-- User Info -->
   {#if !collapsed}
-    <UserInfo name="Kevin Alvear" email="kevin@example.com" />
+    <UserInfo name={user?.user_metadata?.name || "Usuario"} email={user?.email || "usuario@example.com"} />
   {/if}
 
   <!-- Menu -->

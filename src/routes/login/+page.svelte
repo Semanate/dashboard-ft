@@ -3,6 +3,9 @@
   import IMAGE_URL from "$lib/assets/Login-cuate.svg";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
+  import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
+  export let form;
+  export let loading = false;
 </script>
 
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
@@ -13,23 +16,25 @@
   >
     <div class="p-10 flex flex-col justify-center">
       <h1 class="text-3xl font-bold mb-2">Hola!</h1>
-      <p class="text-gray-500 mb-6">Hey, Bienvenido a registrarse!</p>
+      <p class="text-gray-500 mb-6">Hey, Bienvenido!</p>
 
-      <form class="space-y-4 w-full">
+      <form class="space-y-4 w-full" method="POST">
         <FormSection
           title=""
           fields={[
             {
+              id: "email",
               type: "email",
-              label: "Email",
-              placeholder: "Enter your email address",
+              label: "Correo electrónico",
+              placeholder: "Ingrese su correo electrónico",
               value: "",
               onChange: () => {},
             },
             {
+              id: "password",
               type: "password",
-              label: "Password",
-              placeholder: "Enter your password",
+              label: "Contraseña",
+              placeholder: "Ingrese su contraseña",
               value: "",
               onChange: () => {},
             },
@@ -38,25 +43,31 @@
 
         <div class="flex justify-between items-center text-sm text-gray-500">
           <div class="flex items-center gap-2">
-            <input type="checkbox" class="accent-primary" />
-            <span>Remember me</span>
+            <InputCheck id="remember-me" label="Recordarme" />
           </div>
-          <a href="#" class="hover:underline">Forgot password?</a>
+          <!-- <a href="#" class="hover:underline">Recordar contraseña?</a> -->
         </div>
+
+        {#if form?.code}
+          <div class="p-2 bg-red-50 text-red-600 rounded">
+            {form.message}
+          </div>
+        {/if}
 
         <ButtonWithLoading
           type="submit"
-          label="Sign In"
+          label="Iniciar Sesión"
           variant="primary"
           size="large"
-          class="w-full"
+          class="w-full justify-center"
+          {loading}
         />
       </form>
 
       <p class="mt-6 text-sm">
-        Don't have an account?
+        ¿No tienes una cuenta?
         <a href="#" class="text-primary font-semibold hover:underline"
-          >Sign Up</a
+          >Regístrate</a
         >
       </p>
     </div>

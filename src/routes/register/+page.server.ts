@@ -28,7 +28,6 @@ export const actions = {
             password
         });
 
-        console.log('Supabase signup error:', error);
         if (error) {
             return fail(400, { ...ErrorCodes.SUPABASE_SIGNUP_ERROR });
         }

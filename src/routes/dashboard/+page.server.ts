@@ -1,6 +1,17 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
 import { ErrorCodes } from '$lib/constants/error.codes.js';
+
+export const load = async ({ cookies }) => {
+    const accessToken = cookies.get("sb-access-token");
+    if (!accessToken) {
+        throw redirect(303, '/login');
+    }
+
+    const { data: { user } } = await supabase.auth.getUser(accessToken);
+    return { user };
+};
+
 export const actions = {
     default: async ({ request }) => {
         const form = await request.formData();

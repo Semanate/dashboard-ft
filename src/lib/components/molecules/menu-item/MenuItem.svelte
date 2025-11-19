@@ -23,8 +23,6 @@
     disabled = false,
   }: MenuItemProps = $props();
 
-  console.log({ label, icon, href, active, disabled });
-
   function menuItemClasses() {
     return cn(
       "flex items-center gap-3 px-4 py-2 rounded-md transition-colors select-none items-center hover:bg-gray-100",

@@ -1,10 +1,13 @@
 <script lang="ts">
+  export let data;
+
   import Sidebar from "$lib/components/organisms/sidebar/Sidebar.svelte";
 </script>
 
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
   <aside class="fixed top-0 left-0 h-full">
     <Sidebar
+      user={data.user}
       variant="light"
       menu={[
         { label: "Inicio", icon: "House", href: "/dashboard" },
