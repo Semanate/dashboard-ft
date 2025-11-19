@@ -11,4 +11,7 @@
   const IconComponent = (Icons as any)[name];
 </script>
 
-<IconComponent {size} class={className} />
+{#if (Icons as any )[name]}
+  {@const IconComponent = (Icons as any)[name]}
+  <IconComponent size={size} class={className} />
+{/if}
