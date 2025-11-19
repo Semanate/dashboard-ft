@@ -55,6 +55,14 @@
               value: "",
               onChange: () => {},
             },
+            {
+              id: "phone",
+              type: "text",
+              label: "Número de Teléfono",
+              placeholder: "Ingrese su número de teléfono",
+              value: "",
+              onChange: () => {},
+            },
           ]}
         />
 

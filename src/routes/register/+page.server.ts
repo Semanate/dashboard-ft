@@ -8,6 +8,7 @@ export const actions = {
         const password = String(form.get('password'));
         const confirmPassword = String(form.get('confirm-password'));
         const fullName = String(form.get('full-name'));
+        const phone = String(form.get('phone'));
         const acceptTerms = form.get('accept-terms') === 'on';
 
         if (!acceptTerms) {
@@ -30,6 +31,7 @@ export const actions = {
             options: {
                 data: {
                     display_name: fullName,
+                    phone: phone,
                     role: 'user'
                 }
             }
