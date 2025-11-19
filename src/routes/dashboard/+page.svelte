@@ -5,6 +5,7 @@
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
   <aside class="fixed top-0 left-0 h-full">
     <Sidebar
+      variant="light"
       menu={[
         { label: "Inicio", icon: "House", href: "/dashboard" },
         { label: "Perfil", icon: "User", href: "/profile" },

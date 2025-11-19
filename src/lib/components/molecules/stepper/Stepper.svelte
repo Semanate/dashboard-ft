@@ -11,7 +11,6 @@
     active?: number;
   }
   const { steps, active = 0 }: Props = $props();
-  console.log(steps);
 </script>
 
 <div class="flex items-center gap-4">

@@ -36,7 +36,8 @@
       tertiary:
         "bg-transparent text-blue-600 hover:bg-blue-50 focus:ring-blue-500",
       default: "bg-white text-black hover:bg-gray-100 focus:ring-gray-500",
-      ghost: "bg-transparent hover:bg-gray-100 focus:ring-gray-200 outline-none",
+      ghost:
+        "bg-transparent hover:bg-gray-100 focus:ring-gray-200 outline-none",
     };
     const sizes: Record<string, string> = {
       small: "text-sm",

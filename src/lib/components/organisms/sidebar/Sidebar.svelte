@@ -3,6 +3,7 @@
   import UserInfo from "$lib/components/molecules/user-info/UserInfo.svelte";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import { fade, slide, scale } from "svelte/transition";
+  import Tooltip from "$lib/components/atoms/tooltip/Tooltip.svelte";
 
   interface props {
     menu: { label: string; icon: string; href: string }[];
@@ -28,18 +29,25 @@
 
 <div class={sidebarClasses()}>
   <!-- Header -->
-  <div class="flex items-center justify-between p-4">
-    <span
+  <div class="flex items-center justify-end p-4">
+    <!-- <span
       class={collapsed ? "hidden" : "font-bold text-lg"}
       transition:fade={{ duration: 200 }}>Mi Panel</span
-    >
+    > -->
 
-    <ButtonWithIcon
-      label=""
-      iconButton={collapsed ? "ChevronsRight" : "ChevronsLeft"}
-      onclick={toggle}
-      variant="ghost"
-    />
+    <Tooltip
+      active={collapsed}
+      className="ml-4"
+      content={collapsed ? "Expandir" : "Colapsar"}
+      position="right"
+    >
+      <ButtonWithIcon
+        label=""
+        iconButton={collapsed ? "ChevronsRight" : "ChevronsLeft"}
+        onclick={toggle}
+        variant="ghost"
+      />
+    </Tooltip>
   </div>
 
   <!-- User Info -->
@@ -50,13 +58,20 @@
   <!-- Menu -->
   <nav class="mt-6 flex flex-col">
     {#each menu as item}
-      <MenuItem
-        icon={item.icon}
-        label={item.label}
-        href={item.href}
-        hiddenLabel={collapsed}
-        className={collapsed ? "justify-center" : ""}
-      />
+      <Tooltip
+        active={collapsed}
+        className="mx-2 my-1"
+        content={item.label}
+        position="right"
+      >
+        <MenuItem
+          icon={item.icon}
+          label={item.label}
+          href={item.href}
+          hiddenLabel={collapsed}
+          className={collapsed ? "justify-center" : ""}
+        />
+      </Tooltip>
     {/each}
   </nav>
 
