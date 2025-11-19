@@ -14,7 +14,7 @@
     penColor="#000000"
     backgroundColor="#ffffff"
     onChange={(dataUrl) => {
-      console.log("Signature data URL:", dataUrl);
+      // console.log("Signature data URL:", dataUrl);
     }}
   />
 </section>

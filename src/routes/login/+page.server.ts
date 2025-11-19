@@ -2,14 +2,6 @@ import { ErrorCodes } from '$lib/constants/error.codes';
 import { fail, redirect } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
 
-export const load = async ({ cookies }) => {
-    const accessToken = cookies.get("sb-access-token");
-    if (accessToken) {
-        throw redirect(303, '/dashboard');
-    }
-
-    return {};
-};
 
 export const actions = {
     default: async ({ request, cookies }) => {

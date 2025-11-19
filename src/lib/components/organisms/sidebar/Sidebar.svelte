@@ -7,7 +7,7 @@
   import type { User } from "@supabase/supabase-js";
 
   interface props {
-    menu: { label: string; icon: string; href: string }[];
+    menu: { label: string; icon: string; href: string; active: boolean }[];
     collapsed: boolean;
     user: User;
     variant: "light" | "dark";
@@ -54,7 +54,11 @@
 
   <!-- User Info -->
   {#if !collapsed}
-    <UserInfo name={user?.user_metadata?.display_name || "Usuario"} email={user?.email || "usuario@example.com"} />
+    <UserInfo
+      role={(user?.user_metadata?.role as any) || "Usuario"}
+      name={(user?.user_metadata?.display_name as string) || "Usuario"}
+      email={(user?.email as string) || "usuario@example.com"}
+    />
   {/if}
 
   <!-- Menu -->
@@ -69,6 +73,7 @@
         <MenuItem
           icon={item.icon}
           label={item.label}
+          active={item.active}
           href={item.href}
           hiddenLabel={collapsed}
           className={collapsed ? "justify-center" : ""}
