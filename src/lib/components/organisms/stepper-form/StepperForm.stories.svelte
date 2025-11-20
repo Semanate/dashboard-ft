@@ -59,15 +59,19 @@
         label: "Personal Info",
         fields: [
           {
+            id: "firstName",
             name: "firstName",
             type: "text",
+            required: true,
             label: "First Name",
             placeholder: "Enter your first name",
             value: "",
           },
           {
+            id: "lastName",
             name: "lastName",
             type: "text",
+            required: true,
             label: "Last Name",
             placeholder: "Enter your last name",
             value: "",
@@ -78,15 +82,19 @@
         label: "Account Details",
         fields: [
           {
+            id: "email",
             name: "email",
+            required: true,
             type: "text",
             label: "Email",
             placeholder: "Enter your email",
             value: "",
           },
           {
+            id: "password",
             name: "password",
             type: "text",
+            required: true,
             label: "Password",
             placeholder: "Enter your password",
             value: "",

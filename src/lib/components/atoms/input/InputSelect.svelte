@@ -16,6 +16,7 @@
       | "warning"
       | "outline"
       | "ghost";
+    value?: any;
     disabled: boolean;
     size: "small" | "medium" | "large";
   }
@@ -24,6 +25,7 @@
   let value = $state(null);
 
   const {
+    value: initialValue,
     label,
     placeholder,
     disabled,
@@ -86,7 +88,7 @@
     <label class="block mb-1 text-sm text-gray-700 font-medium">{label}</label>
   {/if}
 
-  <div class={inputClass()} onclick={toggle} id={id}>
+  <div class={inputClass()} onclick={toggle} {id}>
     <span class={value ? "text-gray-900" : "text-gray-400"}>
       {value ? options.find((opt) => opt.value === value)?.label : placeholder}
     </span>

@@ -79,7 +79,7 @@
     {rows}
     id={id}
     class={textareaClass(size, variant, error, disabled)}
-    bind:value
+    {value}
     {placeholder}
     {disabled}
   />

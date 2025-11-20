@@ -20,53 +20,26 @@
     options?: Array<{ label: string; value: any }>;
     error?: string;
     value: any;
-    onChange: (value: any) => void;
+    onchange: (value: any) => void;
   }
 
-  const { field }: { field: Field } = $props();
-  let value = $state(field.value || null);
-
-  function handleChange(v: any) {
-    value = v;
-    if (typeof field?.onChange === "function") field.onChange(v);
+  interface Props {
+    field: Field;
   }
+  const { field }: Props = $props();
 </script>
 
 <div class="w-full">
   {#if field.type === "text" || field.type === "password" || field.type === "email"}
-    <InputText
-      id={field.id}
-      label={field.label}
-      type={field.type}
-      placeholder={field.placeholder}
-      error={field.error}
-      bind:value
-    />
+    <InputText {...field} />
   {:else if field.type === "select" && field.options}
-    <InputSelect
-      id={field.id}
-      label={field.label}
-      options={field.options}
-      bind:value
-      error={field.error}
-    />
+    <InputSelect {...field} />
   {:else if field.type === "date"}
-    <InputDate
-      id={field.id}
-      label={field.label}
-      bind:value
-      error={field.error}
-    />
+    <InputDate {...field} />
   {:else if field.type === "file"}
-    <InputFile id={field.id} label={field.label} bind:value error={field.error}  />
+    <InputFile {...field} />
   {:else if field.type === "textarea"}
-    <InputTextarea
-      id={field.id}
-      label={field.label}
-      placeholder={field.placeholder}
-      error={field.error}
-      bind:value
-    />
+    <InputTextarea {...field} />
   {:else}
     <div class="text-red-500 text-sm">
       ❌ Field type "{field.type}" not supported

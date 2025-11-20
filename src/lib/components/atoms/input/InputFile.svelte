@@ -17,6 +17,7 @@
       | "ghost";
     id: string;
     disabled?: boolean;
+    value?: File | null;
     size?: "small" | "medium" | "large";
   }
   let file: File | null = $state(null);
@@ -92,6 +93,7 @@
     type="file"
     id={id}
     {accept}
+    {value}
     {disabled}
     onchange={handleChange}
     class={inputClass()}

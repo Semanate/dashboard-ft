@@ -19,6 +19,7 @@
       | "ghost";
     disabled?: boolean;
     value?: string;
+    onchange?: any;
   }
 
   const {
@@ -30,9 +31,9 @@
     type = "text",
     size = "small",
     id = "",
+    onchange,
     variant = "default",
   }: Props = $props();
-
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
@@ -78,17 +79,20 @@
 
 <div class="flex flex-col gap-1">
   {#if label}
-    <label class="text-sm font-medium text-gray-700">{label}</label>
+    <label class="text-sm font-medium text-gray-700" for={id}>{label}</label>
   {/if}
 
   <input
-    id={id}
+    {id}
+    required
     name={id}
     aria-label={label}
-    type={type}
+    {type}
     class={inputClass(size, variant, error, disabled)}
     {placeholder}
     {disabled}
+    onchange={(e) => onchange && onchange(e.target.value)}
+    {value}
   />
 
   {#if error}

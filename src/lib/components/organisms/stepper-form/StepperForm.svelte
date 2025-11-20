@@ -2,6 +2,7 @@
   import Stepper from "$lib/components/molecules/stepper/Stepper.svelte";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
+
   interface CategoryFormField {
     name: string;
     type: "text" | "select" | "date" | "file" | "textarea";
@@ -10,51 +11,157 @@
     placeholder?: string;
     options?: Array<{ label: string; value: any }>;
     value: any;
+    required?: boolean; // undefined => lo trato como requerido
+    error?: string;
   }
 
   interface Category {
     label: string;
     fields: CategoryFormField[];
   }
+
   interface Props {
     categories: Category[];
   }
 
   let active = $state(0);
-
   let formData = $state<Record<number, Record<string, any>>>({});
+  let fieldErrors = $state<Record<number, Record<string, string>>>({});
+  let hasAttemptedNext = $state(false);
 
   const { categories }: Props = $props();
-  $effect.pre(() => {
+
+  /**
+   * Inicializar formData y fieldErrors una vez con base en categories
+   */
+  $effect(() => {
     const initial: Record<number, Record<string, any>> = {};
+    const initialErrors: Record<number, Record<string, string>> = {};
 
     categories.forEach((cat, i) => {
       initial[i] = {};
+      initialErrors[i] = {};
+
       cat.fields.forEach((field) => {
-        initial[i][field.name] = field.value ?? null;
+        // valor inicial
+        initial[i][field.name] = field.value ?? "";
+        // sin error al inicio
+        initialErrors[i][field.name] = "";
       });
     });
 
     formData = initial;
+    fieldErrors = initialErrors;
   });
 
-  function updateField(categoryIndex: number, fieldName: string, value: any) {
-    formData[categoryIndex][fieldName] = value;
+  /**
+   * Valida un step específico
+   */
+  function validateStep(index: number) {
+    const currentCategory = categories[index];
+    if (!currentCategory) {
+      return { isValid: true, errors: {} as Record<string, string> };
+    }
+
+    let isValid = true;
+    const newErrors: Record<string, string> = {};
+
+    currentCategory.fields.forEach((field) => {
+      if (field.required === false) {
+        newErrors[field.name] = "";
+        return;
+      }
+
+      const value = formData[index]?.[field.name];
+      console.log("Validando campo", field.name, "con valor", value);
+
+      const isEmpty =
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && value.trim() === "") ||
+        (Array.isArray(value) && value.length === 0);
+
+      if (isEmpty) {
+        newErrors[field.name] = "Este campo es requerido";
+        isValid = false;
+      } else {
+        newErrors[field.name] = "";
+      }
+    });
+
+    // Como usamos $state, podemos mutar directamente
+    fieldErrors[index] = newErrors;
+
+    return { isValid, errors: newErrors };
   }
-  const onchange = (i: number) => (active = i);
+
+  /**
+   * Valida el step activo
+   */
+  function validateCurrentStep() {
+    const { isValid } = validateStep(active);
+    return isValid;
+  }
+
+  /**
+   * Actualizar campo correctamente
+   * y revalidar el step si ya intentamos avanzar
+   */
+  function updateField(categoryIndex: number, fieldName: string, value: any) {
+    // Actualizar el valor en formData
+    formData[categoryIndex][fieldName] = value;
+    console.log(formData[categoryIndex][fieldName], value, "valor actualizado");
+    // Si ya intentamos ir al siguiente paso, revalidamos este step
+    if (hasAttemptedNext && categoryIndex === active) {
+      validateStep(categoryIndex);
+    }
+  }
+
+  /**
+   * Cambiar step desde el stepper
+   */
+  const onchange = (i: number) => {
+    // Permitir volver atrás sin validar
+    if (i < active) {
+      active = i;
+      hasAttemptedNext = false;
+      return;
+    }
+
+    hasAttemptedNext = true;
+
+    if (validateCurrentStep()) {
+      active = i;
+      hasAttemptedNext = false;
+    }
+  };
 
   function next() {
-    if (active < categories.length - 1) active++;
-    onchange(active);
+    hasAttemptedNext = true;
+    console.log("Validando paso", active, fieldErrors[active]);
+
+    if (validateCurrentStep() && active < categories.length - 1) {
+      active++;
+      hasAttemptedNext = false;
+    }
   }
 
   function prev() {
-    if (active > 0) active--;
-    onchange(active);
+    if (active > 0) {
+      active--;
+      hasAttemptedNext = false;
+    }
   }
 
+  /**
+   * Métodos exportados
+   */
   export function getValues() {
     return structuredClone(formData);
+  }
+
+  export function isValid() {
+    return categories.every((_, i) => validateStep(i).isValid);
   }
 </script>
 
@@ -64,8 +171,9 @@
     {active}
     {onchange}
   />
+
   <div class="bg-white border rounded-md p-5 shadow-sm">
-    {#each categories as cat, i}
+    {#each categories as cat, i (i)}
       {#if active === i}
         <FormSection
           title={cat.label}
@@ -75,8 +183,9 @@
             label: field.label,
             placeholder: field.placeholder,
             options: field.options,
-            value: formData[i][field.name],
-            onChange: (value: any) => updateField(i, field.name, value),
+            error: fieldErrors[i]?.[field.name] || "",
+            value: formData[i]?.[field.name] ?? "",
+            onchange: (value: any) => updateField(i, field.name, value),
           }))}
         />
       {/if}

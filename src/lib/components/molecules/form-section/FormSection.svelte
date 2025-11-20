@@ -19,7 +19,7 @@
       options?: Array<{ label: string; value: any }>;
       error?: string;
       value: any;
-      onChange: (value: any) => void;
+      onchange: (value: any) => void;
     }>;
   }
 
