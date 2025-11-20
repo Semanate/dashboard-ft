@@ -19,6 +19,7 @@
       | "ghost";
     disabled?: boolean;
     value?: string;
+    required?: boolean;
     onchange?: any;
   }
 
@@ -32,8 +33,10 @@
     size = "small",
     id = "",
     onchange,
+    required = false,
     variant = "default",
   }: Props = $props();
+  console.log("InputText props:", required);
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
@@ -79,12 +82,17 @@
 
 <div class="flex flex-col gap-1">
   {#if label}
-    <label class="text-sm font-medium text-gray-700" for={id}>{label}</label>
+    <label class="text-sm font-medium text-gray-700" for={id}
+      >{label}
+      {#if required}
+        <span class="text-red-500">*</span>
+      {/if}
+    </label>
   {/if}
 
   <input
     {id}
-    required
+    {required}
     name={id}
     aria-label={label}
     {type}

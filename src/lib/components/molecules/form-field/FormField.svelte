@@ -16,6 +16,7 @@
       | "checkbox"
       | "password";
     label: string;
+    required?: boolean;
     placeholder?: string;
     options?: Array<{ label: string; value: any }>;
     error?: string;

@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@lucide/svelte": "^0.553.0",
-    "@supabase/supabase-js": "^2.83.0"
+    "@supabase/supabase-js": "^2.83.0",
+    "exceljs": "^4.4.0"
   }
 }
