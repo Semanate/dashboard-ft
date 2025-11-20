@@ -4,7 +4,7 @@
   import FormField from "./FormField.svelte";
 
   const { Story } = defineMeta({
-    title: "Example/FormField",
+    title: "Molecules/FormField",
     component: FormField,
     tags: ["autodocs"],
     args: {

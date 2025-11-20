@@ -19,7 +19,7 @@
       <div
         class="w-8 h-8 flex items-center justify-center rounded-full
           {i === active
-          ? 'bg-blue-600 text-white'
+          ? 'bg-primary-600 text-white'
           : 'bg-gray-300 text-gray-700'}"
       >
         {#if step.icon}

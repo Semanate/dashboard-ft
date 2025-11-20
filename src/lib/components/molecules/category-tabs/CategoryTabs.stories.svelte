@@ -4,7 +4,7 @@
   import CategoryTabs from "./CategoryTabs.svelte";
 
   const { Story } = defineMeta({
-    title: "Example/CategoryTabs",
+    title: "Molecules/CategoryTabs",
     component: CategoryTabs,
     tags: ["autodocs"],
     args: {

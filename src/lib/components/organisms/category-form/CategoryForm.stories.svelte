@@ -4,7 +4,7 @@
   import CategoryForm from "./CategoryForm.svelte";
 
   const { Story } = defineMeta({
-    title: "Example/CategoryForm",
+    title: "Organisms/CategoryForm",
     component: CategoryForm,
     tags: ["autodocs"],
     args: {

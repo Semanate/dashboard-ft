@@ -4,7 +4,7 @@
   import DynamicForm from "./DynamicForm.svelte";
 
   const { Story } = defineMeta({
-    title: "Example/DynamicForm",
+    title: "Organisms/DynamicForm",
     component: DynamicForm,
     tags: ["autodocs"],
     args: {

@@ -5,7 +5,15 @@
     title?: string;
     fields: Array<{
       id: string;
-      type: "text" | "select" | "date" | "file" | "textarea" | "checkbox" | "password" | "email";
+      type:
+        | "text"
+        | "select"
+        | "date"
+        | "file"
+        | "textarea"
+        | "checkbox"
+        | "password"
+        | "email";
       label: string;
       placeholder?: string;
       options?: Array<{ label: string; value: any }>;
@@ -24,6 +32,6 @@
   {/if}
 
   {#each fields as field}
-    <FormField {field} key={field.id} />
+    <FormField {field} />
   {/each}
 </div>

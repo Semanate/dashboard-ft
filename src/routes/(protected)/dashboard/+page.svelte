@@ -1,5 +1,6 @@
 <script lang="ts">
   import SignaturePad from "$lib/components/molecules/signature-pad/SignaturePad.svelte";
+  import CategoryForm from "$lib/components/organisms/category-form/CategoryForm.svelte";
 </script>
 
 <section class="prose max-w-full">
@@ -8,13 +9,23 @@
     This component allows users to draw their signature on a canvas. It supports
     mouse and touch inputs, and provides options to clear the canvas.
   </p>
-  <SignaturePad
-    width={600}
-    height={200}
-    penColor="#000000"
-    backgroundColor="#ffffff"
-    onChange={(dataUrl) => {
-      // console.log("Signature data URL:", dataUrl);
-    }}
+
+  <CategoryForm
+    categories={[
+      {
+        label: "Category 1",
+        fields: [
+          { id: "fieldA", label: "Field A", type: "text", name: "fieldA", value: "" },
+          { id: "fieldB", label: "Field B", type: "textarea", name: "fieldB", value: "" },
+        ],
+      },
+      {
+        label: "Category 2",
+        fields: [
+          { id: "fieldC", label: "Field C", type: "text", name: "fieldC", value: "" },
+          { id: "fieldD", label: "Field D", type: "date", name: "fieldD", value: "" },
+        ],
+      },
+    ]}
   />
 </section>

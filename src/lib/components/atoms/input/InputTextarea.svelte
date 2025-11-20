@@ -26,6 +26,7 @@
     label = "",
     placeholder = "",
     error = "",
+    id = "",
     rows = 4,
     disabled = false,
     value = "",

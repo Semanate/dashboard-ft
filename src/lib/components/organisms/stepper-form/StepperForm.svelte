@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CategoryTabs from "$lib/components/molecules/category-tabs/CategoryTabs.svelte";
+  import Stepper from "$lib/components/molecules/stepper/Stepper.svelte";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   interface CategoryFormField {
@@ -59,21 +59,25 @@
 </script>
 
 <div class="w-full space-y-6">
-  <CategoryTabs {categories} bind:active {onchange} />
-
+  <Stepper
+    steps={categories.map((cat) => ({ label: cat.label }))}
+    {active}
+    {onchange}
+  />
   <div class="bg-white border rounded-md p-5 shadow-sm">
     {#each categories as cat, i}
       {#if active === i}
         <FormSection
           title={cat.label}
-          fields={[
-            ...cat.fields.map((field) => ({
-              ...field,
-              onChange: (v) => {
-                updateField(i, field.name, v);
-              },
-            })),
-          ]}
+          fields={cat.fields.map((field) => ({
+            id: field.id,
+            type: field.type,
+            label: field.label,
+            placeholder: field.placeholder,
+            options: field.options,
+            value: formData[i][field.name],
+            onChange: (value: any) => updateField(i, field.name, value),
+          }))}
         />
       {/if}
     {/each}

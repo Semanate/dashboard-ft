@@ -95,7 +95,7 @@
   ];
 
   const { Story } = defineMeta({
-    title: "Example/FormLayout",
+    title: "Views/FormLayout",
     component: FormLayout,
     tags: ["autodocs"],
     args: {

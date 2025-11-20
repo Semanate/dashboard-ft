@@ -23,7 +23,7 @@
   ];
 
   const { Story } = defineMeta({
-    title: "Example/Card",
+    title: "Molecules/Card",
     component: Card,
     tags: ["autodocs"],
     args: {
