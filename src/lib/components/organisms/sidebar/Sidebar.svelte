@@ -18,11 +18,15 @@
     user: User;
     variant: "light" | "dark";
   }
-  const { menu: menuItems, collapsed: initialCollapsed, user, variant }: props = $props();
+  const {
+    menu: menuItems,
+    collapsed: initialCollapsed,
+    user,
+    variant,
+  }: props = $props();
   let collapsed = $state(initialCollapsed);
 
-  const menu = menuItems.filter((item) => !item.disabled);
-  
+  let menu = $derived(menuItems.filter((item) => !item.disabled));
   const toggle = () => {
     collapsed = !collapsed;
   };
