@@ -74,7 +74,7 @@
   {/if}
 
   <!-- Menu -->
-  <nav class="mt-6 flex flex-col">
+  <nav class="mt-6 p-1.5 gap-2 flex flex-col">
     {#each menu as item}
       <Tooltip
         active={collapsed}

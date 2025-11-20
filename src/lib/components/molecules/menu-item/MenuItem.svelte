@@ -37,7 +37,7 @@
 
 <a {href} class={menuItemClasses()}>
   {#if icon}
-    <Icon name={icon} size={20} className="text-gray-600" />
+    <Icon name={icon} size={20} className={active ? "text-primary" : "text-gray-600"} />
   {/if}
   {#if !hiddenLabel}
     <span transition:fade={{ duration: 120 }}>{label}</span>
