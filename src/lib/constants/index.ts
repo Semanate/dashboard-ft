@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // excelMappings.ts
 type DocType = "CC" | "CE" | "X" | "PS";
 
@@ -54,14 +55,22 @@ export const excelMappings = {
     JURIDICALPERSONCITY: "juridicalPerson.city",
 
     //Relations 
-    TYPEDOC1: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC2: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC3: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC4: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC5: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC6: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC7: (docType: DocType) => getDocTypeString(docType),
-    TYPEDOC8: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC1: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC2: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC3: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC4: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC5: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC6: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC7: (docType: DocType) => getDocTypeString(docType),
+    // TYPEDOC8: (docType: DocType) => getDocTypeString(docType),
+    TYPEDOC1: "relations[0].typeDoc",
+    TYPEDOC2: "relations[1].typeDoc",
+    TYPEDOC3: "relations[2].typeDoc",
+    TYPEDOC4: "relations[3].typeDoc",
+    TYPEDOC5: "relations[4].typeDoc",
+    TYPEDOC6: "relations[5].typeDoc",
+    TYPEDOC7: "relations[6].typeDoc",
+    TYPEDOC8: "relations[7].typeDoc",
     DOCNUMBER1: "relations[0].docNumber",
     DOCNUMBER2: "relations[1].docNumber",
     DOCNUMBER3: "relations[2].docNumber",
@@ -113,5 +122,43 @@ export const excelMappings = {
     ACCOUNTNAMEENTITY1: "accountEntityFinancials[0].accountNameEntity",
     ACCOUNTNAMEENTITY2: "accountEntityFinancials[1].accountNameEntity",
     ACCOUNTNAMEENTITY3: "accountEntityFinancials[2].accountNameEntity",
-    // 
+
+    // === PEP SECTION ===
+    PEP_MANAGE_PUBLIC_RESOURCES: "pep.managePublicResources",
+    PEP_PUBLIC_POWER: "pep.publicPower",
+    PEP_PUBLIC_POWER_NAME: "pep.publicPowerName",
+
+    PEP_RELATION: "pep.relation",
+    PEP_RELATION_NAME: "pep.relationName",
+
+    PEP_TAX_OBLIGATIONS: "pep.taxObligations",
+    PEP_TAX_COUNTRIES: "pep.taxCountries",
+
+    // === FOREIGN CURRENCY SECTION ===
+    FOREIGN_CURRENCY_MANAGEMENT: "foreignCurrency.management",
+
+    // Row 1
+    FOREIGN_PRODUCT_TYPE1: "foreignCurrency.products[0].type",
+    FOREIGN_ENTITY1: "foreignCurrency.products[0].entity",
+    FOREIGN_COUNTRY1: "foreignCurrency.products[0].country",
+    FOREIGN_CURRENCY1: "foreignCurrency.products[0].currency",
+
+    // Row 2
+    FOREIGN_PRODUCT_TYPE2: "foreignCurrency.products[1].type",
+    FOREIGN_ENTITY2: "foreignCurrency.products[1].entity",
+    FOREIGN_COUNTRY2: "foreignCurrency.products[1].country",
+    FOREIGN_CURRENCY2: "foreignCurrency.products[1].currency",
+
+    // === SIGNATURE SECTION ===
+    SIGN_NAME: "signature.name",
+    SIGN_DOCUMENT: "signature.document",
+    SIGN_SIGNATURE: "signature.signature",
 };
+
+function deepGet(obj: any, path: string) {
+    return path
+        .replace(/\[(\d+)\]/g, ".$1") // convierte [0] → .0
+        .split(".")
+        .reduce((acc, key) => acc?.[key], obj);
+}
+export { deepGet };

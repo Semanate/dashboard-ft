@@ -55,6 +55,151 @@
       address2: "asdasdsad",
       activitySector: "asdasd",
     },
+    relations: [
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+      {
+        typeDoc: "  CC.       CE.        NIT.       PS.",
+        docNumber: "123456789",
+        socialName: "asdasd",
+        percentageParticipation: "50",
+        activityAdminResource: "asdasd",
+        activityReputationGradePublic: "asdasd",
+      },
+    ],
+
+    accountEntityFinancials: [
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+      {
+        accountType: "Ahorros",
+        accountNumber: "123456789",
+        accountNameEntity: "asdasd",
+      },
+    ],
+
+    pep: {
+      managePublicResources: "SI",
+      publicPower: "NO",
+      // publicPowerName: "N/A",
+
+      relation: "NO",
+      relationName: "N/A",
+
+      taxObligations: "NO",
+      // taxCountries: "",
+    },
+
+    foreignCurrency: {
+      management: "SI",
+      products: [
+        {
+          type: "Cuenta en el exterior",
+          entity: "Bank of America",
+          country: "USA",
+          currency: "USD",
+        },
+        {
+          type: "Criptoactivos",
+          entity: "Binance",
+          country: "Global",
+          currency: "USDT",
+        },
+      ],
+    },
+
+    signature: {
+      name: "Kevin Alvear",
+      document: "123456789",
+      signature: "FIRMA_DIGITAL_O_VACÍO",
+    },
   };
 
   async function generateExcel() {

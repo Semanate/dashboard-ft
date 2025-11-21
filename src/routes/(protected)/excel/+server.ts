@@ -2,6 +2,7 @@
 import ExcelJS from "exceljs";
 import { resolve } from "node:path";
 import { json } from "@sveltejs/kit";
+import { deepGet, excelMappings } from "$lib/constants";
 
 export async function GET() {
     const pathExcel = resolve("static/forms/FT-GFI-001.xlsx");
@@ -98,7 +99,6 @@ export async function POST({ request }) {
         // Helper para rangos con nombre
         function set(name: string, value: any) {
             const { ranges } = workbook.definedNames.getRanges(name);
-
             if (!ranges || ranges.length === 0) {
                 console.log("⚠ Named Range no encontrado:", name);
                 return;
@@ -111,48 +111,18 @@ export async function POST({ request }) {
 
             targetSheet.getCell(cellRef).value = value;
         }
-        //Document Info
-        // set("TITLE", data.title);
-        // set("VERSION", data.version);
-        set("DATE", data.date);
-        set("CITY", data.city);
-        set("TYPE_DOCUMENT", data.typeDocument);
-        // set("DATEUPDATED", data.dateUpdated);
 
-        // Legal Representative
-        set("REPRESENTATIVELEGALFIRSTNAME", data.representative.firstName);
-        set("REPRESENTATIVELEGALLASTNAME1", data.representative.lastName1);
-        set("REPRESENTATIVELEGALLASTNAME2", data.representative.lastName2);
-        set("REPRESENTATIVELEGALTYPEDOC", "CC.        CE.  X      PS.");
-        set("REPRESENTATIVELEGALDOCNUMBER", data.representative.docNumber);
-        set("REPRESENTATIVELEGALPHONE", data.representative.phone);
-        set("REPRESENTATIVELEGALEMAIL", data.representative.email);
-        set("REPRESENTATIVELEGALACTIVITYSECTOR", data.representative.activitySector);
-        set("REPRESENTATIVELEGALCITY", data.representative.city);
-        set("REPRESENTATIVELEGALADDRESS", data.representative.address);
-        //Nautral Person
-        set("NATURALPERSONFIRSTNAME", data.naturalPerson.firstName);
-        set("NATURALPERSONLASTNAME1", data.naturalPerson.lastName1);
-        set("NATURALPERSONLASTNAME2", data.naturalPerson.lastName2);
-        set("NATURALPERSONTYPEDOC", "CC.        CE.  X      PS.");
-        set("NATURALPERSONDOCNUMBER", data.naturalPerson.docNumber);
-        set("NATURALPERSONDATEOFBIRTH", data.naturalPerson.dateOfBirth);
-        set("NATURALPERSONACTIVITYSECTOR", data.naturalPerson.activitySector);
-        set("NATURALPERSONPLACEOFBIRTH", data.naturalPerson.placeOfBirth);
-        set("NATURALPERSONPHONE", data.naturalPerson.phone);
-        set("NATURALPERSONADDRESS", data.naturalPerson.address);
-        //Juridical Person
-        set("JURIDICALPERSONBUSINESSNAME", data.juridicalPerson.businessName);
-        set("JURIDICALPERSONNIT", data.juridicalPerson.nit);
-        set("JURIDICALPERSONPHONE", data.juridicalPerson.phone);
-        set("JURIDICALPERSONEMAIL", data.juridicalPerson.email);
-        set("JURIDICALPERSONEMAIL2", data.juridicalPerson.email2);
-        set("JURIDICALPERSONADDRESS", data.juridicalPerson.address);
-        set("JURIDICALPERSONADDRESS2", data.juridicalPerson.address2);
-        set("JURIDICALPERSONPHONE2", data.juridicalPerson.phone2);
-        set("JURIDICALPERSONCITY", data.juridicalPerson.city);
+        for (const namedRange in excelMappings) {
+            const mapper = excelMappings[namedRange as keyof typeof excelMappings];
 
+            console.log("Mapping", namedRange, mapper);
+            const value =
+                typeof mapper === "function"
+                    ? mapper(data)
+                    : deepGet(data, mapper);
 
+            set(namedRange, value ?? "");
+        }
 
         const buffer = await workbook.xlsx.writeBuffer();
 
