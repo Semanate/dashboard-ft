@@ -1,5 +1,6 @@
 <script lang="ts">
   import CategoryForm from "$lib/components/organisms/category-form/CategoryForm.svelte";
+  import type { FormDataType } from "$lib/types";
   async function descargar() {
     const rest = await fetch("/excel");
     const { data } = await rest.json();
@@ -13,7 +14,7 @@
     // a.click();
   }
 
-  let form = {
+  let form: FormDataType = {
     date: "2023-10-10",
     city: "asdasd",
     typeDocument: "asdasd",
