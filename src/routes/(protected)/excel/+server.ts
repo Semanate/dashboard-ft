@@ -86,7 +86,6 @@ export async function POST({ request }) {
     try {
         const data = await request.json();
 
-        // Cargar plantilla
         const templatePath = resolve("static/forms/FT-GFI-001.xlsx");
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(templatePath);
@@ -96,7 +95,6 @@ export async function POST({ request }) {
             return json({ error: "Worksheet not found" }, { status: 404 });
         }
 
-        // Helper para rangos con nombre
         function set(name: string, value: any) {
             const { ranges } = workbook.definedNames.getRanges(name);
             if (!ranges || ranges.length === 0) {
@@ -115,7 +113,6 @@ export async function POST({ request }) {
         for (const namedRange in excelMappings) {
             const mapper = excelMappings[namedRange as keyof typeof excelMappings];
 
-            console.log("Mapping", namedRange, mapper);
             const value =
                 typeof mapper === "function"
                     ? mapper(data)

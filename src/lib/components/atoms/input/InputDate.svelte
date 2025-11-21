@@ -9,6 +9,7 @@
     disabled?: boolean;
     value?: Date | null;
     id: string;
+    onchange?: (value: Date | null) => void;
   }
 
   const {
@@ -17,6 +18,7 @@
     error = "",
     id = "",
     disabled = false,
+    onchange,
     value: initialValue,
   }: Props = $props();
 
@@ -69,6 +71,7 @@
     selected = new Date(current.getFullYear(), current.getMonth(), day);
     value = selected;
     show = false;
+    if (onchange) onchange(value);
   }
 
   function prevMonth() {
@@ -99,7 +102,10 @@
            focus:ring-2 transition disabled:bg-gray-100"
     class:border-red-500={error}
     onclick={toggle}
-    id={id}
+    onchange={() => {
+      if (onchange) onchange(value);
+    }}
+    {id}
   >
     {#if selected}
       {dateFormatter.format(selected)}

@@ -73,8 +73,6 @@
       }
 
       const value = formData[index]?.[field.name];
-      console.log("Validando campo", field.name, "con valor", value);
-
       const isEmpty =
         value === null ||
         value === undefined ||
@@ -153,9 +151,6 @@
     }
   }
 
-  /**
-   * Métodos exportados
-   */
   export function getValues() {
     return structuredClone(formData);
   }
@@ -173,7 +168,7 @@
   />
 
   <div class="bg-white border rounded-md p-5 shadow-sm">
-    {#each categories as cat, i (i)}
+    {#each categories as cat, i (cat)}
       {#if active === i}
         <FormSection
           title={cat.label}
