@@ -35,12 +35,12 @@
   ]);
 </script>
 
-<main class="min-h-screen flex">
+<main class="min-h-screen flex max-h-screen">
   <aside class="h-screen left-0 top-0">
-    <Sidebar user={data.user} variant="light" {menu} collapsed/>
+    <Sidebar user={data.user} variant="light" {menu} collapsed />
   </aside>
 
-  <article class="p-6 w-full">
+  <article class="p-6 w-full max-h-screen overflow-y-auto">
     {@render children()}
   </article>
 </main>

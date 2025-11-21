@@ -36,7 +36,6 @@
     required = false,
     variant = "default",
   }: Props = $props();
-  console.log("InputText props:", required);
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =

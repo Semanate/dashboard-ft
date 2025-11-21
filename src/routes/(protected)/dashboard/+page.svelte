@@ -266,7 +266,7 @@
           name: "date",
           type: "date",
           label: "Fecha",
-          required: true,
+          required: false,
           placeholder: "",
           value: "",
         },
@@ -275,7 +275,7 @@
           name: "city",
           type: "text",
           label: "Ciudad",
-          required: true,
+          required: false,
           placeholder: "Ciudad",
           value: "",
         },
@@ -284,7 +284,7 @@
           name: "typeDocument",
           type: "text",
           label: "Tipo de Documento",
-          required: true,
+          required: false,
           placeholder: "CC / CE / NIT",
           value: "",
         },
@@ -302,7 +302,7 @@
           name: "representative.firstName",
           type: "text",
           label: "Nombres",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -310,7 +310,7 @@
           name: "representative.lastName1",
           type: "text",
           label: "Apellido 1",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -326,7 +326,7 @@
           name: "representative.typeDoc",
           type: "text",
           label: "Tipo de documento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -334,7 +334,7 @@
           name: "representative.docNumber",
           type: "text",
           label: "Número de documento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -342,7 +342,7 @@
           name: "representative.phone",
           type: "text",
           label: "Teléfono",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -350,7 +350,7 @@
           name: "representative.email",
           type: "text",
           label: "Email",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -358,7 +358,7 @@
           name: "representative.city",
           type: "text",
           label: "Ciudad",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -366,7 +366,7 @@
           name: "representative.activitySector",
           type: "text",
           label: "Sector de actividad",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -374,7 +374,7 @@
           name: "representative.address",
           type: "text",
           label: "Dirección",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -391,7 +391,7 @@
           name: "naturalPerson.firstName",
           type: "text",
           label: "Nombres",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -399,7 +399,7 @@
           name: "naturalPerson.lastName1",
           type: "text",
           label: "Apellido 1",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -415,7 +415,7 @@
           name: "naturalPerson.typeDoc",
           type: "text",
           label: "Tipo de documento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -423,7 +423,7 @@
           name: "naturalPerson.docNumber",
           type: "text",
           label: "Número de documento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -431,7 +431,7 @@
           name: "naturalPerson.dateOfBirth",
           type: "date",
           label: "Fecha de nacimiento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -439,7 +439,7 @@
           name: "naturalPerson.placeOfBirth",
           type: "text",
           label: "Lugar de nacimiento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -447,7 +447,7 @@
           name: "naturalPerson.phone",
           type: "text",
           label: "Teléfono",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -455,7 +455,7 @@
           name: "naturalPerson.email",
           type: "text",
           label: "Email",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -463,7 +463,7 @@
           name: "naturalPerson.city",
           type: "text",
           label: "Ciudad",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -471,7 +471,7 @@
           name: "naturalPerson.address",
           type: "text",
           label: "Dirección",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -479,7 +479,7 @@
           name: "naturalPerson.activitySector",
           type: "text",
           label: "Sector de actividad",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -496,7 +496,7 @@
           name: "juridicalPerson.businessName",
           type: "text",
           label: "Razón Social",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -504,7 +504,7 @@
           name: "juridicalPerson.nit",
           type: "text",
           label: "NIT",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -512,7 +512,7 @@
           name: "juridicalPerson.phone",
           type: "text",
           label: "Teléfono",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -520,7 +520,7 @@
           name: "juridicalPerson.email",
           type: "text",
           label: "Email",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -536,7 +536,7 @@
           name: "juridicalPerson.city",
           type: "text",
           label: "Ciudad",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -552,7 +552,7 @@
           name: "juridicalPerson.address",
           type: "text",
           label: "Dirección",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -568,7 +568,7 @@
           name: "juridicalPerson.activitySector",
           type: "text",
           label: "Sector de actividad",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -675,7 +675,7 @@
           name: "pep.managePublicResources",
           type: "text",
           label: "¿Maneja recursos públicos? (SI/NO)",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -683,7 +683,7 @@
           name: "pep.publicPower",
           type: "text",
           label: "¿Ejerce poder público? (SI/NO)",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -691,7 +691,7 @@
           name: "pep.relation",
           type: "text",
           label: "¿Tiene relación con persona PEP? (SI/NO)",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -707,7 +707,7 @@
           name: "pep.taxObligations",
           type: "text",
           label: "¿Tiene obligaciones tributarias en otro país? (SI/NO)",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -725,7 +725,7 @@
           type: "text",
           label:
             "¿Maneja productos financieros en moneda extranjera o activos virtuales? (SI/NO)",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -780,7 +780,7 @@
           name: "signature.name",
           type: "text",
           label: "Nombre",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -788,7 +788,7 @@
           name: "signature.document",
           type: "text",
           label: "Documento",
-          required: true,
+          required: false,
           value: "",
         },
         {
@@ -796,7 +796,7 @@
           name: "signature.signature",
           type: "text",
           label: "Firma",
-          required: true,
+          required: false,
           value: "",
         },
       ],
@@ -994,7 +994,7 @@
   ];
 </script>
 
-<section class="prose max-w-full">
+<section class="prose max-w-full overflow-y-auto overflow-x-hidden p-4">
   <h1>Signature Pad Component</h1>
   <p>
     This component allows users to draw their signature on a canvas. It supports
