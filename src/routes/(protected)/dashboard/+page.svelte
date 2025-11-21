@@ -200,6 +200,40 @@
       document: "123456789",
       signature: "FIRMA_DIGITAL_O_VACÍO",
     },
+
+    verification: {
+      block1: {
+        name: "ASDSDASDA",
+        signature: "ASDDSASADSDA",
+        date: "212313231",
+        time: "23123213",
+        auth: "SI", // o NO
+      },
+      block2: {
+        name: "ASDSADSAD",
+        signature: "C123123",
+        date: "12312323",
+        time: "23123213",
+        auth: "NO",
+      },
+    },
+
+    pepAuthorization: {
+      block1: {
+        name: "CCCCC",
+        signature: "CCC",
+        date: "AAA22",
+        time: "223123231",
+        auth: "SI",
+      },
+      block2: {
+        name: "CASDASDAD",
+        signature: "ASC123123",
+        date: "ASDASDASD",
+        time: "1213123",
+        auth: "NO",
+      },
+    },
   };
 
   async function generateExcel() {

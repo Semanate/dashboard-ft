@@ -153,6 +153,35 @@ export const excelMappings = {
     SIGN_NAME: "signature.name",
     SIGN_DOCUMENT: "signature.document",
     SIGN_SIGNATURE: "signature.signature",
+    
+
+    // === VERIFICACIÓN 1 (Comercial / Suministros) ===
+    VERIF1_NAME: "verification.block1.name",
+    VERIF1_SIGNATURE: "verification.block1.signature",
+    VERIF1_DATE: "verification.block1.date",
+    VERIF1_TIME: "verification.block1.time",
+    VERIF1_AUTH: "verification.block1.auth",
+
+    // === VERIFICACIÓN 2 (Oficial de Cumplimiento) ===
+    VERIF2_NAME: "verification.block2.name",
+    VERIF2_SIGNATURE: "verification.block2.signature",
+    VERIF2_DATE: "verification.block2.date",
+    VERIF2_TIME: "verification.block2.time",
+    VERIF2_AUTH: "verification.block2.auth",
+
+    // === AUTORIZACIÓN PEP 1 (Gerente Administrativa) ===
+    PEP_AUTH1_NAME: "pepAuthorization.block1.name",
+    PEP_AUTH1_SIGNATURE: "pepAuthorization.block1.signature",
+    PEP_AUTH1_DATE: "pepAuthorization.block1.date",
+    PEP_AUTH1_TIME: "pepAuthorization.block1.time",
+    PEP_AUTH1_AUTH: "pepAuthorization.block1.auth",
+
+    // === AUTORIZACIÓN PEP 2 (Oficial de Cumplimiento) ===
+    PEP_AUTH2_NAME: "pepAuthorization.block2.name",
+    PEP_AUTH2_SIGNATURE: "pepAuthorization.block2.signature",
+    PEP_AUTH2_DATE: "pepAuthorization.block2.date",
+    PEP_AUTH2_TIME: "pepAuthorization.block2.time",
+    PEP_AUTH2_AUTH: "pepAuthorization.block2.auth",
 };
 
 function deepGet(obj: any, path: string) {
