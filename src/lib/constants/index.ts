@@ -153,7 +153,7 @@ export const excelMappings = {
     SIGN_NAME: "signature.name",
     SIGN_DOCUMENT: "signature.document",
     SIGN_SIGNATURE: "signature.signature",
-    
+
 
     // === VERIFICACIÓN 1 (Comercial / Suministros) ===
     VERIF1_NAME: "verification.block1.name",
@@ -186,7 +186,7 @@ export const excelMappings = {
 
 function deepGet(obj: any, path: string) {
     return path
-        .replace(/\[(\d+)\]/g, ".$1") // convierte [0] → .0
+        .replace(/\[(\d+)\]/g, ".$1")
         .split(".")
         .reduce((acc, key) => acc?.[key], obj);
 }
