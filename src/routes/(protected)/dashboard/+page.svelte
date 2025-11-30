@@ -1,6 +1,8 @@
 <script lang="ts">
+  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import CategoryForm from "$lib/components/organisms/category-form/CategoryForm.svelte";
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
+  import { citys, citysArray, documentTypesArray } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   async function descargar() {
     const rest = await fetch("/excel");
@@ -273,19 +275,21 @@
         {
           id: "city",
           name: "city",
-          type: "text",
+          type: "select",
           label: "Ciudad",
           required: false,
-          placeholder: "Ciudad",
+          options: citysArray,
+          placeholder: "Seleccione una ciudad",
           value: "",
         },
         {
           id: "typeDocument",
           name: "typeDocument",
-          type: "text",
+          type: "select",
           label: "Tipo de Documento",
           required: false,
-          placeholder: "CC / CE / NIT",
+          options: documentTypesArray,
+          placeholder: "Seleccione un tipo de documento",
           value: "",
         },
       ],
@@ -324,9 +328,11 @@
         {
           id: "repTypeDoc",
           name: "representative.typeDoc",
-          type: "text",
+          type: "select",
           label: "Tipo de documento",
           required: false,
+          options: documentTypesArray,
+          placeholder: "Seleccione un tipo de documento",
           value: "",
         },
         {
@@ -413,8 +419,10 @@
         {
           id: "natTypeDoc",
           name: "naturalPerson.typeDoc",
-          type: "text",
+          type: "select",
           label: "Tipo de documento",
+          options: documentTypesArray,
+          placeholder: "Seleccione un tipo de documento",
           required: false,
           value: "",
         },
@@ -994,12 +1002,13 @@
   ];
 </script>
 
-<section class="prose max-w-full overflow-y-auto overflow-x-hidden p-4">
-  <h1>Signature Pad Component</h1>
-  <p>
-    This component allows users to draw their signature on a canvas. It supports
-    mouse and touch inputs, and provides options to clear the canvas.
-  </p>
+<section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
+  <ButtonWithIcon
+    iconButton="arrow-down-circle"
+    label="Iniciar Tour"
+    variant="primary"
+    size="small"
+  />
 
   <StepperForm categories={sarlaftCategories} />
   <button on:click={descargar}> Descargar Excel SARLAFT </button>

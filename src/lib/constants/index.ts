@@ -190,4 +190,44 @@ function deepGet(obj: any, path: string) {
         .split(".")
         .reduce((acc, key) => acc?.[key], obj);
 }
-export { deepGet };
+
+/**
+ * Citys Constants
+ */
+
+const citys: Record<string, string> = {
+    BGT: "Bogotá",
+    MDL: "Medellín",
+    CAL: "Cali",
+};
+
+
+
+/**
+ * Citys Array for Select Options
+ */
+const citysArray = Object.values(citys).map((city) => ({
+    label: city,
+    value: Object.keys(citys).find((key) => citys[key] === city) || city,
+}));
+
+/**
+ * Documents Types Constants
+ */
+
+
+const documentTypes: Record<string, string> = {
+    CC: "Cédula de Ciudadanía",
+    CE: "Cédula de Extranjería",
+    NIT: "Número de Identificación Tributaria",
+    PS: "Pasaporte",
+};
+
+const documentTypesArray = Object.entries(documentTypes).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+export { deepGet, citys, citysArray, documentTypes, documentTypesArray };
+
+

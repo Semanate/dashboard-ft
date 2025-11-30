@@ -5,7 +5,7 @@
 
   interface CategoryFormField {
     name: string;
-    type: "text" | "select" | "date" | "file" | "textarea";
+    type: "text" | "select" | "date" | "file" | "textarea" | "checkbox" | "password" | "email";
     label: string;
     id: string;
     placeholder?: string;
@@ -118,7 +118,7 @@
   /**
    * Cambiar step desde el stepper
    */
-  const onchange = (i: number) => {
+  export const onchange = (i: number) => {
     // Permitir volver atrás sin validar
     if (i < active) {
       active = i;
@@ -162,8 +162,8 @@
 
 <div class="w-full space-y-6">
   <Stepper
-    steps={categories.map((cat) => ({ label: cat.label }))}
-    {active}
+    steps={categories.map((cat) => ({ label: cat.label as string, completed: false }))}
+    active={active}
     {onchange}
   />
 

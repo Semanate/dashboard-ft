@@ -1,6 +1,5 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
-  import { LoaderCircle } from "@lucide/svelte";
   import Icon from "../icon/Icon.svelte";
   interface Props {
     variant?: "primary" | "secondary" | "tertiary" | "default" | "ghost";
@@ -40,9 +39,9 @@
         "bg-transparent hover:bg-gray-100 focus:ring-gray-200 outline-none",
     };
     const sizes: Record<string, string> = {
-      small: "text-sm",
-      medium: "text-base",
-      large: "text-lg",
+      small: "text-sm h-8",
+      medium: "text-base h-10",
+      large: "text-lg h-12",
     };
 
     return cn(base, variants[type], sizes[sz], classNames ?? "");

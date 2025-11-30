@@ -36,6 +36,8 @@
     size = "medium",
   }: Props = $props();
 
+  console.log("options", options);
+
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
       "w-full border rounded-sm px-3 py-2 transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";

@@ -98,7 +98,7 @@
     class={inputClass(size, variant, error, disabled)}
     {placeholder}
     {disabled}
-    onchange={(e) => onchange && onchange(e.target.value)}
+    onchange={(e) => onchange && onchange(e.currentTarget.value)}
     {value}
   />
 

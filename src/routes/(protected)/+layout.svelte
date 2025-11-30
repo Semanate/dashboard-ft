@@ -40,7 +40,7 @@
     <Sidebar user={data.user} variant="light" {menu} collapsed />
   </aside>
 
-  <article class="p-6 w-full max-h-screen overflow-y-auto">
+  <article class="p-2 w-full max-h-screen overflow-y-auto">
     {@render children()}
   </article>
 </main>

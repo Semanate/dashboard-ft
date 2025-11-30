@@ -75,8 +75,9 @@
               label="Acepto los términos y condiciones"
             />
           </div>
-          <a href="#" class="hover:underline">Ya tengo cuenta?</a>
+          <!-- <a href="#" class="hover:underline">Ya tengo cuenta?</a> -->
         </div>
+
 
         {#if form?.code}
           <div class="p-2 bg-red-50 text-red-600 rounded">

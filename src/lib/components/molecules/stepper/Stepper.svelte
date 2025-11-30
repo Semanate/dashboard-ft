@@ -11,11 +11,11 @@
   interface Props {
     steps: Steps[];
     active?: number;
+    onchange?: (activeIndex: number) => void;
     chunkSize?: number;
   }
 
-  const { steps, active = 0, chunkSize = 2 }: Props = $props();
-
+  const { steps, active = 0, chunkSize = 4, onchange }: Props = $props();
   let windowStart = $derived.by(() => {
     if (!steps || steps.length === 0) return 0;
     if (!chunkSize || chunkSize <= 0) return 0;

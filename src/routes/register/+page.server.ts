@@ -28,10 +28,10 @@ export const actions = {
         const { error } = await supabase.auth.signUp({
             email,
             password,
+            phone,
             options: {
                 data: {
                     display_name: fullName,
-                    phone: phone,
                     role: 'user'
                 }
             }

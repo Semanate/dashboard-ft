@@ -1,6 +1,7 @@
 <script lang="ts">
   import { ArrowLeft, ArrowRight } from "@lucide/svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
+    import { cn } from "$lib/utils";
 
   interface Props {
     label?: string;
@@ -10,12 +11,16 @@
     value?: Date | null;
     id: string;
     onchange?: (value: Date | null) => void;
+    variant: "default";
+    size: "small" | "medium" | "large";
   }
 
   const {
     label = "",
     placeholder = "Select a date",
     error = "",
+    variant = "default",
+    size = "small",
     id = "",
     disabled = false,
     onchange,
@@ -89,6 +94,38 @@
   function daysInMonth() {
     return new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
   }
+
+  function inputClass() {
+    const base =
+      "w-full border rounded-md px-3 py-2 text-sm cursor-pointer bg-white focus:ring-2 transition disabled:bg-gray-100";
+    const sz = size;
+    const vr = variant;
+    const err = error !== "";
+    const dis = disabled;
+
+    const sizes: Record<string, string> = {
+      small: "py-1 px-2 text-sm h-8",
+      medium: "py-2 px-3 text-base h-10",
+      large: "py-3 px-4 text-lg h-12",
+    };
+
+    const variants: Record<string, string> = {
+      default:
+        "bg-white border-gray-300 text-gray-900 focus:ring-primary-600",
+    };
+
+    return cn(
+      base,
+      sizes[sz],
+      variants[vr],
+      err ? "border-red-500 focus:ring-red-400" : "",
+      dis
+        ? "disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+        : ""
+    );
+  }
+
+ 
 </script>
 
 <div class="relative inline-block w-full">
@@ -98,8 +135,7 @@
 
   <div
     aria-label="text"
-    class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm cursor-pointer bg-white
-           focus:ring-2 transition disabled:bg-gray-100"
+    class={inputClass()}
     class:border-red-500={error}
     onclick={toggle}
     onchange={() => {
