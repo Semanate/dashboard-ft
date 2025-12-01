@@ -362,8 +362,10 @@
         {
           id: "repCity",
           name: "representative.city",
-          type: "text",
+          type: "select",
           label: "Ciudad",
+          placeholder: "Seleccione una ciudad",
+          options: citysArray,
           required: false,
           value: "",
         },
@@ -469,8 +471,10 @@
         {
           id: "natCity",
           name: "naturalPerson.city",
-          type: "text",
+          type: "select",
           label: "Ciudad",
+          placeholder: "Seleccione una ciudad",
+          options: citysArray,
           required: false,
           value: "",
         },
@@ -542,8 +546,10 @@
         {
           id: "jurCity",
           name: "juridicalPerson.city",
-          type: "text",
+          type: "select",
           label: "Ciudad",
+          placeholder: "Seleccione una ciudad",
+          options: citysArray,
           required: false,
           value: "",
         },
@@ -1003,12 +1009,12 @@
 </script>
 
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
-  <ButtonWithIcon
+  <!-- <ButtonWithIcon
     iconButton="arrow-down-circle"
     label="Iniciar Tour"
     variant="primary"
     size="small"
-  />
+  /> -->
 
   <StepperForm categories={sarlaftCategories} />
   <button on:click={descargar}> Descargar Excel SARLAFT </button>
