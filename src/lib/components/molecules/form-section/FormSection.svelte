@@ -14,7 +14,8 @@
         | "textarea"
         | "checkbox"
         | "password"
-        | "email";
+        | "email"
+        | "signature";
       label: string;
       placeholder?: string;
       options?: Array<OptionsSelects<any>>;

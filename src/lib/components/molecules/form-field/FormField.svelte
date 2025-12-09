@@ -5,6 +5,8 @@
   import InputFile from "$lib/components/atoms/input/InputFile.svelte";
   import InputTextarea from "$lib/components/atoms/input/InputTextarea.svelte";
   import type { OptionsSelects } from "$lib/types";
+  import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
+  import InputSignature from "$lib/components/atoms/input/InputSignature.svelte";
   interface Field {
     id: string;
     type:
@@ -15,6 +17,7 @@
       | "file"
       | "textarea"
       | "checkbox"
+      | "signature"
       | "password";
     label: string;
     required?: boolean;
@@ -36,12 +39,16 @@
     <InputText {...field} />
   {:else if field.type === "select" && Object.values(field.options ?? {}).length > 0}
     <InputSelect {...field} />
+  {:else if field.type === "checkbox"}
+    <InputCheck {...field} />
   {:else if field.type === "date"}
     <InputDate {...field} />
   {:else if field.type === "file"}
     <InputFile {...field} />
   {:else if field.type === "textarea"}
     <InputTextarea {...field} />
+  {:else if field.type === "signature"}
+    <InputSignature {...field} />
   {:else}
     <div class="text-red-500 text-sm">
       ❌ Field type "{field.type}" not supported

@@ -9,6 +9,7 @@
     citysArray,
     documentTypesArray,
     entityAccountFinancialsArray,
+    typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   async function descargar() {
@@ -689,39 +690,39 @@
     // ============================================================
     // 6. CUENTAS FINANCIERAS (8)
     // ============================================================
-    ...Array.from({ length: 8 }).map((_, i) => ({
-      label: `Cuenta financiera ${i + 1}`,
-      fields: [
-        {
-          id: `accType_${i}`,
-          name: `accountEntityFinancials[${i}].accountType`,
-          type: "select",
-          label: "Tipo de cuenta",
-          required: false,
-          value: "",
-          placeholder: "Seleccione un tipo de cuenta",
-          options: accountTypesArray,
-        },
-        {
-          id: `accNumber_${i}`,
-          name: `accountEntityFinancials[${i}].accountNumber`,
-          type: "text",
-          label: "Número de cuenta",
-          required: false,
-          value: "",
-        },
-        {
-          id: `accEntity_${i}`,
-          name: `accountEntityFinancials[${i}].accountNameEntity`,
-          type: "select",
-          label: "Entidad financiera",
-          required: false,
-          value: "",
-          placeholder: "Seleccione una entidad financiera",
-          options: entityAccountFinancialsArray,
-        },
-      ],
-    })),
+    // ...Array.from({ length: 8 }).map((_, i) => ({
+    //   label: `Cuenta financiera ${i + 1}`,
+    //   fields: [
+    //     {
+    //       id: `accType_${i}`,
+    //       name: `accountEntityFinancials[${i}].accountType`,
+    //       type: "select",
+    //       label: "Tipo de cuenta",
+    //       required: false,
+    //       value: "",
+    //       placeholder: "Seleccione un tipo de cuenta",
+    //       options: accountTypesArray,
+    //     },
+    //     {
+    //       id: `accNumber_${i}`,
+    //       name: `accountEntityFinancials[${i}].accountNumber`,
+    //       type: "text",
+    //       label: "Número de cuenta",
+    //       required: false,
+    //       value: "",
+    //     },
+    //     {
+    //       id: `accEntity_${i}`,
+    //       name: `accountEntityFinancials[${i}].accountNameEntity`,
+    //       type: "select",
+    //       label: "Entidad financiera",
+    //       required: false,
+    //       value: "",
+    //       placeholder: "Seleccione una entidad financiera",
+    //       options: entityAccountFinancialsArray,
+    //     },
+    //   ],
+    // })),
 
     // ============================================================
     // 7. PEP
@@ -740,7 +741,7 @@
         {
           id: "pepPower",
           name: "pep.publicPower",
-          type: "text",
+          type: "checkbox",
           label: "¿Ejerce poder público? (SI/NO)",
           required: false,
           value: "",
@@ -748,7 +749,7 @@
         {
           id: "pepRelation",
           name: "pep.relation",
-          type: "text",
+          type: "checkbox",
           label: "¿Tiene relación con persona PEP? (SI/NO)",
           required: false,
           value: "",
@@ -764,7 +765,7 @@
         {
           id: "pepTax",
           name: "pep.taxObligations",
-          type: "text",
+          type: "checkbox",
           label: "¿Tiene obligaciones tributarias en otro país? (SI/NO)",
           required: false,
           value: "",
@@ -781,7 +782,7 @@
         {
           id: "fxManage",
           name: "foreignCurrency.management",
-          type: "text",
+          type: "checkbox",
           label:
             "¿Maneja productos financieros en moneda extranjera o activos virtuales? (SI/NO)",
           required: false,
@@ -796,7 +797,9 @@
         {
           id: `fxType_${i}`,
           name: `foreignCurrency.products[${i}].type`,
-          type: "text",
+          type: "select",
+          placeholder: "Seleccione un tipo de producto",
+          options: typesForeignCurrencyArray,
           label: "Tipo de producto",
           required: false,
           value: "",
@@ -804,9 +807,11 @@
         {
           id: `fxEntity_${i}`,
           name: `foreignCurrency.products[${i}].entity`,
-          type: "text",
+          type: "select",
+          placeholder: "Seleccione una entidad",
           label: "Entidad",
           required: false,
+          options: entityAccountFinancialsArray,
           value: "",
         },
         {
@@ -853,7 +858,7 @@
         {
           id: "signSignature",
           name: "signature.signature",
-          type: "text",
+          type: "signature",
           label: "Firma",
           required: false,
           value: "",

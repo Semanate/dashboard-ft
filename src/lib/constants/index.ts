@@ -298,6 +298,7 @@ const entityAccountFinancials: Record<string, string> = {
     RCI: "RCI Colombia",
     JEP: "JEP Colombia",
     TEF: "Tuya S.A.",
+    OTH: "Otro",
 };
 
 const entityAccountFinancialsArray = Object.entries(entityAccountFinancials).map(([key, value]) => ({
@@ -305,6 +306,23 @@ const entityAccountFinancialsArray = Object.entries(entityAccountFinancials).map
     value: key,
 }));
 
-export { deepGet, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
+
+
+const typesForeignCurrency: Record<string, string> = {
+    SAV: "Cuenta de Ahorros",
+    CHK: "Cuenta Corriente",
+    FIX: "Depósito a Plazo Fijo",
+    TRF: "Transferencia Internacional",
+    CRD: "Crédito en Moneda Extranjera",
+    OTH: "Otro",
+};
+
+const typesForeignCurrencyArray = Object.entries(typesForeignCurrency).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+
+export { deepGet, typesForeignCurrencyArray, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
 
 

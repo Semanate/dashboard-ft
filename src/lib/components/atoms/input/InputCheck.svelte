@@ -29,7 +29,7 @@
     id = ""
   } = props;
 
-  let checked = props.checked ?? false;
+  let checked = $state(props.checked || false);
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
