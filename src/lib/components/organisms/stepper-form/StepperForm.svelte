@@ -31,6 +31,7 @@
 
   interface Props {
     categories: Category[];
+    callbackOnSubmit?: (data: Record<string, any>) => void;
   }
 
   let active = $state(0);
@@ -38,7 +39,7 @@
   let fieldErrors = $state<Record<number, Record<string, string>>>({});
   let hasAttemptedNext = $state(false);
 
-  const { categories }: Props = $props();
+  const { categories, callbackOnSubmit }: Props = $props();
 
   /**
    * Inicializar formData y fieldErrors una vez con base en categories
@@ -161,7 +162,8 @@
   }
 
   export function getValues() {
-    return structuredClone(formData);
+    // return structuredClone(formData);
+    return JSON.parse(JSON.stringify(formData));
   }
 
   export function isValid() {
@@ -210,11 +212,27 @@
       variant="ghost"
     />
 
-    <Button
-      onclick={next}
-      disabled={active === categories.length - 1}
-      label="Siguiente"
-      variant="ghost"
-    />
+    {#if active < categories.length - 1}
+      <Button
+        onclick={next}
+        disabled={active === categories.length - 1}
+        label="Siguiente"
+        variant="ghost"
+      />
+    {/if}
+    <!-- Submit  -->
+
+    {#if active === categories.length - 1}
+      <Button
+        onclick={() => {
+          hasAttemptedNext = true;
+          if (validateCurrentStep() && isValid() && callbackOnSubmit) {
+            callbackOnSubmit(getValues());
+          }
+        }}
+        label="Enviar"
+        variant="primary"
+      />
+    {/if}
   </div>
 </div>

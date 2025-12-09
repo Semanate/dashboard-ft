@@ -1068,7 +1068,12 @@
     size="small"
   /> -->
 
-  <StepperForm categories={sarlaftCategories} />
+  <StepperForm
+    categories={sarlaftCategories}
+    callbackOnSubmit={(data) => {
+      console.log(data);
+    }}
+  />
   <button onclick={descargar}> Descargar Excel SARLAFT </button>
   <button onclick={generateExcel}> Generar Excel Llenado </button>
 </section>
