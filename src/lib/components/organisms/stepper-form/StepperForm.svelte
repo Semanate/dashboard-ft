@@ -194,7 +194,6 @@
             error: fieldErrors[i]?.[field.name] || "",
             value: formData[i]?.[field.name] ?? "",
             onchange: (value: any) => {
-              console.log("Field changed:", field.name, "=", value);
               updateField(i, field.name, value);
             },
           }))}
