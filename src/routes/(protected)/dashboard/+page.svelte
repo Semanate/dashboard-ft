@@ -1071,7 +1071,8 @@
   <StepperForm
     categories={sarlaftCategories}
     callbackOnSubmit={(data) => {
-      console.log(data);
+      form = data;
+      console.log(data, "FORM DATA");
     }}
   />
   <button onclick={descargar}> Descargar Excel SARLAFT </button>
