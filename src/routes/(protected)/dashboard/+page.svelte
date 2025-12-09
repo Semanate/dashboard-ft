@@ -907,7 +907,7 @@
         {
           id: "ver1Auth",
           name: "verification.block1.auth",
-          type: "text",
+          type: "checkbox",
           label: "Autorización (SI/NO)",
           required: false,
           value: "",
@@ -953,7 +953,7 @@
         {
           id: "ver2Auth",
           name: "verification.block2.auth",
-          type: "text",
+          type: "checkbox",
           label: "Autorización (SI/NO)",
           required: false,
           value: "",
@@ -1002,7 +1002,7 @@
         {
           id: "pepA1Auth",
           name: "pepAuthorization.block1.auth",
-          type: "text",
+          type: "checkbox",
           label: "Autorización (SI/NO)",
           required: false,
           value: "",
@@ -1032,7 +1032,7 @@
         {
           id: "pepA2Date",
           name: "pepAuthorization.block2.date",
-          type: "text",
+          type: "date",
           label: "Fecha",
           required: false,
           value: "",
@@ -1048,7 +1048,7 @@
         {
           id: "pepA2Auth",
           name: "pepAuthorization.block2.auth",
-          type: "text",
+          type: "checkbox",
           label: "Autorización (SI/NO)",
           required: false,
           value: "",

@@ -170,15 +170,16 @@
 </script>
 
 <div class="w-full space-y-6">
-  <Stepper
-    steps={categories.map((cat) => ({
-      label: cat.label as string,
-      completed: false,
-    }))}
-    {active}
-    {onchange}
-  />
-
+  <div class="h-14">
+    <Stepper
+      steps={categories.map((cat) => ({
+        label: cat.label as string,
+        completed: false,
+      }))}
+      {active}
+      {onchange}
+    />
+  </div>
   <div class="bg-white border rounded-md p-5 shadow-sm">
     {#each categories as cat, i (cat)}
       {#if active === i}

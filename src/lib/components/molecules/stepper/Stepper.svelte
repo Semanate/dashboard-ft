@@ -33,14 +33,32 @@
   });
 
   let visibleSteps = $derived.by(() =>
-    steps.slice(windowStart, Math.min(windowStart + chunkSize, steps.length))
+    steps.slice(windowStart, Math.min(windowStart + chunkSize, steps.length)),
   );
+  let previousActive = active;
+  let direction = 1;
+
+  $effect(() => {
+    direction = active > previousActive ? 1 : -1;
+    previousActive = active;
+  });
 </script>
 
 {#key windowStart}
   <div
     class="flex items-center gap-4"
-    transition:fly|local={{ x: 40, duration: 250, easing: (t) => t * t }}
+    in:fly|local={{
+      x: 40 * direction,
+      duration: 350,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+      opacity: 1,
+    }}
+    out:fly|local={{
+      x: -40 * direction,
+      duration: 250,
+      easing: (t) => t * t,
+      opacity: 1,
+    }}
   >
     {#each visibleSteps as step, i}
       {@const realIndex = windowStart + i}
