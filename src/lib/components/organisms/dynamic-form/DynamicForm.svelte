@@ -1,5 +1,7 @@
 <script lang="ts">
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
+  import type { OptionsSelects } from "$lib/types";
+
   interface Props {
     schema: {
       sections: Array<{
@@ -8,7 +10,7 @@
           type: "text" | "select" | "date" | "file" | "textarea";
           label: string;
           placeholder?: string;
-          options?: Array<{ label: string; value: any }>;
+          options?: Array<OptionsSelects<any>>;
           error?: string;
           value: any;
           onChange: (value: any) => void;

@@ -45,9 +45,10 @@
 </script>
 
 <div
+  role="tooltip"
   class="relative inline-block overflow-visible"
-  on:mouseenter={handleMouseEnter}
-  on:mouseleave={handleMouseLeave}
+  onmouseenter={handleMouseEnter}
+  onmouseleave={handleMouseLeave}
 >
   <!-- Contenido del trigger -->
   {@render children?.()}

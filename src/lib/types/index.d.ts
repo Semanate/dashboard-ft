@@ -127,3 +127,9 @@ interface CategoryField {
     type: string;
     label: string;
 }
+
+
+export interface OptionsSelects<T> {
+    label: string;
+    value: T[] | string | T;
+}

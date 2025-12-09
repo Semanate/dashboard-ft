@@ -2,13 +2,15 @@
   import CategoryTabs from "$lib/components/molecules/category-tabs/CategoryTabs.svelte";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
+  import type { OptionsSelects } from "$lib/types";
+
   interface CategoryFormField {
     name: string;
     type: "text" | "select" | "date" | "file" | "textarea";
     label: string;
     id: string;
     placeholder?: string;
-    options?: Array<{ label: string; value: any }>;
+    options?: Array<OptionsSelects<any>>;
     value: any;
   }
 

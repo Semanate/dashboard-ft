@@ -1,11 +1,12 @@
 <script lang="ts">
+  import type { OptionsSelects } from "$lib/types";
   import { cn } from "$lib/utils";
 
   interface Props {
     label?: string;
     id: string;
-    placeholder: string;
-    options: { label: string; value: any }[];
+    placeholder?: string;
+    options?: Array<OptionsSelects<any>>;
     error?: string;
     variant?:
       | "default"
@@ -13,34 +14,34 @@
       | "secondary"
       | "danger"
       | "success"
-      | "warning"
       | "outline"
       | "ghost";
     value?: any;
-    disabled: boolean;
-    size: "small" | "medium" | "large";
+    disabled?: boolean;
+    size?: "small" | "medium" | "large";
+    onchange?: (value: any) => void;
   }
 
   let open = $state(false);
-  let value = $state(null);
 
   const {
     value: initialValue,
     label,
-    placeholder,
-    disabled,
+    placeholder = "Select an option",
+    disabled = false,
     error,
-    options,
+    options = [],
     id = "",
     variant = "default",
+    onchange,
     size = "medium",
   }: Props = $props();
 
-  console.log("options", options);
+  let value = $state(initialValue);
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
-      "w-full border rounded-sm px-3 py-2 transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";
+      "w-full border rounded-sm px-3 py-2 transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed text-left flex justify-between items-center";
     const sizes: Record<string, string> = {
       small: "text-sm h-8",
       medium: "text-base h-10",
@@ -71,7 +72,7 @@
       err ? "border-red-500" : "",
       dis
         ? "disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-        : ""
+        : "",
     );
   }
 
@@ -82,21 +83,26 @@
   function selectOption(opt: any) {
     value = opt.value;
     open = false;
+    if (onchange) onchange(value);
   }
 </script>
 
 <div class="relative w-full">
   {#if label}
-    <label class="block mb-1 text-sm text-gray-700 font-medium">{label}</label>
+    <label for={id} class="block mb-1 text-sm text-gray-700 font-medium"
+      >{label}</label
+    >
   {/if}
 
-  <div class={inputClass()} onclick={toggle} {id}>
+  <button class={inputClass()} onclick={toggle} {id} name={id}>
     <span class={value ? "text-gray-900" : "text-gray-400"}>
       {value ? options.find((opt) => opt.value === value)?.label : placeholder}
     </span>
 
     <span class="text-gray-500">▾</span>
-  </div>
+  </button>
+
+  <input type="hidden" name={id} {id} {value} required={!!error || undefined} />
 
   {#if error}
     <p class="mt-1 text-sm text-red-600">{error}</p>
@@ -104,16 +110,18 @@
 
   {#if open}
     <div
-      class="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300
-             rounded shadow z-[9999] max-h-48 overflow-auto"
+      class="absolute left-0 top-full mt-1 w-full bg-white border border-gray-300 flex flex-col items-start
+             rounded shadow z-99 max-h-48 overflow-auto"
     >
       {#each options as opt}
-        <div
-          class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+        <button
+          type="button"
+          tabindex="0"
+          class="px-3 py-2 hover:bg-gray-100 cursor-pointer w-full text-left"
           onclick={() => selectOption(opt)}
         >
           {opt.label}
-        </div>
+        </button>
       {/each}
     </div>
   {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
   import FormField from "../form-field/FormField.svelte";
+  import type { OptionsSelects } from "$lib/types";
 
   interface Props {
     title?: string;
@@ -16,10 +17,10 @@
         | "email";
       label: string;
       placeholder?: string;
-      options?: Array<{ label: string; value: any }>;
+      options?: Array<OptionsSelects<any>>;
       error?: string;
       value: any;
-      onchange: (value: any) => void;
+      onchange?: (value: any) => void;
     }>;
   }
 

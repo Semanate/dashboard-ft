@@ -2,14 +2,23 @@
   import Stepper from "$lib/components/molecules/stepper/Stepper.svelte";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
+  import type { OptionsSelects } from "$lib/types";
 
   interface CategoryFormField {
     name: string;
-    type: "text" | "select" | "date" | "file" | "textarea" | "checkbox" | "password" | "email";
+    type:
+      | "text"
+      | "select"
+      | "date"
+      | "file"
+      | "textarea"
+      | "checkbox"
+      | "password"
+      | "email";
     label: string;
     id: string;
     placeholder?: string;
-    options?: Array<{ label: string; value: any }>;
+    options?: Array<OptionsSelects<any>>;
     value: any;
     required?: boolean; // undefined => lo trato como requerido
     error?: string;
@@ -162,8 +171,11 @@
 
 <div class="w-full space-y-6">
   <Stepper
-    steps={categories.map((cat) => ({ label: cat.label as string, completed: false }))}
-    active={active}
+    steps={categories.map((cat) => ({
+      label: cat.label as string,
+      completed: false,
+    }))}
+    {active}
     {onchange}
   />
 
@@ -180,7 +192,10 @@
             options: field.options,
             error: fieldErrors[i]?.[field.name] || "",
             value: formData[i]?.[field.name] ?? "",
-            onchange: (value: any) => updateField(i, field.name, value),
+            onchange: (value: any) => {
+              console.log("Field changed:", field.name, "=", value);
+              updateField(i, field.name, value);
+            },
           }))}
         />
       {/if}

@@ -29,7 +29,6 @@
               label: "Correo Electrónico",
               placeholder: "Ingrese su correo electrónico",
               value: "",
-              onChange: () => {},
             },
             {
               id: "password",
@@ -37,7 +36,6 @@
               label: "Contraseña",
               placeholder: "Ingrese su contraseña",
               value: "",
-              onChange: () => {},
             },
             {
               id: "confirm-password",
@@ -45,7 +43,6 @@
               label: "Confirmar Contraseña",
               placeholder: "Reingrese su contraseña",
               value: "",
-              onChange: () => {},
             },
             {
               id: "full-name",
@@ -53,7 +50,6 @@
               label: "Nombre Completo",
               placeholder: "Ingrese su nombre completo",
               value: "",
-              onChange: () => {},
             },
             {
               id: "phone",
@@ -61,7 +57,6 @@
               label: "Número de Teléfono",
               placeholder: "Ingrese su número de teléfono",
               value: "",
-              onChange: () => {},
             },
           ]}
         />
@@ -77,7 +72,6 @@
           </div>
           <!-- <a href="#" class="hover:underline">Ya tengo cuenta?</a> -->
         </div>
-
 
         {#if form?.code}
           <div class="p-2 bg-red-50 text-red-600 rounded">

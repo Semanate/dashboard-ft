@@ -4,6 +4,7 @@
   import InputDate from "$lib/components/atoms/input/InputDate.svelte";
   import InputFile from "$lib/components/atoms/input/InputFile.svelte";
   import InputTextarea from "$lib/components/atoms/input/InputTextarea.svelte";
+  import type { OptionsSelects } from "$lib/types";
   interface Field {
     id: string;
     type:
@@ -18,10 +19,10 @@
     label: string;
     required?: boolean;
     placeholder?: string;
-    options?: Array<{ label: string; value: any }>;
+    options?: Array<OptionsSelects<any>>;
     error?: string;
     value: any;
-    onchange: (value: any) => void;
+    onchange?: (value: any) => void;
   }
 
   interface Props {
@@ -33,7 +34,7 @@
 <div class="w-full">
   {#if field.type === "text" || field.type === "password" || field.type === "email"}
     <InputText {...field} />
-  {:else if field.type === "select" && field.options}
+  {:else if field.type === "select" && Object.values(field.options ?? {}).length > 0}
     <InputSelect {...field} />
   {:else if field.type === "date"}
     <InputDate {...field} />

@@ -258,26 +258,44 @@
 
   export const sarlaftCategories = [
     // ============================================================
-    // 1. INFORMACIÓN GENERAL
+    // 1.1 INFORMACIÓN GENERAL
+    // ============================================================F
+    {
+      label: "Información Inicial",
+      fields: [
+        {
+          id: "dateAggrement",
+          name: "dateAggrement",
+          type: "date",
+          label: "Fecha",
+          required: true,
+          placeholder: "",
+          value: new Date().toISOString().split("T")[0],
+        },
+        {
+          id: "cityAggrement",
+          name: "cityAggrement",
+          type: "select",
+          label: "Ciudad",
+          required: true,
+          options: citysArray,
+          placeholder: "Seleccione una ciudad",
+          value: "",
+        },
+      ],
+    },
+    // ============================================================
+    // 1.1 INFORMACIÓN GENERAL
     // ============================================================
     {
       label: "Información General",
       fields: [
         {
-          id: "date",
-          name: "date",
-          type: "date",
-          label: "Fecha",
-          required: false,
-          placeholder: "",
-          value: "",
-        },
-        {
           id: "city",
           name: "city",
           type: "select",
           label: "Ciudad",
-          required: false,
+          required: true,
           options: citysArray,
           placeholder: "Seleccione una ciudad",
           value: "",
@@ -287,9 +305,18 @@
           name: "typeDocument",
           type: "select",
           label: "Tipo de Documento",
-          required: false,
+          required: true,
           options: documentTypesArray,
           placeholder: "Seleccione un tipo de documento",
+          value: "",
+        },
+
+        {
+          id: "documentNumber",
+          name: "documentNumber",
+          type: "text",
+          label: "Número de Documento",
+          required: true,
           value: "",
         },
       ],
@@ -1017,6 +1044,6 @@
   /> -->
 
   <StepperForm categories={sarlaftCategories} />
-  <button on:click={descargar}> Descargar Excel SARLAFT </button>
-  <button on:click={generateExcel}> Generar Excel Llenado </button>
+  <button onclick={descargar}> Descargar Excel SARLAFT </button>
+  <button onclick={generateExcel}> Generar Excel Llenado </button>
 </section>

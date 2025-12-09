@@ -4,7 +4,7 @@
   interface Props {
     label?: string;
     placeholder?: string;
-    type: "text" | "password" | "email" | "number" | "url" | "tel";
+    type: "text" | "password" | "email";
     error?: string;
     id: string;
     size?: "small" | "medium" | "large";
@@ -20,7 +20,7 @@
     disabled?: boolean;
     value?: string;
     required?: boolean;
-    onchange?: any;
+    onchange?: (value: string) => void;
   }
 
   const {
@@ -74,7 +74,7 @@
       sizes[sz],
       variants[vr],
       err && errorVariant,
-      dis && "opacity-60"
+      dis && "opacity-60",
     );
   }
 </script>
