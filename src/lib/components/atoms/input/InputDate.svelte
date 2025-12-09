@@ -97,7 +97,7 @@
 
   function inputClass() {
     const base =
-      "w-full border rounded-md px-3 py-2 text-sm cursor-pointer bg-white focus:ring-2 transition disabled:bg-gray-100";
+      "w-full border rounded-md px-3 py-2 text-sm cursor-pointer bg-white focus:ring-2 transition disabled:bg-gray-100 text-left outline-none";
     const sz = size;
     const vr = variant;
     const err = error !== "";
@@ -127,10 +127,12 @@
 
 <div class="relative inline-block w-full">
   {#if label}
-    <label class="block mb-1 text-sm text-gray-700 font-medium">{label}</label>
+    <label for={id} class="block mb-1 text-sm text-gray-700 font-medium"
+      >{label}</label
+    >
   {/if}
 
-  <div
+  <button
     aria-label="text"
     class={inputClass()}
     class:border-red-500={error}
@@ -145,7 +147,7 @@
     {:else}
       <span class="text-gray-400">{placeholder}</span>
     {/if}
-  </div>
+  </button>
 
   {#if error}
     <p class="mt-1 text-sm text-red-600">{error}</p>
@@ -162,9 +164,11 @@
           <ArrowLeft size="24" />
         </Button>
 
-        <span class="font-semibold capitalize">
+        <button
+          class="font-semibold capitalize hover:cursor-pointer hover:bg-gray-100 rounded-md px-2 py-1"
+        >
           {monthFormatter.format(current)}
-        </span>
+        </button>
 
         <Button variant="ghost" size="small" onclick={nextMonth} label="">
           <ArrowRight size="24" />

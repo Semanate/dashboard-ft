@@ -228,6 +228,83 @@ const documentTypesArray = Object.entries(documentTypes).map(([key, value]) => (
     value: key,
 }));
 
-export { deepGet, citys, citysArray, documentTypes, documentTypesArray };
+const activitySectors: Record<string, string> = {
+    AGR: "Agricultura",
+    IND: "Industria",
+    SRV: "Servicios",
+    TEC: "Tecnología",
+    EDU: "Educación",
+    SAL: "Salud",
+    COM: "Comercio",
+};
+
+const activitySectorsArray = Object.entries(activitySectors).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+const accountTypes: Record<string, string> = {
+    SAV: "Ahorros",
+    CHK: "Corriente",
+    BUS: "Negocios",
+    INV: "Inversión",
+};
+
+const accountTypesArray = Object.entries(accountTypes).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+const entityAccountFinancials: Record<string, string> = {
+    BOG: "Banco de Bogotá",
+    BAN: "Bancolombia",
+    DAV: "Davivienda",
+    CIT: "Citibank",
+    BBV: "BBVA",
+    NEQ: "Nequi",
+    NU: "Nubank",
+    FAL: "Banco Falabella",
+    OCC: "Banco de Occidente",
+
+    // Bancos adicionales
+    AVV: "Banco AV Villas",
+    COLP: "Colpatria (Scotiabank Colpatria)",
+    GNB: "GNB Sudameris",
+    POP: "Banco Popular",
+    AGR: "Banco Agrario",
+    ITA: "Itaú",
+    COOP: "CoopCentral",
+    SERF: "Serfinanza",
+    COOPF: "Banco Cooperativo Coopcentral",
+    MFB: "Banco Mundo Mujer",
+    FIN: "Finandina",
+
+    // Bancos 100% digitales
+    LULO: "Lulo Bank",
+    IRIS: "Iris Bank (Finandina wallet)",
+    DALE: "Dale! (Grupo Aval)",
+
+    // Billeteras y medios de pago
+    MOV: "Movii",
+    POW: "Powwi",
+    DDD: "Daviplata",
+
+    // Cooperativas and entities 
+    JUR: "Juriscoop",
+    CFIN: "Cooperativa Financiera",
+    CRED: "Crediflores",
+
+    //   Companies of financial services
+    RCI: "RCI Colombia",
+    JEP: "JEP Colombia",
+    TEF: "Tuya S.A.",
+};
+
+const entityAccountFinancialsArray = Object.entries(entityAccountFinancials).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+export { deepGet, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
 
 
