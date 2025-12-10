@@ -3,6 +3,7 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects } from "$lib/types";
+    import { expand } from "$lib/utils/forms";
 
   interface CategoryFormField {
     name: string;
@@ -116,10 +117,7 @@
    * y revalidar el step si ya intentamos avanzar
    */
   function updateField(categoryIndex: number, fieldName: string, value: any) {
-    // Actualizar el valor en formData
     formData[categoryIndex][fieldName] = value;
-    console.log(formData[categoryIndex][fieldName], value, "valor actualizado");
-    // Si ya intentamos ir al siguiente paso, revalidamos este step
     if (hasAttemptedNext && categoryIndex === active) {
       validateStep(categoryIndex);
     }
@@ -146,8 +144,6 @@
 
   function next() {
     hasAttemptedNext = true;
-    console.log("Validando paso", active, fieldErrors[active]);
-
     if (validateCurrentStep() && active < categories.length - 1) {
       active++;
       hasAttemptedNext = false;
@@ -161,9 +157,15 @@
     }
   }
 
+
+
   export function getValues() {
-    // return structuredClone(formData);
-    return JSON.parse(JSON.stringify(formData));
+    const arr = Object.values(formData);
+    const clean = JSON.parse(JSON.stringify(arr));
+    const merged = Object.assign({}, ...clean);
+    const fullObject = expand(merged);
+
+    return fullObject;
   }
 
   export function isValid() {

@@ -434,9 +434,9 @@
                     </div>
                     
                     <ButtonWithIcon 
-                      on:click={() => editingRole = true}
+                      onclick={() => editingRole = true}
                       label="Cambiar rol" 
-                      variant="outline"
+                      variant="primary"
                     />
                   </div>
                   

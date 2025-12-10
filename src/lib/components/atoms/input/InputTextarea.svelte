@@ -65,24 +65,26 @@
       err ? "border-red-500" : "",
       dis
         ? "disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-        : ""
+        : "",
     );
   }
 </script>
 
 <div class="w-full">
   {#if label}
-    <label class="block mb-1 text-sm font-medium text-gray-700">{label}</label>
+    <label for={id} class="block mb-1 text-sm font-medium text-gray-700"
+      >{label}</label
+    >
   {/if}
 
   <textarea
     {rows}
-    id={id}
+    {id}
     class={textareaClass(size, variant, error, disabled)}
     {value}
     {placeholder}
     {disabled}
-  />
+  ></textarea>
 
   {#if error}
     <p class="mt-1 text-sm text-red-600">{error}</p>
