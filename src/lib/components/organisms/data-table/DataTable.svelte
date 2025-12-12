@@ -14,6 +14,8 @@
         onEdit: (row: any) => void;
         onDelete: (row: any) => void;
     } = $props();
+
+    console.log('DataTable props:', { table, onEdit, onDelete });
 </script>
 
 <Table>
@@ -44,18 +46,20 @@
                 <TableCell class="flex gap-0.5">
                     <ButtonWithIcon
                         variant="ghost"
-                        size="small"
                         label=""
-                        iconButton="Trash"
+                        size="small"
                         onclick={() => onDelete(row)}
-                    />
+                    >
+                        <Icon name="Trash" className="text-orange-300/80" />
+                    </ButtonWithIcon>
                     <ButtonWithIcon
                         variant="ghost"
                         size="small"
                         label=""
-                        iconButton="Edit"
                         onclick={() => onEdit(row)}
-                    />
+                    >
+                        <Icon name="Edit" className="text-blue-300/80" />
+                    </ButtonWithIcon>
                 </TableCell>
             </TableRow>
         {/each}
