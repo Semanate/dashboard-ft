@@ -32,12 +32,13 @@ export const actions = {
             options: {
                 data: {
                     display_name: fullName,
-                    role: 'user'
+                    // role: 'user'
                 }
             }
         });
 
-        if (error) {
+        if (error
+        ) {
             return fail(400, { ...ErrorCodes.SUPABASE_SIGNUP_ERROR });
         }
 

@@ -4,8 +4,6 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
   import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
-  import Alert from "$lib/components/atoms/alert/Alert.svelte";
-
   export let form;
 </script>
 

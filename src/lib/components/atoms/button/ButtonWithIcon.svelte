@@ -57,7 +57,7 @@
   {#if iconButton}
     <Icon name={iconButton} />
   {/if}
-  <p class="text-center">{label}</p>
+  <p class="text-center ml-2">{label}</p>
 
   {#if children}
     {@render children()}

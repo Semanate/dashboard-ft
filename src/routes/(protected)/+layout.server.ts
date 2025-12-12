@@ -1,13 +1,20 @@
 import { redirect } from '@sveltejs/kit';
-import { supabase } from '$lib/db/client';
 
-export const load = async ({ cookies }) => {
-    const accessToken = cookies.get("sb-access-token");
-    if (!accessToken) {
+export const load = async ({ locals }) => {
+    if (!locals.user) {
         throw redirect(303, '/login');
     }
 
-    const { data: { user } } = await supabase.auth.getUser(accessToken);
+    const { data: profile, error } = await locals.supabase
+        .from('profiles')
+        .select('role')
+        .single();
+
+    if (error || !profile) {
+        throw redirect(303, '/login');
+    }
+    const user = { ...locals.user, role: profile.role };
+
     return { user };
 };
 

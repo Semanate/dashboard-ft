@@ -30,7 +30,14 @@
       icon: "Settings",
       href: "/admin/settings",
       active: page.url.pathname === "/admin/settings",
-      disabled: data.user?.user_metadata?.role !== "admin",
+      disabled: data.user?.role !== "admin",
+    },
+    {
+      label: "Usuarios",
+      icon: "Users",
+      href: "/admin/users",
+      active: page.url.pathname === "/admin/users",
+      disabled: data.user?.role !== "admin",
     },
   ]);
 </script>
