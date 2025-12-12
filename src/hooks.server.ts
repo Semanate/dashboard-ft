@@ -31,6 +31,14 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     event.locals.user = user;
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .single();
 
+    if (!profile) {
+        throw redirect(303, '/login');
+    }
+    event.locals.user.role = profile.role;
     return resolve(event);
 };

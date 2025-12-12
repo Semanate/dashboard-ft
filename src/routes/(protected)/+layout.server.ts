@@ -5,17 +5,17 @@ export const load = async ({ locals }) => {
         throw redirect(303, '/login');
     }
 
-    const { data: profile, error } = await locals.supabase
-        .from('profiles')
-        .select('role')
-        .single();
+    // const { data: profile, error } = await locals.supabase
+    //     .from('profiles')
+    //     .select('role')
+    //     .single();
 
-    if (error || !profile) {
-        throw redirect(303, '/login');
-    }
-    const user = { ...locals.user, role: profile.role };
+    // if (error || !profile) {
+    //     throw redirect(303, '/login');
+    // }
+    // const user = { ...locals.user, role: profile.role };
 
-    return { user };
+    return { user: locals.user };
 };
 
 
