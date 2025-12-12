@@ -9,12 +9,14 @@
     onclick?: () => void;
     loading?: boolean;
     children?: any;
+    disabled?: boolean;
     class?: string;
     iconButton?: string;
   }
 
   const {
     variant = "primary",
+    disabled = false,
     size = "medium",
     loading = false,
     label,
@@ -39,7 +41,7 @@
         "bg-transparent hover:bg-gray-100 focus:ring-gray-200 outline-none",
     };
     const sizes: Record<string, string> = {
-      small: "text-sm h-8",
+      small: "text-sm h-6",
       medium: "text-base h-10",
       large: "text-lg h-12",
     };
@@ -52,7 +54,7 @@
   type={props.type ?? "button"}
   class={buttonClass()}
   {...props}
-  disabled={loading}
+  disabled={  disabled || loading}
 >
   {#if iconButton}
     <Icon name={iconButton} />

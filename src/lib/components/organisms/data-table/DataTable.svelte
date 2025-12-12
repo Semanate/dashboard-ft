@@ -1,49 +1,80 @@
 <script lang="ts">
+    import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+    import Icon from "$lib/components/atoms/icon/Icon.svelte";
     import TableCell from "$lib/components/atoms/table-cell/TableCell.svelte";
     import Table from "$lib/components/molecules/table-row/Table.svelte";
     import TableRow from "$lib/components/molecules/table-row/TableRow.svelte";
 
-    type Column<T> = {
-        key: keyof T;
-        label: string;
-    };
-
     const {
-        columns,
-        rows,
+        table,
+        onEdit,
+        onDelete,
     }: {
-        columns: Column<any>[];
-        rows: any[];
+        table: any;
+        onEdit: (row: any) => void;
+        onDelete: (row: any) => void;
     } = $props();
 </script>
 
 <Table>
     <thead>
         <TableRow header>
-            {#each columns as column}
-                <TableCell as="th">{column.label}</TableCell>
+            {#each table.columns as col}
+                <TableCell
+                    as="th"
+                    onclick={() => col.sortable && table.toggleSort(col.key)}
+                    class={col.sortable ? "cursor-pointer" : ""}
+                >
+                    {col.label}
+                    {#if table.sortKey === col.key}
+                        {table.sortDir === "asc" ? " ↑" : " ↓"}
+                    {/if}
+                </TableCell>
             {/each}
+            <TableCell as="th">Acciones</TableCell>
         </TableRow>
     </thead>
 
     <tbody>
-        {#if rows.length === 0}
-            <tr>
-                <td
-                    colspan={columns.length}
-                    class="p-4 text-center text-gray-500"
-                >
-                    No hay datos
-                </td>
-            </tr>
-        {:else}
-            {#each rows as row}
-                <TableRow>
-                    {#each columns as column}
-                        <TableCell>{row[column.key]}</TableCell>
-                    {/each}
-                </TableRow>
-            {/each}
-        {/if}
+        {#each table.rows() as row}
+            <TableRow>
+                {#each table.columns as col}
+                    <TableCell>{row[col.key]}</TableCell>
+                {/each}
+                <TableCell class="flex gap-0.5">
+                    <ButtonWithIcon
+                        variant="ghost"
+                        size="small"
+                        label=""
+                        iconButton="Trash"
+                        onclick={() => onDelete(row)}
+                    />
+                    <ButtonWithIcon
+                        variant="ghost"
+                        size="small"
+                        label=""
+                        iconButton="Edit"
+                        onclick={() => onEdit(row)}
+                    />
+                </TableCell>
+            </TableRow>
+        {/each}
     </tbody>
 </Table>
+
+<div class="flex gap-2 mt-4 items-center justify-between">
+    <ButtonWithIcon
+        variant="ghost"
+        label="Anterior"
+        iconButton="MoveLeft"
+        onclick={() => table.page--}
+        disabled={table.page === 1}
+    /><span>Página {table.page}</span>
+    <ButtonWithIcon
+        label="Siguiente"
+        onclick={() => table.page++}
+        disabled={table.page * table.pageSize >= table.total}
+    >
+        <Icon name="MoveRight" className="ml-2" />
+    </ButtonWithIcon>
+</div>
