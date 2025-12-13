@@ -1,19 +1,19 @@
-// supabase/functions/list-users/index.ts
 import { serve } from 'https://deno.land/std/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { jsonResponse } from '../_shared/response.ts'
 
 serve(async (req) => {
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-        return new Response(
-            JSON.stringify({ error: 'Unauthorized' }),
-            { status: 401, headers: { 'Content-Type': 'application/json' } }
-        )
+        return jsonResponse({
+            success: false,
+            data: null,
+            error: 'Unauthorized'
+        }, 401)
     }
 
     const jwt = authHeader.replace('Bearer ', '')
 
-    // Cliente con JWT del usuario
     const supabase = createClient(
         Deno.env.get('SUPABASE_URL')!,
         Deno.env.get('SUPABASE_ANON_KEY')!,
@@ -24,52 +24,50 @@ serve(async (req) => {
         }
     )
 
-    // Obtener usuario desde el token
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const { data: { user }, error: userError } =
+        await supabase.auth.getUser()
 
     if (userError || !user) {
-        return new Response(
-            JSON.stringify({ error: 'Invalid token' }),
-            { status: 401, headers: { 'Content-Type': 'application/json' } }
-        )
+        return jsonResponse({
+            success: false,
+            data: null,
+            error: 'Invalid token'
+        }, 401)
     }
 
-    // Verificar rol desde profiles
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single()
 
-    if (profileError || profile?.role !== 'admin') {
-        return new Response(
-            JSON.stringify({ error: 'Forbidden' }),
-            { status: 403, headers: { 'Content-Type': 'application/json' } }
-        )
+    if (profile?.role !== 'admin') {
+        return jsonResponse({
+            success: false,
+            data: null,
+            error: 'Forbidden'
+        }, 403)
     }
 
-    // Cliente admin (service role)
     const admin = createClient(
         Deno.env.get('SUPABASE_URL')!,
         Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
-    const { data, error: usersError } =
-        await admin.auth.admin.listUsers()
-
-    if (usersError) {
-        return new Response(
-            JSON.stringify({ error: usersError.message }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-        )
+    const { data, error } = await admin.auth.admin.listUsers()
+    if (error || !data?.users) {
+        return jsonResponse({
+            success: false,
+            data: null,
+            error: error?.message ?? 'Failed to fetch users'
+        }, 500)
     }
 
-    // Traer roles
     const { data: profiles } = await admin
         .from('profiles')
         .select('id, role')
 
-    const usersWithRoles = data.users.map((u) => {
+    const usersWithRoles = data.users.map(u => {
         const profile = profiles?.find(p => p.id === u.id)
 
         return {
@@ -81,8 +79,12 @@ serve(async (req) => {
         }
     })
 
-    return new Response(
-        JSON.stringify({ data: usersWithRoles }),
-        { headers: { 'Content-Type': 'application/json' } }
-    )
+    return jsonResponse({
+        success: true,
+        data: usersWithRoles,
+        meta: {
+            total: usersWithRoles.length
+        },
+        message: 'Users fetched successfully'
+    })
 })
