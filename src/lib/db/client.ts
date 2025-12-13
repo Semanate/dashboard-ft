@@ -6,3 +6,4 @@ const supabaseUrl = PUBLIC_SUPABASE_URL;
 const supabaseKey = PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
+// console.log('Supabase client initialized with URL:', await supabase.auth.signInWithPassword({ email: "lamafialawii@gmail.com", password: "kevinlar15" }));

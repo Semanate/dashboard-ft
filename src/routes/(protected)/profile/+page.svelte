@@ -10,7 +10,6 @@
   let editingProfile = false;
   let editingRole = false;
 
-  console.log("User data in profile page:", user);
   // Roles disponibles
   const availableRoles = [
     {
@@ -41,10 +40,6 @@
 
   // Datos temporales para edición
   let tempUserData = { ...user };
-  console.log(
-    "Temp user data initialized:",
-    tempUserData.user_metadata.display_name,
-  );
   let tempPreferences = { ...preferences };
   let selectedRole = user.role;
 
@@ -86,10 +81,6 @@
     tempPreferences = { ...preferences };
   }
 
-  console.log(
-    "Rendering profile page with user:",
-    user.avatar?.trim() ? user.avatar : "https://via.placeholder.com/150",
-  );
 
   let userAvatar = user.avatar?.trim()
     ? user.avatar

@@ -32,7 +32,6 @@ export const actions = {
             password
         });
 
-
         if (error) {
             return fail(400, { ...ErrorCodes.INVALID_CREDENTIALS });
         }

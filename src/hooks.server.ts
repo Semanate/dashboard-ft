@@ -40,5 +40,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(303, '/login');
     }
     event.locals.user.role = profile.role;
+    event.locals.accessToken = accessToken;
+
     return resolve(event);
 };

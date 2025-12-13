@@ -15,7 +15,6 @@
         onDelete: (row: any) => void;
     } = $props();
 
-    console.log('DataTable props:', { table, onEdit, onDelete });
 </script>
 
 <Table>

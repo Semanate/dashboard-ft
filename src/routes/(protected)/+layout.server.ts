@@ -15,6 +15,7 @@ export const load = async ({ locals }) => {
     // }
     // const user = { ...locals.user, role: profile.role };
 
+    
     return { user: locals.user };
 };
 

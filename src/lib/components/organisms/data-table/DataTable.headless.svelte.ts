@@ -11,7 +11,6 @@ export function createDataTable<T>(rows: T[], columns: Column<T>[]) {
     let sortDir = $state<'asc' | 'desc'>('asc');
 
     const sortedRows = $derived(() => {
-        console.log('Sorting rows with key:', sortKey, 'and direction:', sortDir);
         if (!sortKey) return rows;
 
         
