@@ -2,7 +2,7 @@
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte.js";
 
-  // export let data;
+  export let data;
 
   const columns = [
     { key: "id", label: "ID" },
@@ -10,18 +10,10 @@
     { key: "role", label: "Rol", sortable: true },
   ];
 
-  const exampleUsers = [
-    { id: "1", email: "asa@gmail.com", role: "admin" },
-    { id: "2", email: "adasd@gmail.com", role: "user" },
-    { id: "3", email: "asdad123123@gmail.com", role: "user" },
-    { id: "4", email: "example4@gmail.com", role: "user" },
-    { id: "5", email: "example5@gmail.com", role: "user" },
-    { id: "6", email: "example6@gmail.com", role: "user" },
-    { id: "7", email: "example7@gmail.com", role: "user" },
-    { id: "8", email: "example8@gmail.com", role: "user" },
-    { id: "9", email: "example9@gmail.com", role: "user" },
-    { id: "10", email: "example10@gmail.com", role: "user" },
-  ];
+const exampleUsers = data.users; 
+console.log(exampleUsers);
+
+
   const table = createDataTable(exampleUsers, columns);
   console.log(table.rows());
 
