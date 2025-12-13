@@ -7,3 +7,10 @@ export function fetchAdminUsers(
 ): Promise<ApiResponse<AdminUser[]>> {
     return callEdge<AdminUser[]>('list-users', accessToken)
 }
+export function updateUserRole(
+    accessToken: string,
+    userId: string,
+    role: string
+): Promise<ApiResponse<void>> {
+    return callEdge<void>('update-user-role', accessToken, { userId, role })
+}

@@ -8,14 +8,12 @@
     { key: "id", label: "ID" },
     { key: "email", label: "Email", sortable: true },
     { key: "role", label: "Rol", sortable: true },
+    { key: "created_at", label: "Creado el", sortable: true },
   ];
 
-const exampleUsers = data.users; 
-console.log(exampleUsers);
-
+  const exampleUsers = data.users;
 
   const table = createDataTable(exampleUsers, columns);
-  console.log(table.rows());
 
   function editUser(user) {
     console.log("Editar", user);
