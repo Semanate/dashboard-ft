@@ -8,6 +8,7 @@
     onclick?: () => void;
     children?: any;
     disabled?: boolean;
+    type?: "button" | "submit" | "reset";
   }
 
   const {
@@ -16,6 +17,7 @@
     label,
     disabled = false,
     children,
+    type = "button",
     ...props
   }: Props = $props();
 
@@ -41,7 +43,7 @@
   }
 </script>
 
-<button type="button" class={buttonClass()} {disabled} {...props}>
+<button type={type} class={buttonClass()} {disabled} {...props}>
   {label}
   {#if children}
     {@render children()}
