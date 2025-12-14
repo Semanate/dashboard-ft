@@ -12,5 +12,11 @@ export function updateUserRole(
     userId: string,
     role: string
 ): Promise<ApiResponse<void>> {
-    return callEdge<void>('update-user-role', accessToken, { userId, role })
+    return callEdge<void>('update-user-role', accessToken, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, role })
+    })
 }
