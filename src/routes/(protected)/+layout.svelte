@@ -39,6 +39,13 @@
       active: page.url.pathname === "/admin/users",
       disabled: data.user?.role !== "admin",
     },
+    {
+      label: "Noticias",
+      icon: "FileText",
+      href: "/admin/news",
+      active: page.url.pathname.startsWith("/admin/news"),
+      disabled: data.user?.role !== "admin",
+    },
   ]);
 </script>
 

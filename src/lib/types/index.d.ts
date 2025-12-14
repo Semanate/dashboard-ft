@@ -134,3 +134,6 @@ export interface OptionsSelects<T> {
     label: string;
     value: T[] | string | T;
 }
+
+// Re-export news types
+export type { NewsItem, CreateNewsData, UpdateNewsData, NewsStatus } from './news.js';
