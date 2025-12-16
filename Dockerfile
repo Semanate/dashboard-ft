@@ -13,8 +13,14 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Create build directory early (for Dockploy compatibility)
+RUN mkdir -p build && chmod 755 build
+
 # Build the application
 RUN npm run build
+
+# Ensure build directory exists and has correct permissions after build
+RUN ls -la build/ && chmod -R 755 build/
 
 # Remove dev dependencies to reduce image size
 RUN npm ci --only=production && npm cache clean --force
