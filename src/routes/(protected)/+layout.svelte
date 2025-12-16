@@ -20,6 +20,12 @@
       active: page.url.pathname === "/dashboard",
     },
     {
+      label: "SARLAFT",
+      icon: "Shield",
+      href: "/sarlaft",
+      active: page.url.pathname.startsWith("/sarlaft"),
+    },
+    {
       label: "Perfil",
       icon: "User",
       href: "/profile",

@@ -31,7 +31,6 @@
       body: formData
     });
 
-    // Reload the page to reflect changes
     window.location.reload();
   }
 
@@ -47,9 +46,7 @@
 <div class="container mx-auto px-4 py-8">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-900">Gestión de Noticias</h1>
-    <Button onclick={createNews} variant="primary" label="Crear Nueva Noticia">
-      Crear Nueva Noticia
-    </Button>
+    <Button onclick={createNews} variant="primary" label="Crear Nueva Noticia"/>
   </div>
 
   <div class="bg-white rounded-lg shadow">

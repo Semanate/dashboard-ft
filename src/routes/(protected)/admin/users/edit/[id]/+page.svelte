@@ -3,6 +3,7 @@
     import { goto } from "$app/navigation";
     import { enhance } from "$app/forms";
     import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+    import InputSelect from "$lib/components/atoms/input/InputSelect.svelte";
 
     let { data, form }: { data: any; form?: any } = $props();
 
@@ -114,22 +115,13 @@
                     >
                         Rol *
                     </label>
-                    <select
+                    <InputSelect
                         id="role"
-                        name="role"
+                        variant="default"
+                        options={roleOptions}
                         value={data.user.role}
-                        required
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        {#each roleOptions as option}
-                            <option
-                                value={option.value}
-                                selected={data.user.role === option.value}
-                            >
-                                {option.label}
-                            </option>
-                        {/each}
-                    </select>
+                    />
+
                     <p class="text-xs text-gray-500 mt-1">
                         Los administradores tienen acceso completo al panel de
                         administración.

@@ -5,6 +5,7 @@
   import { fade, slide, scale } from "svelte/transition";
   import Tooltip from "$lib/components/atoms/tooltip/Tooltip.svelte";
   import type { User } from "@supabase/supabase-js";
+  import { cn } from "$lib/utils";
 
   interface props {
     menu: {
@@ -43,12 +44,12 @@
 
 <div class={sidebarClasses()}>
   <!-- Header -->
-  <div class="flex items-center justify-end p-4">
-    <!-- <span
-      class={collapsed ? "hidden" : "font-bold text-lg"}
-      transition:fade={{ duration: 200 }}>Mi Panel</span
-    > -->
-
+  <div
+    class={`${collapsed ? "p-2.5" : "p-4"} flex items-center justify-between border-b`}
+  >
+    {#if !collapsed}
+      <h2 class="text-xl font-bold">Mi App</h2>
+    {/if}
     <Tooltip
       active={collapsed}
       className="ml-4"

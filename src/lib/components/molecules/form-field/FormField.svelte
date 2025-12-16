@@ -16,6 +16,7 @@
       | "email"
       | "file"
       | "textarea"
+      | "number"
       | "checkbox"
       | "signature"
       | "password";
@@ -35,7 +36,7 @@
 </script>
 
 <div class="w-full">
-  {#if field.type === "text" || field.type === "password" || field.type === "email"}
+  {#if field.type === "text" || field.type === "password" || (field.type === "email") || (field.type === "number")}
     <InputText {...field} />
   {:else if field.type === "select" && Object.values(field.options ?? {}).length > 0}
     <InputSelect {...field} />

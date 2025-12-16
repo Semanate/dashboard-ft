@@ -8,6 +8,12 @@ export const load = async ({ cookies }) => {
     }
 
     const { data: { user } } = await supabase.auth.getUser(accessToken);
+
+    if (!user) {
+        throw redirect(303, '/login');
+    }
     return { user };
+
 };
+
 

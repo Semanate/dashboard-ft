@@ -4,7 +4,7 @@
   interface Props {
     label?: string;
     placeholder?: string;
-    type: "text" | "password" | "email";
+    type: "text" | "password" | "email" | "number";
     error?: string;
     id: string;
     size?: "small" | "medium" | "large";

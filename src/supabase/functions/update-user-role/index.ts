@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { jsonResponse } from '../_shared/response.ts'
+import { createAdminClient, createUserClient } from '../_shared/supabase.ts'
 
 serve(async (req) => {
     if (req.method !== 'PATCH') {
@@ -14,13 +14,7 @@ serve(async (req) => {
 
     const jwt = authHeader.replace('Bearer ', '')
 
-    const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_ANON_KEY')!,
-        {
-            global: { headers: { Authorization: `Bearer ${jwt}` } }
-        }
-    )
+    const supabase = createUserClient(jwt)
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -44,10 +38,7 @@ serve(async (req) => {
         return jsonResponse({ success: false, error: 'Missing params' }, 400)
     }
 
-    const admin = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
+    const admin = createAdminClient()
 
     const { error } = await admin
         .from('profiles')

@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { jsonResponse } from '../_shared/response.ts'
+import { createAdminClient, createUserClient } from '../_shared/supabase.ts'
 
 serve(async (req) => {
     const authHeader = req.headers.get('Authorization')
@@ -14,15 +14,7 @@ serve(async (req) => {
 
     const jwt = authHeader.replace('Bearer ', '')
 
-    const supabase = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_ANON_KEY')!,
-        {
-            global: {
-                headers: { Authorization: `Bearer ${jwt}` }
-            }
-        }
-    )
+    const supabase = createUserClient(jwt)
 
     const { data: { user }, error: userError } =
         await supabase.auth.getUser()
@@ -49,10 +41,7 @@ serve(async (req) => {
         }, 403)
     }
 
-    const admin = createClient(
-        Deno.env.get('SUPABASE_URL')!,
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
+    const admin = createAdminClient()
 
     const { data, error } = await admin.auth.admin.listUsers()
     if (error || !data?.users) {
