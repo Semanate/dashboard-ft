@@ -50,11 +50,10 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
 
-EXPOSE 3000
+EXPOSE 3001
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
-
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/ || exit 1
 # Comando de inicio
 CMD ["dumb-init", "node", "build/index.js"]

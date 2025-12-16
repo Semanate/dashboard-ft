@@ -1,18 +1,19 @@
 services:
   dashboard-app:
+    image: dashboard-ft:latest
     build:
       context: .
       dockerfile: prod.Dockerfile
       args:
         - NODE_ENV=production
-        - PORT=3000
+        - PORT=3001
     ports:
-      - "${PORT:-3000}:3000"
+      - "${PORT:-3001}:3001"
     container_name: dashboard-${ENVIRONMENT:-production}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3001
       - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
       - PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=${PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
     networks:
