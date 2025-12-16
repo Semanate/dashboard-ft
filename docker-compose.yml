@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
+        - PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=${PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
     ports:
       - "3000:3000"
     container_name: dashboard-ft
