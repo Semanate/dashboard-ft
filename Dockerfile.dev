@@ -1,0 +1,24 @@
+# Development stage
+FROM node:20-alpine AS development
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Copy package.json and pnpm-lock.yaml (if exists)
+COPY package.json ./
+COPY pnpm-lock.yaml* ./
+
+# Install dependencies
+RUN pnpm install
+
+# Copy source code
+COPY . .
+
+# Expose development ports
+EXPOSE 5173 6006
+
+# Default command for development
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]
