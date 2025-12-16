@@ -5,18 +5,19 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# Build outputs
-dist
-build
+# Build outputs - let Docker build create these
 .svelte-kit
+# build - commented out to let Docker handle it
+dist
 .output
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Environment variables - Dockploy handles these
+.env*
+!.env.example
+
+# Prevent any .env files from being copied to build directory
+**/build/.env
+**/.env
 
 # IDE and editor files
 .vscode
