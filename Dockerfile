@@ -16,15 +16,8 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Create necessary directories early (before any potential .env creation)
-RUN mkdir -p build static .svelte-kit && \
-    chmod -R 755 build static .svelte-kit
-
-# Build the application
+# Build the application (build directory already exists from repo)
 RUN npm run build
-
-# Verify build was successful
-RUN ls -la build/ || (echo "Build failed - no build directory" && exit 1)
 
 # Remove dev dependencies to reduce image size
 RUN npm ci --only=production && npm cache clean --force

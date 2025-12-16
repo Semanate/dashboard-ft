@@ -5,9 +5,11 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# Build outputs - let Docker build create these
+# Build outputs - keep build directory but exclude its contents except .gitkeep and README
 .svelte-kit
-# build - commented out to let Docker handle it
+build/*
+!build/.gitkeep
+!build/README.md
 dist
 .output
 
