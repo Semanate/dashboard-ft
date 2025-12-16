@@ -1,32 +1,34 @@
-FROM node:20-alpine AS build
+FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN apk add --no-cache dumb-init
 
-# Install deps but skip lifecycle scripts for better Docker caching.
-# We'll run `prepare` after copying the source so SvelteKit can find `svelte.config.js`.
-RUN npm ci --ignore-scripts
+ARG PUBLIC_SUPABASE_URL
+ARG PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+
+ENV PUBLIC_SUPABASE_URL=$PUBLIC_SUPABASE_URL
+ENV PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=$PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+
+
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
 
-RUN npm run prepare
+# Build de SvelteKit
 RUN npm run build
 
-
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-RUN apk add --no-cache dumb-init
+# 🔑 CLAVE: Dokploy necesita esta carpeta existente
+RUN mkdir -p build
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY package*.json ./
-RUN npm ci --omit=dev --ignore-scripts
-
-COPY --from=build /app/build ./build
-
 EXPOSE 3000
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000', r => process.exit(r.statusCode === 200 ? 0 : 1))"
+
+# 🔑 Entry correcto de SvelteKit
 CMD ["dumb-init", "node", "build"]
