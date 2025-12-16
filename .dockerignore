@@ -1,34 +1,47 @@
+# =========================
 # Dependencies
+# =========================
 node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# Build outputs - keep build directory but exclude its contents except .gitkeep and README
+# =========================
+# Build outputs
+# =========================
 .svelte-kit
-build/*
-!build/.gitkeep
-!build/README.md
 dist
 .output
 
-# Environment variables - Dockploy handles these
+# 🔑 IMPORTANTE: permitir build/ para Dokploy
+build/*
+!build/.gitkeep
+!build/README.md
+!build/.env
+
+# =========================
+# Environment variables
+# =========================
 .env*
 !.env.example
 
-# Prevent any .env files from being copied to build directory
-**/build/.env
-**/.env
+# ❌ ELIMINADO: Dokploy necesita escribir build/.env
+# **/build/.env
+# **/.env
 
-# IDE and editor files
+# =========================
+# IDE / Editor
+# =========================
 .vscode
 .idea
 *.swp
 *.swo
 *~
 
-# OS generated files
+# =========================
+# OS files
+# =========================
 .DS_Store
 .DS_Store?
 ._*
@@ -37,40 +50,50 @@ dist
 ehthumbs.db
 Thumbs.db
 
+# =========================
 # Git
+# =========================
 .git
 .gitignore
 
-# Docker
-Dockerfile
-.dockerignore
+# =========================
+# Docker files (opcionales)
+# =========================
 docker-compose.yml
 docker-compose.yaml
 
+# =========================
 # Testing
+# =========================
 coverage
 .nyc_output
 .vitest
 
+# =========================
 # Storybook
+# =========================
 storybook-static
 
+# =========================
 # Logs
+# =========================
 logs
 *.log
 
-# Temporary files
+# =========================
+# Temporary
+# =========================
 .temp
 .tmp
 
-# Supabase (if you don't need it in production)
+# =========================
+# Supabase
+# =========================
 supabase/.temp
 supabase/.branches
 
-# Static assets that don't need to be copied (if any)
-# static/large-files
-
-# Documentation
-README.md
+# =========================
+# Docs
+# =========================
 CHANGELOG.md
 LICENSE
