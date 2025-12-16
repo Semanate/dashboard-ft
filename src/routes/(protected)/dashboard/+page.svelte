@@ -5,6 +5,6 @@
   <h2 class="text-3xl font-bold mb-4">Dashboard</h2>
   <p>
     Bienvenido al panel de control. Aquí puedes ver un resumen de tu actividad
-    reciente y estadísticas importantes.
+    reciente y estadísticas importantesasda.
   </p>
 </section>
