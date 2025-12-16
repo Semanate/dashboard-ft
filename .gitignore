@@ -27,3 +27,4 @@ vite.config.ts.timestamp-*
 storybook-static
 package-lock.json
 .vscode/settings.json
+.env
