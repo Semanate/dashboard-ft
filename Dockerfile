@@ -4,21 +4,18 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Copy package.json and pnpm-lock.yaml (if exists)
+# Copy package.json and package-lock.json (if exists)
 COPY package.json ./
-COPY pnpm-lock.yaml* ./
+COPY package-lock.json* ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN npm ci
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN pnpm run build
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine AS production
@@ -26,15 +23,12 @@ FROM node:20-alpine AS production
 # Set working directory
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
-
-# Copy package.json and pnpm-lock.yaml from builder
+# Copy package.json and package-lock.json from builder
 COPY package.json ./
-COPY pnpm-lock.yaml* ./
+COPY package-lock.json* ./
 
 # Install only production dependencies
-RUN pnpm install --prod --frozen-lockfile
+RUN npm ci --only=production
 
 # Copy built application from builder stage
 COPY --from=builder /app/build ./build
