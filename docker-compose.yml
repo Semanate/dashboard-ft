@@ -2,10 +2,13 @@ services:
   dashboard-app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: prod.Dockerfile
+      args:
+        - NODE_ENV=production
+        - PORT=3000
     ports:
-      - "3000:3000"
-    container_name: dashboard-ft
+      - "${PORT:-3000}:3000"
+    container_name: dashboard-${ENVIRONMENT:-production}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -13,20 +16,8 @@ services:
       - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
       - PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=${PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
     networks:
-      - dashboard-network
-
-  # Optional: Add a reverse proxy with SSL if needed
-  # nginx-proxy:
-  #   image: nginxproxy/nginx-proxy
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - /var/run/docker.sock:/tmp/docker.sock:ro
-  #     - ./certs:/etc/nginx/certs:ro
-  #   networks:
-  #     - dashboard-network
+      - dokploy-network
 
 networks:
-  dashboard-network:
-    driver: bridge
+  dokploy-network:
+    external: true

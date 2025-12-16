@@ -10,7 +10,7 @@ const config = {
     adapter: adapter({
       out: 'build',
       precompress: false,
-      envPrefix: ''
+      envPrefix: 'PUBLIC_'
     }),
     alias: {
       $lib: "src/lib",
