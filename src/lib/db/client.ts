@@ -4,19 +4,19 @@ import { env } from '$env/dynamic/private';
 let cachedClient: SupabaseClient | null = null;
 
 function createSupabaseClient(): SupabaseClient {
-	const supabaseUrl = env.PUBLIC_SUPABASE_URL ?? env.SUPABASE_URL ?? '';
+	const supabaseUrl = env.SUPABASE_URL ?? env.SUPABASE_URL ?? '';
 	const supabaseKey =
-		env.PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
+		env.SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
 		env.SUPABASE_ANON_KEY ??
 		env.SUPABASE_KEY ??
 		'';
 
 	if (!supabaseUrl) {
-		throw new Error('Missing Supabase URL. Set PUBLIC_SUPABASE_URL or SUPABASE_URL.');
+		throw new Error('Missing Supabase URL. Set SUPABASE_URL or SUPABASE_URL.');
 	}
 	if (!supabaseKey) {
 		throw new Error(
-			'Missing Supabase key. Set PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY, SUPABASE_ANON_KEY, or SUPABASE_KEY.'
+			'Missing Supabase key. Set SUPABASE_PUBLISHABLE_DEFAULT_KEY, SUPABASE_ANON_KEY, or SUPABASE_KEY.'
 		);
 	}
 

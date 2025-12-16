@@ -6,16 +6,18 @@ services:
       dockerfile: prod.Dockerfile
       args:
         - NODE_ENV=production
-        - PORT=3001
+        - PORT=3000
+        - PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+        - PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=${SUPABASE_PUBLISHABLE_DEFAULT_KEY}
     ports:
-      - "${PORT:-3001}:3001"
+      - "3001:3000"
     container_name: dashboard-${ENVIRONMENT:-production}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - PORT=3001
-      - PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
-      - PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=${PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY}
+      - PORT=3000
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_PUBLISHABLE_DEFAULT_KEY=${SUPABASE_PUBLISHABLE_DEFAULT_KEY}
     networks:
       - dokploy-network
 
