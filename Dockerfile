@@ -1,12 +1,11 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Simple Dockerfile optimized for Dockploy
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if exists)
-COPY package.json ./
-COPY package-lock.json* ./
+# Copy package files
+COPY package*.json ./
 
 # Install dependencies
 RUN npm ci
@@ -17,42 +16,26 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS production
+# Remove dev dependencies to reduce image size
+RUN npm ci --only=production && npm cache clean --force
 
-# Set working directory
-WORKDIR /app
-
-# Copy package.json and package-lock.json from builder
-COPY package.json ./
-COPY package-lock.json* ./
-
-# Install only production dependencies
-RUN npm ci --only=production
-
-# Copy built application from builder stage
-COPY --from=builder /app/build ./build
-COPY --from=builder /app/static ./static
-COPY --from=builder /app/package.json ./package.json
-
-# Create a non-root user
+# Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S sveltekit -u 1001
+    adduser -S sveltekit -u 1001 && \
+    chown -R sveltekit:nodejs /app
 
-# Change ownership of the app directory
-RUN chown -R sveltekit:nodejs /app
 USER sveltekit
 
-# Expose port 3000
-EXPOSE 3000
-
-# Add environment variable for production
+# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 
+# Expose port
+EXPOSE 3000
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
+  CMD node -e "require('http').get('http://localhost:$PORT', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
 
-# Start the application
+# Start application
 CMD ["node", "build"]
