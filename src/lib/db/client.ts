@@ -1,8 +1,39 @@
-import { createClient } from "@supabase/supabase-js";
-import { PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public";
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { env } from '$env/dynamic/private';
 
+let cachedClient: SupabaseClient | null = null;
 
-const supabaseUrl = PUBLIC_SUPABASE_URL;
-const supabaseKey = PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+function createSupabaseClient(): SupabaseClient {
+	const supabaseUrl = env.PUBLIC_SUPABASE_URL ?? env.SUPABASE_URL ?? '';
+	const supabaseKey =
+		env.PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
+		env.SUPABASE_ANON_KEY ??
+		env.SUPABASE_KEY ??
+		'';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+	if (!supabaseUrl) {
+		throw new Error('Missing Supabase URL. Set PUBLIC_SUPABASE_URL or SUPABASE_URL.');
+	}
+	if (!supabaseKey) {
+		throw new Error(
+			'Missing Supabase key. Set PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY, SUPABASE_ANON_KEY, or SUPABASE_KEY.'
+		);
+	}
+
+	return createClient(supabaseUrl, supabaseKey);
+}
+
+export function getSupabaseClient(): SupabaseClient {
+	if (!cachedClient) cachedClient = createSupabaseClient();
+	return cachedClient;
+}
+
+// Preserve the existing API (import { supabase } ...) without
+// instantiating the client at module-evaluation time (which breaks Docker builds).
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+	get(_target, prop) {
+		const client = getSupabaseClient();
+		const value = (client as any)[prop];
+		return typeof value === 'function' ? value.bind(client) : value;
+	}
+});
