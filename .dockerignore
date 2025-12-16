@@ -14,7 +14,9 @@ lerna-debug.log*
 dist
 .output
 
-# 🔑 IMPORTANTE: permitir build/ para Dokploy
+# 🔑 MUY IMPORTANTE PARA DOKPLOY
+# El directorio build DEBE existir
+# y Dokploy DEBE poder crear build/.env
 build/*
 !build/.gitkeep
 !build/README.md
@@ -25,10 +27,6 @@ build/*
 # =========================
 .env*
 !.env.example
-
-# ❌ ELIMINADO: Dokploy necesita escribir build/.env
-# **/build/.env
-# **/.env
 
 # =========================
 # IDE / Editor
@@ -57,7 +55,7 @@ Thumbs.db
 .gitignore
 
 # =========================
-# Docker files (opcionales)
+# Docker
 # =========================
 docker-compose.yml
 docker-compose.yaml
