@@ -6,6 +6,7 @@
     label: string;
     completed: boolean;
     icon?: string;
+    isVisible?: boolean;
   }
 
   interface Props {
@@ -61,34 +62,38 @@
     }}
   >
     {#each visibleSteps as step, i}
-      {@const realIndex = windowStart + i}
+      {#if step.isVisible ?? true}
+        {@const realIndex = windowStart + i}
 
-      <div class="flex items-center gap-2">
-        <div
-          class="w-8 h-8 flex items-center justify-center rounded-full
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 flex items-center justify-center rounded-full
             {realIndex === active
-            ? 'bg-primary-600 text-white'
-            : 'bg-gray-300 text-gray-700'}"
-        >
-          {#if step.icon}
-            {@const IconComponent = (icons as any)[step.icon]}
-            <IconComponent
-              class="w-4 h-4 {realIndex === active
-                ? 'text-white'
-                : 'text-gray-600'}"
-            />
-          {:else}
-            <span class="font-semibold">{realIndex + 1}</span>
-          {/if}
+              ? 'bg-primary-600 text-white'
+              : 'bg-gray-300 text-gray-700'}"
+          >
+            {#if step.icon}
+              {@const IconComponent = (icons as any)[step.icon]}
+              <IconComponent
+                class="w-4 h-4 {realIndex === active
+                  ? 'text-white'
+                  : 'text-gray-600'}"
+              />
+            {:else}
+              <span class="font-semibold">{realIndex + 1}</span>
+            {/if}
+          </div>
+
+          <span
+            class={realIndex === active ? "font-semibold" : "text-gray-600"}
+          >
+            {step.label}
+          </span>
         </div>
 
-        <span class={realIndex === active ? "font-semibold" : "text-gray-600"}>
-          {step.label}
-        </span>
-      </div>
-
-      {#if i < visibleSteps.length - 1}
-        <div class="flex-1 h-[2px] bg-gray-300"></div>
+        {#if i < visibleSteps.length - 1}
+          <div class="flex-1 h-[2px] bg-gray-300"></div>
+        {/if}
       {/if}
     {/each}
   </div>

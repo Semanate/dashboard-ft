@@ -12,7 +12,6 @@ export const POST = async ({ request, cookies }) => {
         accessToken,
         payload
     );
-    console.log("Response from createFormSarlaftPayload:", response);
 
     return json(response);
 };

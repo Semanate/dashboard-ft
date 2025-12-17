@@ -322,7 +322,17 @@ const typesForeignCurrencyArray = Object.entries(typesForeignCurrency).map(([key
     value: key,
 }));
 
+const typesPerson: Record<string, string> = {
+    NAT: "Persona Natural",
+    JUR: "Persona Jurídica",
+    LGL: "Representante Legal",
+};
 
-export { deepGet, typesForeignCurrencyArray, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
+const typesPersonArray = Object.entries(typesPerson).map(([key, value]) => ({
+    label: value,
+    value: key,
+}));
+
+export { typesPersonArray, deepGet, typesForeignCurrencyArray, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
 
 

@@ -11,6 +11,7 @@
     documentTypesArray,
     entityAccountFinancialsArray,
     typesForeignCurrencyArray,
+    typesPersonArray,
   } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
 
@@ -111,328 +112,6 @@
   }
 
   let form: FormDataType = {};
-  // let form: FormDataType = {
-  //   id: undefined,
-  //   userId: undefined,
-  //   createdAt: undefined,
-  //   updatedAt: undefined,
-  //   status: "draft",
-
-  //   date: "2023-10-10",
-  //   city: "asdasd",
-  //   typeDocument: "asdasd",
-
-  //   representative: {
-  //     firstName: "test",
-  //     lastName1: "asdasd",
-  //     lastName2: "asdasd",
-  //     phone: "aasdasd",
-  //     email: "asdasd",
-  //     typeDoc: "CC",
-  //     docNumber: "123456789",
-  //     city: "asdsad",
-  //     activitySector: "asdasd",
-  //     address: "asdasdsad",
-  //   },
-
-  //   naturalPerson: {
-  //     typeDoc: "CC",
-  //     docNumber: "123456789",
-  //     firstName: "test",
-  //     lastName1: "asdasd",
-  //     activitySector: "asdasd",
-  //     lastName2: "asdasd",
-  //     phone: "aasdasd",
-  //     email: "asdasd",
-  //     city: "asdsad",
-  //     address: "asdasdsad",
-  //     dateOfBirth: "1990-01-01",
-  //     placeOfBirth: "asdasd",
-  //     nationality: "Colombiana",
-  //     gender: "M",
-  //     civilStatus: "soltero",
-  //     cellPhone: "321-456-7890",
-  //     country: "Colombia",
-  //     postalCode: "110111",
-  //   },
-
-  //   // Nueva información financiera SARLAFT
-  //   financialInfo: {
-  //     monthlyIncome: 5000000,
-  //     otherIncome: 1000000,
-  //     monthlyExpenses: 3000000,
-  //     assets: 50000000,
-  //     liabilities: 10000000,
-  //     patrimony: 40000000,
-  //     incomeSource: "salario",
-  //     incomeSourceDescription: "Trabajo como desarrollador",
-  //     operationCurrency: "COP",
-  //   },
-
-  //   // Nueva información laboral SARLAFT
-  //   laboralInfo: {
-  //     company: "Tech Company S.A.S",
-  //     position: "Desarrollador Senior",
-  //     workTime: "3_5",
-  //     companyAddress: "Calle 123 # 45-67",
-  //     companyCity: "Bogotá",
-  //     companyCountry: "Colombia",
-  //     companyPhone: "601-234-5678",
-  //     economicActivity: "Desarrollo de software",
-  //     taxRegime: "comun",
-  //   },
-  //   juridicalPerson: {
-  //     businessName: "asdasd",
-  //     nit: "123456789",
-  //     phone: "aasdasd",
-  //     email: "asdasd",
-  //     email2: "asdasd",
-  //     city: "asdsad",
-  //     phone2: "aasdasd",
-  //     address: "asdasdsad",
-  //     address2: "asdasdsad",
-  //     activitySector: "asdasd",
-  //   },
-  //   relations: [
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //     {
-  //       typeDoc: "  CC.       CE.        NIT.       PS.",
-  //       docNumber: "123456789",
-  //       socialName: "asdasd",
-  //       percentageParticipation: "50",
-  //       activityAdminResource: "asdasd",
-  //       activityReputationGradePublic: "asdasd",
-  //     },
-  //   ],
-
-  //   accountEntityFinancials: [
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //     {
-  //       accountType: "Ahorros",
-  //       accountNumber: "123456789",
-  //       accountNameEntity: "asdasd",
-  //     },
-  //   ],
-
-  //   pep: {
-  //     managePublicResources: "SI",
-  //     publicPower: "NO",
-  //     relation: "NO",
-  //     relationName: "N/A",
-  //     taxObligations: "NO",
-
-  //     // Nuevos campos SARLAFT
-  //     isPep: false,
-  //     pepRelated: false,
-  //     pepDetails: "",
-  //     criminalInvestigations: false,
-  //     investigationDetails: "",
-  //     taxHavenOperations: false,
-  //     taxHavenDetails: "",
-  //     thirdPartyResources: false,
-  //     thirdPartyDetails: "",
-  //     uifReports: false,
-  //     uifDetails: "",
-  //     highRiskActivities: false,
-  //     riskDetails: "",
-  //   },
-
-  //   foreignCurrency: {
-  //     management: "SI",
-  //     products: [
-  //       {
-  //         type: "Cuenta en el exterior",
-  //         entity: "Bank of America",
-  //         country: "USA",
-  //         currency: "USD",
-  //       },
-  //       {
-  //         type: "Criptoactivos",
-  //         entity: "Binance",
-  //         country: "Global",
-  //         currency: "USDT",
-  //       },
-  //     ],
-  //   },
-
-  //   // Nuevos campos SARLAFT
-  //   cashTransactions: {
-  //     handlesCash: false,
-  //     maxAmount: 0,
-  //     frequency: "",
-  //   },
-
-  //   commercialReferences: [
-  //     {
-  //       entity: "",
-  //       phone: "",
-  //       productType: "",
-  //       relationshipTime: "",
-  //     },
-  //     {
-  //       entity: "",
-  //       phone: "",
-  //       productType: "",
-  //       relationshipTime: "",
-  //     },
-  //   ],
-
-  //   personalReferences: [
-  //     {
-  //       name: "",
-  //       phone: "",
-  //       relationship: "",
-  //       knowledgeTime: "",
-  //     },
-  //     {
-  //       name: "",
-  //       phone: "",
-  //       relationship: "",
-  //       knowledgeTime: "",
-  //     },
-  //   ],
-
-  //   signature: {
-  //     name: "Kevin Alvear",
-  //     document: "123456789",
-  //     signature: "FIRMA_DIGITAL_O_VACÍO",
-  //     signatureDate: new Date().toISOString().split("T")[0],
-  //   },
-
-  //   // Nuevas autorizaciones SARLAFT
-  //   authorizations: {
-  //     dataProcessing: false,
-  //     dataProcessingDate: "",
-  //     centralConsultation: false,
-  //     centralConsultationDate: "",
-  //     emailCommunication: false,
-  //     truthDeclaration: false,
-  //     truthDeclarationDate: "",
-  //   },
-
-  //   verification: {
-  //     block1: {
-  //       name: "ASDSDASDA",
-  //       signature: "ASDDSASADSDA",
-  //       date: "212313231",
-  //       time: "23123213",
-  //       auth: "SI", // o NO
-  //     },
-  //     block2: {
-  //       name: "ASDSADSAD",
-  //       signature: "C123123",
-  //       date: "12312323",
-  //       time: "23123213",
-  //       auth: "NO",
-  //     },
-  //   },
-
-  //   pepAuthorization: {
-  //     block1: {
-  //       name: "CCCCC",
-  //       signature: "CCC",
-  //       date: "AAA22",
-  //       time: "223123231",
-  //       auth: "SI",
-  //     },
-  //     block2: {
-  //       name: "CASDASDAD",
-  //       signature: "ASC123123",
-  //       date: "ASDASDASD",
-  //       time: "1213123",
-  //       auth: "NO",
-  //     },
-  //   },
-  // };
 
   async function generateExcel() {
     const res = await fetch("/excel", {
@@ -464,7 +143,7 @@
     // 1.1 INFORMACIÓN GENERAL
     // ============================================================F
     {
-      label: "Información Inicial",
+      label: "INFORMACIÓN GENERAL",
       fields: [
         {
           id: "dateAggrement",
@@ -485,51 +164,22 @@
           placeholder: "Seleccione una ciudad",
           value: "",
         },
-      ],
-    },
-    // ============================================================
-    // 1.1 INFORMACIÓN GENERAL
-    // ============================================================
-    {
-      label: "Información General",
-      fields: [
         {
-          id: "city",
-          name: "city",
+          id: "typePersonAggrement",
+          name: "typePersonAggrement",
+          placeholder: "Seleccione un tipo de persona",
           type: "select",
-          label: "Ciudad",
+          label: "Tipo de persona",
           required: true,
-          options: citysArray,
-          placeholder: "Seleccione una ciudad",
-          value: "",
-        },
-        {
-          id: "typeDocument",
-          name: "typeDocument",
-          type: "select",
-          label: "Tipo de Documento",
-          required: true,
-          options: documentTypesArray,
-          placeholder: "Seleccione un tipo de documento",
-          value: "",
-        },
-
-        {
-          id: "documentNumber",
-          name: "documentNumber",
-          type: "text",
-          label: "Número de Documento",
-          required: true,
-          value: "",
+          options: typesPersonArray,
         },
       ],
     },
-
     // ============================================================
     // 2. REPRESENTANTE LEGAL
     // ============================================================
     {
-      label: "Representante Legal",
+      label: "DATOS DEL REPRESENTANTE LEGAL Y/O APODERADO",
       fields: [
         {
           id: "repFirstName",
@@ -624,7 +274,7 @@
     // 3. PERSONA NATURAL
     // ============================================================
     {
-      label: "Información Persona Natural",
+      label: "IDENTIFICACIÓN PERSONA NATURAL O EXTRANJERA",
       fields: [
         {
           id: "natFirstName",
@@ -1821,7 +1471,6 @@
     size="small"
   /> -->
 
-  <!-- Interfaz de usuario mejorada con botones para SARLAFT -->
   <div class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
     <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
       <div>

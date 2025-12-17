@@ -3,7 +3,7 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects } from "$lib/types";
-    import { expand } from "$lib/utils/forms";
+  import { expand } from "$lib/utils/forms";
 
   interface CategoryFormField {
     name: string;
@@ -27,20 +27,53 @@
 
   interface Category {
     label: string;
+    isVisible?: boolean;
     fields: CategoryFormField[];
   }
 
   interface Props {
     categories: Category[];
     callbackOnSubmit?: (data: Record<string, any>) => void;
+    isVisible?: boolean;
   }
 
-  let active = $state(0);
+  // activeVisible = posición dentro del listado visible
+  let activeVisible = $state(0);
+
+  // active = índice real dentro de categories (derivado)
   let formData = $state<Record<number, Record<string, any>>>({});
   let fieldErrors = $state<Record<number, Record<string, string>>>({});
   let hasAttemptedNext = $state(false);
 
-  const { categories, callbackOnSubmit }: Props = $props();
+  const { categories, callbackOnSubmit, isVisible = true }: Props = $props();
+
+  /**
+   * Índices reales de categories que están visibles
+   */
+  let visibleIndexes = $derived.by(() =>
+    categories
+      .map((cat, i) => ((cat.isVisible ?? true) ? i : -1))
+      .filter((i) => i !== -1),
+  );
+
+  /**
+   * Índice real activo dentro de categories
+   */
+  let active = $derived.by(() => visibleIndexes[activeVisible] ?? 0);
+
+  /**
+   * Si cambia la visibilidad y el activeVisible queda fuera de rango, lo ajustamos
+   */
+  $effect(() => {
+    const last = visibleIndexes.length - 1;
+    if (last < 0) {
+      activeVisible = 0;
+      return;
+    }
+    if (activeVisible > last) {
+      activeVisible = last;
+    }
+  });
 
   /**
    * Inicializar formData y fieldErrors una vez con base en categories
@@ -54,9 +87,7 @@
       initialErrors[i] = {};
 
       cat.fields.forEach((field) => {
-        // valor inicial
         initial[i][field.name] = field.value ?? "";
-        // sin error al inicio
         initialErrors[i][field.name] = "";
       });
     });
@@ -67,10 +98,16 @@
 
   /**
    * Valida un step específico
+   * Nota: si la categoría está oculta, NO la validamos (para que no bloquee el submit)
    */
   function validateStep(index: number) {
     const currentCategory = categories[index];
     if (!currentCategory) {
+      return { isValid: true, errors: {} as Record<string, string> };
+    }
+
+    if ((currentCategory.isVisible ?? true) === false) {
+      fieldErrors[index] = {};
       return { isValid: true, errors: {} as Record<string, string> };
     }
 
@@ -98,14 +135,13 @@
       }
     });
 
-    // Como usamos $state, podemos mutar directamente
     fieldErrors[index] = newErrors;
 
     return { isValid, errors: newErrors };
   }
 
   /**
-   * Valida el step activo
+   * Valida el step activo (activo REAL)
    */
   function validateCurrentStep() {
     const { isValid } = validateStep(active);
@@ -124,12 +160,11 @@
   }
 
   /**
-   * Cambiar step desde el stepper
+   * Cambiar step desde el stepper (recibe índice VISIBLE)
    */
-  export const onchange = (i: number) => {
-    // Permitir volver atrás sin validar
-    if (i < active) {
-      active = i;
+  export const onchange = (visibleI: number) => {
+    if (visibleI < activeVisible) {
+      activeVisible = visibleI;
       hasAttemptedNext = false;
       return;
     }
@@ -137,104 +172,107 @@
     hasAttemptedNext = true;
 
     if (validateCurrentStep()) {
-      active = i;
+      activeVisible = visibleI;
       hasAttemptedNext = false;
     }
   };
 
   function next() {
     hasAttemptedNext = true;
-    if (validateCurrentStep() && active < categories.length - 1) {
-      active++;
+
+    if (validateCurrentStep() && activeVisible < visibleIndexes.length - 1) {
+      activeVisible++;
       hasAttemptedNext = false;
     }
   }
 
   function prev() {
-    if (active > 0) {
-      active--;
+    if (activeVisible > 0) {
+      activeVisible--;
       hasAttemptedNext = false;
     }
   }
-
-
 
   export function getValues() {
     const arr = Object.values(formData);
     const clean = JSON.parse(JSON.stringify(arr));
     const merged = Object.assign({}, ...clean);
     const fullObject = expand(merged);
-
     return fullObject;
   }
 
+  /**
+   * Valida SOLO visibles
+   */
   export function isValid() {
-    return categories.every((_, i) => validateStep(i).isValid);
+    return visibleIndexes.every((realIndex) => validateStep(realIndex).isValid);
   }
 </script>
 
-<div class="w-full space-y-6">
-  <div class="h-14">
-    <Stepper
-      steps={categories.map((cat) => ({
-        label: cat.label as string,
-        completed: false,
-      }))}
-      {active}
-      {onchange}
-    />
-  </div>
-  <div class="bg-white border rounded-md p-5 shadow-sm">
-    {#each categories as cat, i (cat)}
-      {#if active === i}
-        <FormSection
-          title={cat.label}
-          fields={cat.fields.map((field) => ({
-            id: field.id,
-            type: field.type,
-            label: field.label,
-            placeholder: field.placeholder,
-            options: field.options,
-            error: fieldErrors[i]?.[field.name] || "",
-            value: formData[i]?.[field.name] ?? "",
-            onchange: (value: any) => {
-              updateField(i, field.name, value);
-            },
-          }))}
-        />
+{#if isVisible}
+  <div class="w-full space-y-6">
+    <div class="h-14">
+      <Stepper
+        steps={visibleIndexes.map((i) => ({
+          label: categories[i].label as string,
+          completed: false,
+          isVisible: true,
+        }))}
+        active={activeVisible}
+        {onchange}
+      />
+    </div>
+
+    <div class="bg-white border rounded-md p-5 shadow-sm">
+      {#if visibleIndexes.length === 0}
+        <div class="text-gray-600">No hay secciones visibles.</div>
+      {:else}
+        {#each visibleIndexes as realI (realI)}
+          {#if active === realI}
+            <FormSection
+              title={categories[realI].label}
+              fields={categories[realI].fields.map((field) => ({
+                id: field.id,
+                type: field.type,
+                label: field.label,
+                placeholder: field.placeholder,
+                options: field.options,
+                error: fieldErrors[realI]?.[field.name] || "",
+                value: formData[realI]?.[field.name] ?? "",
+                onchange: (value: any) => {
+                  updateField(realI, field.name, value);
+                },
+              }))}
+            />
+          {/if}
+        {/each}
       {/if}
-    {/each}
-  </div>
+    </div>
 
-  <div class="flex justify-between pt-4">
-    <Button
-      label="Anterior"
-      onclick={prev}
-      disabled={active === 0}
-      variant="ghost"
-    />
-
-    {#if active < categories.length - 1}
+    <div class="flex justify-between pt-4">
       <Button
-        onclick={next}
-        disabled={active === categories.length - 1}
-        label="Siguiente"
+        label="Anterior"
+        onclick={prev}
+        disabled={activeVisible === 0}
         variant="ghost"
       />
-    {/if}
-    <!-- Submit  -->
 
-    {#if active === categories.length - 1}
-      <Button
-        onclick={() => {
-          hasAttemptedNext = true;
-          if (validateCurrentStep() && isValid() && callbackOnSubmit) {
-            callbackOnSubmit(getValues());
-          }
-        }}
-        label="Enviar"
-        variant="primary"
-      />
-    {/if}
+      {#if activeVisible < visibleIndexes.length - 1}
+        <Button onclick={next} label="Siguiente" variant="ghost" />
+      {/if}
+
+      {#if activeVisible === visibleIndexes.length - 1 && visibleIndexes.length > 0}
+        <Button
+          onclick={() => {
+            hasAttemptedNext = true;
+            if (validateCurrentStep() && isValid() && callbackOnSubmit) {
+              callbackOnSubmit(getValues());
+            }
+          }}
+          label="Enviar"
+          variant="primary"
+        />
+      {/if}
+    </div>
   </div>
-</div>
+{/if}
