@@ -1,7 +1,7 @@
 import type { ApiResponse } from '$lib/types/api'
+import { PUBLIC_EDGE_BASE_URL } from '$env/static/public'
 
-const EDGE_BASE_URL = 'http://127.0.0.1:54321/functions/v1'
-
+const EDGE_BASE_URL = PUBLIC_EDGE_BASE_URL
 export async function callEdge<T>(
   path: string,
   accessToken: string,
