@@ -8,7 +8,6 @@ export const POST = async ({ request, cookies }) => {
     }
 
     const payload = await request.json();
-    // Llamas a tu Edge Function
     const response = await createFormSarlaftPayload(
         accessToken,
         payload
