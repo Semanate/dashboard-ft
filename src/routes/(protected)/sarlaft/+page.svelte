@@ -36,6 +36,7 @@
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
+      console.log("Saving form data:", formData);
       const response = await fetch("/sarlaft", {
         method: "POST",
         headers: {
@@ -44,10 +45,10 @@
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        form.id = result.id;
-        form.updatedAt = result.updatedAt;
+      const res = await response.json();
+      if (res.success) {
+        form.id = res.data.id;
+        form.updatedAt = res.data.updatedAt;
         return true;
       }
     } catch (error) {

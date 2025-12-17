@@ -1,5 +1,4 @@
 // src/hooks.server.ts
-// import { createClient } from '@supabase/supabase-js';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
 

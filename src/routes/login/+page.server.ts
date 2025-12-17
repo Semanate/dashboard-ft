@@ -33,6 +33,7 @@ export const actions = {
         });
 
         if (error) {
+            console.error('Error during sign-in:', error);
             return fail(400, { ...ErrorCodes.INVALID_CREDENTIALS });
         }
 

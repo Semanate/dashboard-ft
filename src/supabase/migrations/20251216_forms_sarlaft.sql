@@ -393,20 +393,144 @@ with check (
   )
 );
 
+create unique index if not exists sarlaft_forms_user_id_unique
+on public.sarlaft_forms(user_id);
+create unique index if not exists sarlaft_forms_user_id_unique
+on public.sarlaft_forms(user_id);
+
 commit;
 
--- ====== EJEMPLO DE INSERT (opcional) ======
--- En el SQL editor auth.uid() normalmente devuelve NULL (no hay contexto JWT).
--- Hazlo desde tu app con supabase-js usando el user.id real.
---
--- insert into public.sarlaft_forms (
---   user_id, date_agreement, city_agreement, city, type_document, document_number, payload
--- ) values (
---   '00000000-0000-0000-0000-000000000000'::uuid,
---   '2025-12-02',
---   'CAL',
---   'CAL',
---   'CE',
---   'asd12312',
---   '{ "dateAggrement":"2025-12-02T05:00:00.000Z", "cityAggrement":"CAL", ... }'::jsonb
--- ) returning id;
+
+create or replace function public.save_sarlaft(p_payload jsonb)
+returns uuid
+language plpgsql
+as $$
+declare
+  v_id uuid;
+  v_date date;
+  v_city_agreement text;
+  v_city text;
+  v_type_document text;
+  v_document_number text;
+begin
+  if auth.uid() is null then
+    raise exception 'Unauthorized';
+  end if;
+
+  v_date := (substring(coalesce(p_payload->>'dateAggrement', p_payload->>'dateAgreement') from 1 for 10))::date;
+  v_city_agreement := coalesce(p_payload->>'cityAggrement', p_payload->>'cityAgreement');
+  v_city := p_payload->>'city';
+  v_type_document := p_payload->>'typeDocument';
+  v_document_number := p_payload->>'documentNumber';
+
+  if v_date is null or v_city_agreement is null or v_city is null or v_type_document is null or v_document_number is null then
+    raise exception 'Missing required fields';
+  end if;
+
+  -- 1) UPSERT cabecera (siempre draft aquí)
+  insert into public.sarlaft_forms (
+    user_id, date_agreement, city_agreement, city, type_document, document_number, status, payload
+  ) values (
+    auth.uid(), v_date, v_city_agreement, v_city, v_type_document, v_document_number, 'draft', p_payload
+  )
+  on conflict (user_id) do update set
+    date_agreement = excluded.date_agreement,
+    city_agreement = excluded.city_agreement,
+    city = excluded.city,
+    type_document = excluded.type_document,
+    document_number = excluded.document_number,
+    status = 'draft',
+    payload = excluded.payload
+  returning id into v_id;
+
+  -- 2) relations (sync: delete + insert)
+  delete from public.sarlaft_relations where sarlaft_id = v_id;
+
+  insert into public.sarlaft_relations (
+    sarlaft_id, position, type_doc, doc_number, social_name,
+    percentage_participation, activity_admin_resource, activity_reputation_grade_public
+  )
+  select
+    v_id,
+    (r.ordinality - 1)::int,
+    nullif(r.value->>'typeDoc',''),
+    nullif(r.value->>'docNumber',''),
+    nullif(r.value->>'socialName',''),
+    nullif(r.value->>'percentageParticipation','')::numeric,
+    nullif(r.value->>'activityAdminResource',''),
+    nullif(r.value->>'activityReputationGradePublic','')
+  from jsonb_array_elements(coalesce(p_payload->'relations','[]'::jsonb)) with ordinality as r(value, ordinality)
+  where coalesce(nullif(r.value->>'docNumber',''), nullif(r.value->>'socialName','')) is not null;
+
+  -- 3) accountEntityFinancials
+  delete from public.sarlaft_account_entity_financials where sarlaft_id = v_id;
+
+  insert into public.sarlaft_account_entity_financials (
+    sarlaft_id, position, account_type, account_number, account_name_entity
+  )
+  select
+    v_id,
+    (a.ordinality - 1)::int,
+    nullif(a.value->>'accountType',''),
+    nullif(a.value->>'accountNumber',''),
+    nullif(a.value->>'accountNameEntity','')
+  from jsonb_array_elements(coalesce(p_payload->'accountEntityFinancials','[]'::jsonb)) with ordinality as a(value, ordinality)
+  where coalesce(nullif(a.value->>'accountNumber',''), nullif(a.value->>'accountNameEntity','')) is not null;
+
+  -- 4) commercialReferences
+  delete from public.sarlaft_commercial_references where sarlaft_id = v_id;
+
+  insert into public.sarlaft_commercial_references (
+    sarlaft_id, position, entity, phone, product_type, relationship_time
+  )
+  select
+    v_id,
+    (c.ordinality - 1)::int,
+    nullif(c.value->>'entity',''),
+    nullif(c.value->>'phone',''),
+    nullif(c.value->>'productType',''),
+    nullif(c.value->>'relationshipTime','')
+  from jsonb_array_elements(coalesce(p_payload->'commercialReferences','[]'::jsonb)) with ordinality as c(value, ordinality)
+  where coalesce(nullif(c.value->>'entity',''), nullif(c.value->>'phone','')) is not null;
+
+  -- 5) personalReferences
+  delete from public.sarlaft_personal_references where sarlaft_id = v_id;
+
+  insert into public.sarlaft_personal_references (
+    sarlaft_id, position, name, phone, relationship, knowledge_time
+  )
+  select
+    v_id,
+    (p.ordinality - 1)::int,
+    nullif(p.value->>'name',''),
+    nullif(p.value->>'phone',''),
+    nullif(p.value->>'relationship',''),
+    nullif(p.value->>'knowledgeTime','')
+  from jsonb_array_elements(coalesce(p_payload->'personalReferences','[]'::jsonb)) with ordinality as p(value, ordinality)
+  where coalesce(nullif(p.value->>'name',''), nullif(p.value->>'phone','')) is not null;
+
+  -- 6) foreignCurrency.products
+  delete from public.sarlaft_foreign_products where sarlaft_id = v_id;
+
+  insert into public.sarlaft_foreign_products (
+    sarlaft_id, position, type, entity, country, currency
+  )
+  select
+    v_id,
+    (f.ordinality - 1)::int,
+    nullif(f.value->>'type',''),
+    nullif(f.value->>'entity',''),
+    nullif(f.value->>'country',''),
+    nullif(f.value->>'currency','')
+  from jsonb_array_elements(coalesce(p_payload->'foreignCurrency'->'products','[]'::jsonb)) with ordinality as f(value, ordinality)
+  where coalesce(
+    nullif(f.value->>'type',''),
+    nullif(f.value->>'entity',''),
+    nullif(f.value->>'country',''),
+    nullif(f.value->>'currency','')
+  ) is not null;
+
+  return v_id;
+end;
+$$;
+
