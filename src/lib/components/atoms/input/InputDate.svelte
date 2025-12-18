@@ -10,6 +10,7 @@
     disabled?: boolean;
     value?: Date | null;
     id: string;
+    required?: boolean;
     onchange?: (value: Date | null) => void;
     variant?: "default";
     size?: "small" | "medium" | "large";
@@ -22,6 +23,7 @@
     variant = "default",
     size = "small",
     id = "",
+    required = false,
     disabled = false,
     onchange,
     value: initialValue,
@@ -29,13 +31,16 @@
 
   let value: Date | null = $state(initialValue || null);
 
+  let isInvalid = $derived.by(() => required && !value);
+
   let show = $state(false);
   let calendarRef: HTMLDivElement | null = $state(null);
 
   let locale = navigator.language || "en-US";
 
   let current = $state(new Date());
-  let selected = $state<Date | null>(null);
+  const currentValue = initialValue ? new Date(initialValue) : null;
+  let selected = $state<Date | null>(currentValue);
 
   let monthFormatter = new Intl.DateTimeFormat(locale, {
     month: "long",
@@ -130,6 +135,9 @@
     <label for={id} class="block mb-1 text-sm text-gray-700 font-medium"
       >{label}</label
     >
+    {#if required}
+      <span class="text-red-500 ml-1">*</span>
+    {/if}
   {/if}
 
   <button
@@ -137,9 +145,6 @@
     class={inputClass()}
     class:border-red-500={error}
     onclick={toggle}
-    onchange={() => {
-      if (onchange) onchange(value);
-    }}
     {id}
   >
     {#if selected}
@@ -151,6 +156,8 @@
 
   {#if error}
     <p class="mt-1 text-sm text-red-600">{error}</p>
+  {:else if isInvalid}
+    <p class="mt-1 text-sm text-red-600">Este campo es obligatorio</p>
   {/if}
 
   <!-- POPUP -->

@@ -139,7 +139,7 @@
           label: "Fecha",
           required: true,
           placeholder: "",
-          value: new Date().toISOString().split("T")[0],
+          value: new Date(),
         },
         {
           id: "cityAggrement",
