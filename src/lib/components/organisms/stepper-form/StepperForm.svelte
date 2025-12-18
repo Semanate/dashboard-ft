@@ -3,7 +3,7 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects } from "$lib/types";
-  import { expand } from "$lib/utils/forms";
+  import { getValues } from "$lib/utils/forms";
 
   interface CategoryFormField {
     name: string;
@@ -21,38 +21,54 @@
     placeholder?: string;
     options?: Array<OptionsSelects<any>>;
     value: any;
-    required?: boolean; // undefined => lo trato como requerido
+    required?: boolean;
     error?: string;
   }
 
   interface Category {
     label: string;
-    isVisible?: boolean;
+    isVisible: (values: Record<string, any>) => boolean;
     fields: CategoryFormField[];
   }
 
   interface Props {
+    formData?: Record<string, any>;
     categories: Category[];
     callbackOnSubmit?: (data: Record<string, any>) => void;
     isVisible?: boolean;
+    updateNext?: () => void;
   }
 
   // activeVisible = posición dentro del listado visible
   let activeVisible = $state(0);
 
   // active = índice real dentro de categories (derivado)
-  let formData = $state<Record<number, Record<string, any>>>({});
+  // let formData = $state<Record<number, Record<string, any>>>({});
   let fieldErrors = $state<Record<number, Record<string, string>>>({});
   let hasAttemptedNext = $state(false);
+  let didInit = $state(false);
 
-  const { categories, callbackOnSubmit, isVisible = true }: Props = $props();
+  const {
+    categories,
+    callbackOnSubmit,
+    isVisible = true,
+    formData = $bindable({}),
+    updateNext,
+  }: Props = $props();
+
+  let values = $derived.by(() => getValues(formData));
+
+  function isCategoryVisible(category) {
+    if (!category.isVisible) return true;
+    return category.isVisible(values);
+  }
 
   /**
    * Índices reales de categories que están visibles
    */
   let visibleIndexes = $derived.by(() =>
     categories
-      .map((cat, i) => ((cat.isVisible ?? true) ? i : -1))
+      .map((cat, i) => (resolveVisibility(cat) ? i : -1))
       .filter((i) => i !== -1),
   );
 
@@ -74,11 +90,16 @@
       activeVisible = last;
     }
   });
-
+  function replaceRecord(target: Record<any, any>, next: Record<any, any>) {
+    for (const k in target) delete target[k];
+    Object.assign(target, next);
+  }
   /**
    * Inicializar formData y fieldErrors una vez con base en categories
    */
   $effect(() => {
+    if (didInit) return;
+    didInit = true;
     const initial: Record<number, Record<string, any>> = {};
     const initialErrors: Record<number, Record<string, string>> = {};
 
@@ -92,9 +113,22 @@
       });
     });
 
-    formData = initial;
-    fieldErrors = initialErrors;
+    replaceRecord(formData, initial);
+    replaceRecord(fieldErrors, initialErrors);
+    // formData = initial;
+    // fieldErrors = initialErrors;
   });
+  function resolveVisibility(category: Category): boolean {
+    if (typeof category.isVisible === "function") {
+      return category.isVisible(values);
+    }
+
+    if (typeof category.isVisible === "boolean") {
+      return category.isVisible;
+    }
+
+    return true; // default visible
+  }
 
   /**
    * Valida un step específico
@@ -106,10 +140,15 @@
       return { isValid: true, errors: {} as Record<string, string> };
     }
 
-    if ((currentCategory.isVisible ?? true) === false) {
+    if (!resolveVisibility(currentCategory)) {
       fieldErrors[index] = {};
       return { isValid: true, errors: {} as Record<string, string> };
     }
+
+    // if ((currentCategory.isVisible(values) ?? true) === false) {
+    //   fieldErrors[index] = {};
+    //   return { isValid: true, errors: {} as Record<string, string> };
+    // }
 
     let isValid = true;
     const newErrors: Record<string, string> = {};
@@ -141,7 +180,7 @@
   }
 
   /**
-   * Valida el step activo (activo REAL)
+   * Valid Step Active
    */
   function validateCurrentStep() {
     const { isValid } = validateStep(active);
@@ -179,6 +218,9 @@
 
   function next() {
     hasAttemptedNext = true;
+    if (updateNext) {
+      updateNext();
+    }
 
     if (validateCurrentStep() && activeVisible < visibleIndexes.length - 1) {
       activeVisible++;
@@ -191,14 +233,6 @@
       activeVisible--;
       hasAttemptedNext = false;
     }
-  }
-
-  export function getValues() {
-    const arr = Object.values(formData);
-    const clean = JSON.parse(JSON.stringify(arr));
-    const merged = Object.assign({}, ...clean);
-    const fullObject = expand(merged);
-    return fullObject;
   }
 
   /**
@@ -266,7 +300,7 @@
           onclick={() => {
             hasAttemptedNext = true;
             if (validateCurrentStep() && isValid() && callbackOnSubmit) {
-              callbackOnSubmit(getValues());
+              callbackOnSubmit(getValues(formData));
             }
           }}
           label="Enviar"

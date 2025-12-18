@@ -1,12 +1,8 @@
 <script lang="ts">
-  import { createFormSarlaftPayload } from "$lib/api/admin/sarlaft";
-  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
-  import CategoryForm from "$lib/components/organisms/category-form/CategoryForm.svelte";
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
   import {
     accountTypesArray,
     activitySectorsArray,
-    citys,
     citysArray,
     documentTypesArray,
     entityAccountFinancialsArray,
@@ -14,6 +10,7 @@
     typesPersonArray,
   } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
+  import { getValues } from "$lib/utils/forms";
 
   // Funciones para manejo de datos SARLAFT
   // async function loadFormData(userId?: string): Promise<FormDataType | null> {
@@ -34,7 +31,8 @@
   //   }
   //   return null;
   // }
-
+  let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
+  let formData: FormDataType = getValues(formDataState) as FormDataType;
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
       console.log("Saving form data:", formData);
@@ -48,8 +46,8 @@
 
       const res = await response.json();
       if (res.success) {
-        form.id = res.data.id;
-        form.updatedAt = res.data.updatedAt;
+        formData.id = res.data.id;
+        formData.updatedAt = res.data.updatedAt;
         return true;
       }
     } catch (error) {
@@ -59,17 +57,17 @@
   }
 
   async function autoSave() {
-    if (form.id || hasChanges()) {
-      form.status = "draft";
-      await saveFormData(form);
-    }
+    // if (formData.id || hasChanges()) {
+    // formData.status = "draft";
+    // await saveFormData(formData);
+    // }
   }
 
   function hasChanges(): boolean {
     return (
-      form.naturalPerson.firstName.length > 0 ||
-      form.naturalPerson.docNumber.length > 0 ||
-      form.representative.firstName.length > 0
+      formData.naturalPerson.firstName.length > 0 ||
+      formData.naturalPerson.docNumber.length > 0 ||
+      formData.representative.firstName.length > 0
     );
   }
 
@@ -111,8 +109,6 @@
     // a.click();
   }
 
-  let form: FormDataType = {};
-
   async function generateExcel() {
     const res = await fetch("/excel", {
       method: "POST",
@@ -129,12 +125,12 @@
     a.click();
   }
   function validateForm(): boolean {
-    if (!form.naturalPerson.firstName.trim()) return false;
-    if (!form.naturalPerson.docNumber.trim()) return false;
-    if (!form.representative.firstName.trim()) return false;
+    if (!formData.naturalPerson.firstName.trim()) return false;
+    if (!formData.naturalPerson.docNumber.trim()) return false;
+    if (!formData.representative.firstName.trim()) return false;
 
-    if (!form.authorizations?.dataProcessing) return false;
-    if (!form.authorizations?.truthDeclaration) return false;
+    if (!formData.authorizations?.dataProcessing) return false;
+    if (!formData.authorizations?.truthDeclaration) return false;
 
     return true;
   }
@@ -180,6 +176,7 @@
     // ============================================================
     {
       label: "DATOS DEL REPRESENTANTE LEGAL Y/O APODERADO",
+      isVisible: (v) => v.typePersonAggrement === "LGL",
       fields: [
         {
           id: "repFirstName",
@@ -275,6 +272,7 @@
     // ============================================================
     {
       label: "IDENTIFICACIÓN PERSONA NATURAL O EXTRANJERA",
+      isVisible: (v) => v.typePersonAggrement === "NAT",
       fields: [
         {
           id: "natFirstName",
@@ -443,6 +441,97 @@
       ],
     },
 
+    // ============================================================
+    // 4. PERSONA JURÍDICA
+    // ============================================================
+    {
+      label: "IDENTIFICACIÓN PERSONA JURÍDICA",
+      isVisible: (v) => v.typePersonAggrement === "JUR",
+      fields: [
+        {
+          id: "jurName",
+          name: "juridicalPerson.businessName",
+          type: "text",
+          label: "Razón Social",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurNit",
+          name: "juridicalPerson.nit",
+          type: "text",
+          label: "NIT",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurPhone",
+          name: "juridicalPerson.phone",
+          type: "text",
+          label: "Teléfono",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurEmail",
+          name: "juridicalPerson.email",
+          type: "text",
+          label: "Email 1",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurEmail2",
+          name: "juridicalPerson.email2",
+          type: "text",
+          label: "Email 2",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurCity",
+          name: "juridicalPerson.city",
+          type: "select",
+          label: "Ciudad",
+          placeholder: "Seleccione una ciudad",
+          options: citysArray,
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurPhone2",
+          name: "juridicalPerson.phone2",
+          type: "text",
+          label: "Teléfono 2",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurAddress",
+          name: "juridicalPerson.address",
+          type: "text",
+          label: "Dirección",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurAddress2",
+          name: "juridicalPerson.address2",
+          type: "text",
+          label: "Dirección 2",
+          required: false,
+          value: "",
+        },
+        {
+          id: "jurActivity",
+          name: "juridicalPerson.activitySector",
+          type: "text",
+          label: "Sector de actividad",
+          required: false,
+          value: "",
+        },
+      ],
+    },
     // ============================================================
     // INFORMACIÓN FINANCIERA SARLAFT
     // ============================================================
@@ -625,97 +714,6 @@
             { value: "simplificado", label: "Régimen simplificado" },
             { value: "no_responsable", label: "No responsable" },
           ],
-          required: false,
-          value: "",
-        },
-      ],
-    },
-
-    // ============================================================
-    // 4. PERSONA JURÍDICA
-    // ============================================================
-    {
-      label: "Información Persona Jurídica",
-      fields: [
-        {
-          id: "jurName",
-          name: "juridicalPerson.businessName",
-          type: "text",
-          label: "Razón Social",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurNit",
-          name: "juridicalPerson.nit",
-          type: "text",
-          label: "NIT",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurPhone",
-          name: "juridicalPerson.phone",
-          type: "text",
-          label: "Teléfono",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurEmail",
-          name: "juridicalPerson.email",
-          type: "text",
-          label: "Email 1",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurEmail2",
-          name: "juridicalPerson.email2",
-          type: "text",
-          label: "Email 2",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurCity",
-          name: "juridicalPerson.city",
-          type: "select",
-          label: "Ciudad",
-          placeholder: "Seleccione una ciudad",
-          options: citysArray,
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurPhone2",
-          name: "juridicalPerson.phone2",
-          type: "text",
-          label: "Teléfono 2",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurAddress",
-          name: "juridicalPerson.address",
-          type: "text",
-          label: "Dirección",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurAddress2",
-          name: "juridicalPerson.address2",
-          type: "text",
-          label: "Dirección 2",
-          required: false,
-          value: "",
-        },
-        {
-          id: "jurActivity",
-          name: "juridicalPerson.activitySector",
-          type: "text",
-          label: "Sector de actividad",
           required: false,
           value: "",
         },
@@ -1481,18 +1479,18 @@
           Sistema de Administración del Riesgo de Lavado de Activos y de la
           Financiación del Terrorismo
         </p>
-        {#if form.status}
+        {#if formData.status ?? false}
           <span
             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            {form.status === 'completed'
+            {formData.status === 'completed'
               ? 'bg-green-100 text-green-800'
-              : form.status === 'validated'
+              : formData.status === 'validated'
                 ? 'bg-blue-100 text-blue-800'
                 : 'bg-yellow-100 text-yellow-800'}"
           >
-            {form.status === "completed"
+            {formData.status === "completed"
               ? "Completado"
-              : form.status === "validated"
+              : formData.status === "validated"
                 ? "Validado"
                 : "Borrador"}
           </span>
@@ -1503,7 +1501,7 @@
         <button
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
           onclick={async () => {
-            form.status = "draft";
+            formData.status = "draft";
             const success = await saveFormData(form);
             if (success) {
               alert("Formulario guardado como borrador");
@@ -1519,8 +1517,8 @@
           class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
           onclick={async () => {
             if (validateForm()) {
-              form.status = "completed";
-              const success = await saveFormData(form);
+              formData.status = "completed";
+              const success = await saveFormData(formData);
               if (success) {
                 alert("Formulario marcado como completado");
               } else {
@@ -1550,19 +1548,22 @@
       </div>
     </div>
 
-    {#if form.updatedAt}
+    {#if getValues(formData).length > 0 && getValues(formData).updatedAt}
       <div class="mb-4 text-sm text-gray-500">
-        Última actualización: {new Date(form.updatedAt).toLocaleString("es-CO")}
+        Última actualización: {new Date(
+          getValues<FormDataType>(formData).updatedAt,
+        ).toLocaleString("es-CO")}
       </div>
     {/if}
 
     <StepperForm
+      bind:formData={formDataState}
       categories={sarlaftCategories}
       callbackOnSubmit={(data) => {
-        form = data;
+        // form = data;
         console.log(data, "FORM DATA");
         // Auto-guardar cuando se envía el formulario
-        autoSave();
+        // autoSave();
       }}
     />
   </div>

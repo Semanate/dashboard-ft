@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/**
+ * Get Values del formData expand
+ * @param formData
+ */
+export function getValues<T>(formData: Record<string, any>): T | any {
+    const arr = Object.values(formData);
+    const clean = JSON.parse(JSON.stringify(arr));
+    const merged = Object.assign({}, ...clean);
+    const fullObject = expand(merged);
+    return fullObject;
+}
 
 /**
  * 

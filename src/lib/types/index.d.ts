@@ -7,7 +7,7 @@ export interface FormDataType {
     createdAt?: string;
     updatedAt?: string;
     status?: 'draft' | 'completed' | 'validated';
-    
+    typePersonAggrement: 'Natural' | 'Juridica' | 'Representante Legal';
     date: string;
     city: string;
     typeDocument: string;
@@ -38,7 +38,7 @@ export interface FormDataType {
         address: string;
         dateOfBirth: string;
         placeOfBirth: string;
-        
+
         // Campos adicionales SARLAFT
         nationality?: string;
         gender?: string;
@@ -110,7 +110,7 @@ export interface FormDataType {
         relationName: string;
         taxObligations: string;
         taxCountries?: string;
-        
+
         // Campos adicionales SARLAFT
         isPep?: boolean;
         pepRelated?: boolean;
