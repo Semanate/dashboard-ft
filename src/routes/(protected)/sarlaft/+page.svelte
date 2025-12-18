@@ -1,30 +1,10 @@
 <script lang="ts">
+  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
   import { sarlaftCategories } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
 
-  // Funciones para manejo de datos SARLAFT
-  // async function loadFormData(userId?: string): Promise<FormDataType | null> {
-  //   try {
-  //     const response = await fetch(
-  //       `/api/sarlaft${userId ? `?userId=${userId}` : ""}`,
-  //       {
-  //         method: "GET",
-  //       },
-  //     );
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       return data;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error loading form data:", error);
-  //   }
-  //   return null;
-  // }
-  export let data;
-  console.log(data, "PAGE DATA");
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
   let formData: FormDataType = getValues(formDataState) as FormDataType;
 
@@ -131,6 +111,24 @@
       </div>
 
       <div class="flex gap-2">
+        <ButtonWithIcon
+          label="Cargar Datos"
+          iconButton="Upload"
+          variant="secondary"
+          size="medium"
+          onclick={async () => {
+            const response = await fetch("/sarlaft", {
+              method: "GET",
+            });
+            const res = await response.json();
+            console.log(res, "CARGAR DATOS");
+            // if (res.success && res.data.payload) {
+            //   formDataState = $state(res.data.payload);
+            // } else {
+            //   alert("No se encontraron datos guardados.");
+            // }
+          }}
+        />
         <button
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
           onclick={async () => {
