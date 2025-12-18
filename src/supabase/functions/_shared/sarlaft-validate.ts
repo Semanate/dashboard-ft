@@ -148,8 +148,6 @@ const SarlaftPayloadSchema = z
         pep: PepSchema,
         relations: z.array(RelationItemSchema).optional().default([]),
         accountEntityFinancials: z.array(AccountEntityItemSchema).optional().default([]),
-        commercialReferences: z.array(CommercialRefSchema).optional().default([]),
-        personalReferences: z.array(PersonalRefSchema).optional().default([]),
         foreignCurrency: ForeignCurrencySchema.optional().default({ management: "", products: [] }),
 
         status: z.enum(["draft", "submitted", "approved", "rejected"]).optional(),

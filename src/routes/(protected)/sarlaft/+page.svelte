@@ -32,6 +32,8 @@
   //   return null;
   // }
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
+  let formData: FormDataType = getValues(formDataState) as FormDataType;
+
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
       const response = await fetch("/sarlaft", {
