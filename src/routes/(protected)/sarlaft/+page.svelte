@@ -68,7 +68,6 @@
     { label: "Número de Documento", key: "naturalPerson.docNumber" },
     { label: "Fecha de Creación", key: "created_at" },
     { label: "Última Actualización", key: "updated_at" },
-
   ];
 
   const rows = $derived(
@@ -111,19 +110,6 @@
             console.log("Recargando formularios...", rows);
           }}
         />
-        <!-- <button
-          class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
-          onclick={generateExcel}
-        >
-          📄 Exportar Excel
-        </button> -->
-
-        <!-- <button
-          class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
-          onclick={descargar}
-        >
-          📥 Descargar Plantilla
-        </button> -->
       </div>
       <article class="w-full">
         <DataTable {table} />
