@@ -279,7 +279,7 @@
           name: "naturalPerson.firstName",
           type: "text",
           label: "Nombres",
-          required: false,
+          required: true,
           value: "",
         },
         {
@@ -374,14 +374,6 @@
           label: "Sector de actividad",
           options: activitySectorsArray,
           placeholder: "Seleccione un sector de actividad",
-          required: false,
-          value: "",
-        },
-        {
-          id: "natNationality",
-          name: "naturalPerson.nationality",
-          type: "text",
-          label: "Nacionalidad",
           required: false,
           value: "",
         },
