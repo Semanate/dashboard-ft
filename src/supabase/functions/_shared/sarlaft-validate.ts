@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "https://esm.sh/zod@3.23.8";
 
 const nonEmpty = z.string().trim().min(1, "Campo requerido");
@@ -167,14 +168,13 @@ export function validateAndNormalizeSarlaft(input: unknown) {
     const parsed = SarlaftPayloadSchemaV2.safeParse(input);
 
     if (!parsed.success) {
-        const errors = parsed.error.issues.map((i) => ({
+        const errors = parsed.error.issues.map((i: any) => ({
             path: i.path.join("."),
             message: i.message,
         }));
         return { ok: false as const, errors };
     }
 
-    // Si tu endpoint es SOLO "guardar", fuerza draft aquí:
     const value = { ...parsed.data, status: "draft" as const };
 
     return { ok: true as const, value };

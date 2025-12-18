@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
 import { ErrorCodes } from '$lib/constants/error.codes.js';
-import { createFormSarlaftPayload } from '$lib/api/admin/sarlaft.js';
+import { createFormSarlaftPayload, getUserSarlaftPayload } from '$lib/api/admin/sarlaft.js';
 import type { FormDataType } from '$lib/types';
 
 export const load = async ({ cookies }) => {
@@ -11,7 +11,15 @@ export const load = async ({ cookies }) => {
     }
 
     const { data: { user } } = await supabase.auth.getUser(accessToken);
-    return { user };
+    const dataSarlaft = await getUserSarlaftPayload(accessToken, { includePayload: false });
+
+    console.log('Data Sarlaft in load function:', dataSarlaft);
+    if (!dataSarlaft.success) {
+
+        throw fail(500, { error: 'Error al obtener los formularios Sarlaft' });
+    }
+
+    return { user, sarlaftForms: dataSarlaft.data };
 };
 
 // export const actions = {

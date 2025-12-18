@@ -1,15 +1,6 @@
 <script lang="ts">
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
-  import {
-    accountTypesArray,
-    activitySectorsArray,
-    citysArray,
-    documentTypesArray,
-    entityAccountFinancialsArray,
-    sarlaftCategories,
-    typesForeignCurrencyArray,
-    typesPersonArray,
-  } from "$lib/constants";
+  import { sarlaftCategories } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
 
@@ -32,6 +23,8 @@
   //   }
   //   return null;
   // }
+  export let data;
+  console.log(data, "PAGE DATA");
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
   let formData: FormDataType = getValues(formDataState) as FormDataType;
 
