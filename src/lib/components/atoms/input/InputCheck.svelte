@@ -17,6 +17,7 @@
       | "outline"
       | "ghost";
     size?: "small" | "medium" | "large";
+    onchange?: (value: boolean) => void;
   }
   const props: Props = $props();
 
@@ -26,7 +27,8 @@
     error = "",
     variant = "primary",
     size = "medium",
-    id = ""
+    id = "",
+    onchange,
   } = props;
 
   let checked = $state(props.checked || false);
@@ -62,7 +64,7 @@
       sizes[sz],
       variants[vr],
       err && "border-red-500",
-      dis && "text-gray-400 cursor-not-allowed"
+      dis && "text-gray-400 cursor-not-allowed",
     );
   }
 </script>
@@ -70,15 +72,18 @@
 <div
   class={cn(
     "flex items-center gap-2",
-    disabled ? "cursor-not-allowed" : "cursor-pointer"
+    disabled ? "cursor-not-allowed" : "cursor-pointer",
   )}
 >
   <input
-    id={id ?? "input-check"}
-    name={id ?? "input-check"}
+    {id}
     type="checkbox"
-    bind:checked
+    {checked}
     {disabled}
+    onchange={(e) => {
+      const value = (e.target as HTMLInputElement).checked;
+      onchange?.(value);
+    }}
     class={cn(
       inputClass(),
       variant === "default" && "accent-gray-600",
@@ -90,7 +95,7 @@
       variant === "outline" && "accent-gray-600",
       variant === "ghost" && "accent-gray-700",
       !disabled && "hover:cursor-pointer",
-      disabled && "cursor-not-allowed"
+      disabled && "cursor-not-allowed",
     )}
   />
 

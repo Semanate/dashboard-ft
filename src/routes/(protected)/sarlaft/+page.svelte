@@ -32,10 +32,8 @@
   //   return null;
   // }
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
-  let formData: FormDataType = getValues(formDataState) as FormDataType;
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
-      console.log("Saving form data:", formData);
       const response = await fetch("/sarlaft", {
         method: "POST",
         headers: {
@@ -57,6 +55,7 @@
   }
 
   async function autoSave() {
+    let formData: FormDataType = getValues(formDataState) as FormDataType;
     if (formData.id || hasChanges()) {
       formData.status = "draft";
       await saveFormData(formData);
@@ -64,6 +63,7 @@
   }
 
   function hasChanges(): boolean {
+    let formData: FormDataType = getValues(formDataState) as FormDataType;
     return (
       formData.naturalPerson.firstName.length > 0 ||
       formData.naturalPerson.docNumber.length > 0 ||
@@ -71,31 +71,6 @@
     );
   }
 
-  // Auto-guardar cada 30 segundos
-  let autoSaveInterval: any;
-
-  // onMount(() => {
-  //   // Función async interna
-  //   const initializeForm = async () => {
-  //     // Cargar datos existentes si los hay
-  //     const existingData = await loadFormData();
-  //     if (existingData) {
-  //       form = existingData;
-  //     }
-  //   };
-
-  //   // Ejecutar la inicialización
-  //   initializeForm();
-
-  //   // Configurar auto-guardado
-  //   autoSaveInterval = setInterval(autoSave, 30000);
-
-  //   return () => {
-  //     if (autoSaveInterval) {
-  //       clearInterval(autoSaveInterval);
-  //     }
-  //   };
-  // });
   async function descargar() {
     const rest = await fetch("/excel");
     const { data } = await rest.json();
@@ -1083,67 +1058,67 @@
     // ============================================================
     // AUTORIZACIONES SARLAFT
     // ============================================================
-    {
-      label: "Autorizaciones y Declaraciones",
-      fields: [
-        {
-          id: "authDataProcessing",
-          name: "authorizations.dataProcessing",
-          type: "checkbox",
-          label: "Autorizo el tratamiento de datos personales",
-          required: true,
-          value: false,
-        },
-        {
-          id: "authDataDate",
-          name: "authorizations.dataProcessingDate",
-          type: "date",
-          label: "Fecha de autorización de datos",
-          required: false,
-          value: "",
-        },
-        {
-          id: "authCentral",
-          name: "authorizations.centralConsultation",
-          type: "checkbox",
-          label: "Autorizo consulta en centrales de riesgo",
-          required: false,
-          value: false,
-        },
-        {
-          id: "authCentralDate",
-          name: "authorizations.centralConsultationDate",
-          type: "date",
-          label: "Fecha de autorización centrales",
-          required: false,
-          value: "",
-        },
-        {
-          id: "authEmail",
-          name: "authorizations.emailCommunication",
-          type: "checkbox",
-          label: "Acepto comunicaciones por email",
-          required: false,
-          value: false,
-        },
-        {
-          id: "authTruth",
-          name: "authorizations.truthDeclaration",
-          type: "checkbox",
-          label: "Declaro que la información es verdadera",
-          required: true,
-          value: false,
-        },
-        {
-          id: "authTruthDate",
-          name: "authorizations.truthDeclarationDate",
-          type: "date",
-          label: "Fecha de declaración",
-          required: false,
-          value: "",
-        },
-      ],
-    },
+    // {
+    //   label: "Autorizaciones y Declaraciones",
+    //   fields: [
+    //     {
+    //       id: "authDataProcessing",
+    //       name: "authorizations.dataProcessing",
+    //       type: "checkbox",
+    //       label: "Autorizo el tratamiento de datos personales",
+    //       required: true,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authDataDate",
+    //       name: "authorizations.dataProcessingDate",
+    //       type: "date",
+    //       label: "Fecha de autorización de datos",
+    //       required: false,
+    //       value: "",
+    //     },
+    //     {
+    //       id: "authCentral",
+    //       name: "authorizations.centralConsultation",
+    //       type: "checkbox",
+    //       label: "Autorizo consulta en centrales de riesgo",
+    //       required: false,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authCentralDate",
+    //       name: "authorizations.centralConsultationDate",
+    //       type: "date",
+    //       label: "Fecha de autorización centrales",
+    //       required: false,
+    //       value: "",
+    //     },
+    //     {
+    //       id: "authEmail",
+    //       name: "authorizations.emailCommunication",
+    //       type: "checkbox",
+    //       label: "Acepto comunicaciones por email",
+    //       required: false,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authTruth",
+    //       name: "authorizations.truthDeclaration",
+    //       type: "checkbox",
+    //       label: "Declaro que la información es verdadera",
+    //       required: true,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authTruthDate",
+    //       name: "authorizations.truthDeclarationDate",
+    //       type: "date",
+    //       label: "Fecha de declaración",
+    //       required: false,
+    //       value: "",
+    //     },
+    //   ],
+    // },
   ];
 </script>
 
