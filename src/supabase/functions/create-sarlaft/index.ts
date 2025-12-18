@@ -20,7 +20,7 @@ serve(async (req) => {
     return jsonResponse({ success: false, data: null, error: validation.errors }, 400);
   }
 
-  const { data, error } = await supabase.rpc("save_sarlaft", { p_payload: payload });
+  const { data, error } = await supabase.rpc("save_sarlaft_v2", { p_payload: payload });
   if (error) {
     return jsonResponse({ success: false, data: null, error: error.message }, 400);
   }
