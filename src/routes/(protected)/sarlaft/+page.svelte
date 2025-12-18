@@ -57,10 +57,10 @@
   }
 
   async function autoSave() {
-    // if (formData.id || hasChanges()) {
-    // formData.status = "draft";
-    // await saveFormData(formData);
-    // }
+    if (formData.id || hasChanges()) {
+      formData.status = "draft";
+      await saveFormData(formData);
+    }
   }
 
   function hasChanges(): boolean {
@@ -113,7 +113,7 @@
     const res = await fetch("/excel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(formData),
     });
 
     const blob = await res.blob();
@@ -124,16 +124,7 @@
     a.download = "Formulario_Llenado.xlsx";
     a.click();
   }
-  function validateForm(): boolean {
-    if (!formData.naturalPerson.firstName.trim()) return false;
-    if (!formData.naturalPerson.docNumber.trim()) return false;
-    if (!formData.representative.firstName.trim()) return false;
 
-    if (!formData.authorizations?.dataProcessing) return false;
-    if (!formData.authorizations?.truthDeclaration) return false;
-
-    return true;
-  }
   export const sarlaftCategories = [
     // ============================================================
     // 1.1 INFORMACIÓN GENERAL
@@ -1197,7 +1188,7 @@
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
           onclick={async () => {
             formData.status = "draft";
-            const success = await saveFormData(form);
+            const success = await saveFormData(formData);
             if (success) {
               alert("Formulario guardado como borrador");
             } else {
@@ -1211,16 +1202,12 @@
         <button
           class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
           onclick={async () => {
-            if (validateForm()) {
-              formData.status = "completed";
-              const success = await saveFormData(formData);
-              if (success) {
-                alert("Formulario marcado como completado");
-              } else {
-                alert("Error al completar el formulario");
-              }
+            formData.status = "completed";
+            const success = await saveFormData(formData);
+            if (success) {
+              alert("Formulario marcado como completado");
             } else {
-              alert("Por favor complete todos los campos requeridos");
+              alert("Error al completar el formulario");
             }
           }}
         >
@@ -1255,10 +1242,9 @@
       bind:formData={formDataState}
       categories={sarlaftCategories}
       callbackOnSubmit={(data) => {
-        // form = data;
         console.log(data, "FORM DATA");
         // Auto-guardar cuando se envía el formulario
-        // autoSave();
+        autoSave();
       }}
     />
   </div>
