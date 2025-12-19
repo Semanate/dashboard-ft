@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { getSarlaftById } from "$lib/api/admin/sarlaft";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
   import { onMount } from "svelte";
+  import type { ComponentType } from "vitest-browser-svelte";
 
   async function descargar() {
     const rest = await fetch("/excel");
@@ -44,21 +46,24 @@
     loadForms();
   });
 
-  // async function generateExcel() {
-  //   const res = await fetch("/excel", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify(formData),
-  //   });
+  async function generateExcel(data) {
+    console.log("Generating Excel for:", data);
 
-  //   const blob = await res.blob();
-  //   const url = URL.createObjectURL(blob);
+    // const formData = await getSarlaftById(data.id);
+    const res = await fetch("/excel", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: data.id }),
+    });
 
-  //   const a = document.createElement("a");
-  //   a.href = url;
-  //   a.download = "Formulario_Llenado.xlsx";
-  //   a.click();
-  // }
+    // const blob = await res.blob();
+    // const url = URL.createObjectURL(blob);
+
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = "Formulario_Llenado.xlsx";
+    // a.click();
+  }
 
   const columns = [
     { label: "ID", key: "id" },
@@ -112,7 +117,25 @@
         />
       </div>
       <article class="w-full">
-        <DataTable {table} />
+        <DataTable
+          {table}
+          actions={[
+            {
+              iconName: "Eye",
+              iconClass: "text-green-300/80",
+              onclick: (row) => {
+                window.location.href = `/sarlaft/${row.id}`;
+              },
+            },
+            {
+              iconName: "Download",
+              iconClass: "text-blue-300/80",
+              onclick: (row) => {
+                generateExcel(row);
+              },
+            },
+          ]}
+        />
       </article>
     </div>
   </div>

@@ -38,3 +38,16 @@ export function getUserSarlaftPayload(
         method: 'GET',
     });
 }
+
+export function getSarlaftById(
+    accessToken: string,
+    sarlaftId: string
+): Promise<ApiResponse<any>> {
+    return callEdge<any>(`get-sarlaft`, accessToken, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-sarlaft-id': sarlaftId
+        },
+    });
+}
