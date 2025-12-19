@@ -155,15 +155,20 @@ export async function GET() {
 
 export async function POST({ request, cookies }) {
     try {
-        const accessToken = cookies.get('sb-access-token');
+        const accessToken = cookies.get("sb-access-token");
         if (!accessToken) {
-            return json({ error: 'No autorizado' }, { status: 401 });
+            return json({ error: "No autorizado" }, { status: 401 });
         }
-        const payload = await request.json();
-        const formData = await getSarlaftById(accessToken, payload.id);
-        // const formData: FormDataType = await request.json();
 
-        // console.log("Form Data received for Excel generation:", formData);
+        const payload = await request.json();
+
+        const response = await getSarlaftById(accessToken, payload.id);
+        const formData = response.data;
+
+        if (!formData?.values) {
+            return json({ error: "Formulario inválido" }, { status: 400 });
+        }
+
         const templatePath = resolve("static/forms/FT-GFI-001.xlsx");
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(templatePath);
@@ -175,167 +180,30 @@ export async function POST({ request, cookies }) {
 
         function set(name: string, value: any) {
             const { ranges } = workbook.definedNames.getRanges(name);
-            if (!ranges || ranges.length === 0) {
-                console.log("⚠ Named Range no encontrado:", name);
-                return;
-            }
+            if (!ranges || ranges.length === 0) return;
 
             const [sheetName, cellRef] = ranges[0].split("!");
-
             const targetSheet = workbook.getWorksheet(sheetName.replace(/'/g, ""));
             if (!targetSheet) return;
 
             targetSheet.getCell(cellRef).value = value;
         }
 
-        // Mapear todos los campos del formulario SARLAFT a las celdas de Excel
+        for (const [namedRange, value] of Object.entries(formData.values)) {
+            if (value !== undefined && value !== null) {
+                set(namedRange, value);
+            }
+        }
 
-        // // Información básica
-        // set("DATE", formatDate(formData));
-        // set("CITY", formData.city);
-        // set("TYPEDOCUMENT", formData.typeDocument);
-
-        // // Representante legal
-        // if (formData.representative) {
-        //     set("REPRESENTATIVELEGALFIRSTNAME", formData.representative.firstName);
-        //     set("REPRESENTATIVELEGALLASTNAME1", formData.representative.lastName1);
-        //     set("REPRESENTATIVELEGALLASTNAME2", formData.representative.lastName2);
-        //     set("REPRESENTATIVELEGALTYPEDOC", formData.representative.typeDoc);
-        //     set("REPRESENTATIVELEGALDOCNUMBER", formData.representative.docNumber);
-        //     set("REPRESENTATIVELEGALPHONE", formData.representative.phone);
-        //     set("REPRESENTATIVELEGALEMAIL", formData.representative.email);
-        //     set("REPRESENTATIVELEGALACTIVITYSECTOR", formData.representative.activitySector);
-        //     set("REPRESENTATIVELEGALCITY", formData.representative.city);
-        //     set("REPRESENTATIVELEGALADDRESS", formData.representative.address);
-        // }
-
-        // // Persona natural
-        // if (formData.naturalPerson) {
-        //     set("NATURALPERSONFIRSTNAME", formData.naturalPerson.firstName);
-        //     set("NATURALPERSONLASTNAME1", formData.naturalPerson.lastName1);
-        //     set("NATURALPERSONLASTNAME2", formData.naturalPerson.lastName2);
-        //     set("NATURALPERSONTYPEDOC", formData.naturalPerson.typeDoc);
-        //     set("NATURALPERSONDOCNUMBER", formData.naturalPerson.docNumber);
-        //     set("NATURALPERSONDATEOFBIRTH", formatDate(formData.naturalPerson.dateOfBirth));
-        //     set("NATURALPERSONPLACEOFBIRTH", formData.naturalPerson.placeOfBirth);
-        //     set("NATURALPERSONPHONE", formData.naturalPerson.phone);
-        //     set("NATURALPERSONEMAIL", formData.naturalPerson.email);
-        //     set("NATURALPERSONACTIVITYSECTOR", formData.naturalPerson.activitySector);
-        //     set("NATURALPERSONCITY", formData.naturalPerson.city);
-        //     set("NATURALPERSONADDRESS", formData.naturalPerson.address);
-
-        //     // Nuevos campos SARLAFT
-        //     set("NATURALPERSONNATIONALITY", formData.naturalPerson.nationality);
-        //     set("NATURALPERSONGENDER", formData.naturalPerson.gender);
-        //     set("NATURALPERSONCIVILSTATUS", formData.naturalPerson.civilStatus);
-        //     set("NATURALPERSONCELLPHONE", formData.naturalPerson.cellPhone);
-        //     set("NATURALPERSONCOUNTRY", formData.naturalPerson.country);
-        //     set("NATURALPERSONPOSTALCODE", formData.naturalPerson.postalCode);
-        // }
-
-        // // Información financiera SARLAFT
-        // if (formData.financialInfo) {
-        //     set("FINANCIALMONTHLYINCOME", formatCurrency(formData.financialInfo.monthlyIncome));
-        //     set("FINANCIALOTIERINCOME", formatCurrency(formData.financialInfo.otherIncome));
-        //     set("FINANCIALMONTHLYEXPENSES", formatCurrency(formData.financialInfo.monthlyExpenses));
-        //     set("FINANCIALASSETS", formatCurrency(formData.financialInfo.assets));
-        //     set("FINANCIALLIABILITIES", formatCurrency(formData.financialInfo.liabilities));
-        //     set("FINANCIALPATRIMONY", formatCurrency(formData.financialInfo.patrimony));
-        //     set("FINANCIALINCOMESOURCE", formData.financialInfo.incomeSource);
-        //     set("FINANCIALINCOMEDESCRPTION", formData.financialInfo.incomeSourceDescription);
-        //     set("FINANCIALCURRENCY", formData.financialInfo.operationCurrency);
-        // }
-
-        // // Información laboral SARLAFT
-        // if (formData.laboralInfo) {
-        //     set("LABORALCOMPANY", formData.laboralInfo.company);
-        //     set("LABORALPOSITION", formData.laboralInfo.position);
-        //     set("LABORALWORKTIME", formData.laboralInfo.workTime);
-        //     set("LABORALCOMPANYADDRESS", formData.laboralInfo.companyAddress);
-        //     set("LABORALCOMPANYCITY", formData.laboralInfo.companyCity);
-        //     set("LABORALCOMPANYCOUNTRY", formData.laboralInfo.companyCountry);
-        //     set("LABORALCOMPANYPHONE", formData.laboralInfo.companyPhone);
-        //     set("LABORALECONOMICACTIVITY", formData.laboralInfo.economicActivity);
-        //     set("LABORALTAXREGIME", formData.laboralInfo.taxRegime);
-        // }
-
-        // // Persona jurídica
-        // if (formData.juridicalPerson) {
-        //     set("JURIDICALPERSONBUSINESSNAME", formData.juridicalPerson.businessName);
-        //     set("JURIDICALPERSONNIT", formData.juridicalPerson.nit);
-        //     set("JURIDICALPERSONPHONE", formData.juridicalPerson.phone);
-        //     set("JURIDICALPERSONEMAIL", formData.juridicalPerson.email);
-        //     set("JURIDICALPERSONACTIVITYSECTOR", formData.juridicalPerson.activitySector);
-        //     set("JURIDICALPERSONADDRESS", formData.juridicalPerson.address);
-        //     set("JURIDICALPERSONADDRESS2", formData.juridicalPerson.address2);
-        //     set("JURIDICALPERSONPHONE2", formData.juridicalPerson.phone2);
-        //     set("JURIDICALPERSONCITY", formData.juridicalPerson.city);
-        // }
-
-        // // PEP - Ampliar con nuevos campos SARLAFT
-        // if (formData.pep) {
-        //     set("PEPMANAGEPUBLIC", formData.pep.managePublicResources);
-        //     set("PEPPUBLICPOWER", formData.pep.publicPower);
-        //     set("PEPRELATION", formData.pep.relation);
-        //     set("PEPRELATIONNAME", formData.pep.relationName);
-        //     set("PEPTAXOBLIGATIONS", formData.pep.taxObligations);
-
-        //     // Nuevos campos PEP SARLAFT
-        //     set("PEPISPEP", formData.pep.isPep ? "SÍ" : "NO");
-        //     set("PEPRELATED", formData.pep.pepRelated ? "SÍ" : "NO");
-        //     set("PEPDETAILS", formData.pep.pepDetails);
-        //     set("PEPCRIMINAL", formData.pep.criminalInvestigations ? "SÍ" : "NO");
-        //     set("PEPCRIMINALDETAILS", formData.pep.investigationDetails);
-        //     set("PEPTAXHAVEN", formData.pep.taxHavenOperations ? "SÍ" : "NO");
-        //     set("PEPTAXHAVENDETAILS", formData.pep.taxHavenDetails);
-        //     set("PEPTHIRDPARTY", formData.pep.thirdPartyResources ? "SÍ" : "NO");
-        //     set("PEPTHIRDPARTYDETAILS", formData.pep.thirdPartyDetails);
-        //     set("PEPUIF", formData.pep.uifReports ? "SÍ" : "NO");
-        //     set("PEPUIFDETAILS", formData.pep.uifDetails);
-        //     set("PEPHIGHRISK", formData.pep.highRiskActivities ? "SÍ" : "NO");
-        //     set("PEPRISKDETAILS", formData.pep.riskDetails);
-        // }
-        // // Autorizaciones
-        // if (formData.authorizations) {
-        //     set("AUTHDATA", formData.authorizations.dataProcessing ? "SÍ" : "NO");
-        //     set("AUTHDATADATE", formatDate(formData.authorizations.dataProcessingDate || ""));
-        //     set("AUTHCENTRAL", formData.authorizations.centralConsultation ? "SÍ" : "NO");
-        //     set("AUTHCENTRALDATE", formatDate(formData.authorizations.centralConsultationDate || ""));
-        //     set("AUTHEMAIL", formData.authorizations.emailCommunication ? "SÍ" : "NO");
-        //     set("AUTHTRUTH", formData.authorizations.truthDeclaration ? "SÍ" : "NO");
-        //     set("AUTHTRUTHDATE", formatDate(formData.authorizations.truthDeclarationDate || ""));
-        // }
-
-        // // Firma y fechas
-        // if (formData.signature) {
-        //     set("SIGNATURENAME", formData.signature.name);
-        //     set("SIGNATUREDOCUMENT", formData.signature.document);
-        //     set("SIGNATUREDATE", formatDate(formData.signature.signatureDate || ""));
-        // }
-
-        // Usar mappings existentes para otros campos compatibles
-        // for (const namedRange in excelMappings) {
-        //     const mapper = excelMappings[namedRange as keyof typeof excelMappings];
-
-        //     try {
-        //         const value = typeof mapper === "function" ? mapper(formData) : deepGet(formData, mapper);
-        //         if (value !== undefined && value !== null) {
-        //             set(namedRange, value);
-        //         }
-        //     } catch (error) {
-        //         console.log("Error mapping field:", namedRange, error);
-        //     }
-        // }
-        applyExcelMappings(workbook, formData);
         const buffer = await workbook.xlsx.writeBuffer();
 
         return new Response(buffer, {
             headers: {
-                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "Content-Disposition": `attachment; filename=SARLAFT_${formatDate(formData.date)}_${formData.naturalPerson?.firstName || 'Formulario'}.xlsx`
-            }
+                "Content-Type":
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Content-Disposition": `attachment; filename=SARLAFT_${formData.id}.xlsx`,
+            },
         });
-
     } catch (err: any) {
         console.error("Error generating Excel:", err);
         return json({ error: err.message }, { status: 500 });

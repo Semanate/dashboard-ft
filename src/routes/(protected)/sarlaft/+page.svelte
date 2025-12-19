@@ -56,13 +56,13 @@
       body: JSON.stringify({ id: data.id }),
     });
 
-    // const blob = await res.blob();
-    // const url = URL.createObjectURL(blob);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
 
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = "Formulario_Llenado.xlsx";
-    // a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Formulario_Llenado.xlsx";
+    a.click();
   }
 
   const columns = [
