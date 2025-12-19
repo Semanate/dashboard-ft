@@ -69,15 +69,15 @@ const AccountEntityItemSchema = z.object({
 });
 
 const PepSchemaV2 = z.object({
-    managePublicResources: z.string().optional().nullable(),
-    publicPower: z.string().optional().nullable(),
-    relation: z.string().optional().nullable(),
+    managePublicResources: z.boolean().optional().nullable(),
+    publicPower: z.boolean().optional().nullable(),
+    relation: z.boolean().optional().nullable(),
     relationName: z.string().optional().nullable(),
-    taxObligations: z.string().optional().nullable(),
+    taxObligations: z.boolean().optional().nullable(),
 });
 
 const ForeignCurrencySchema = z.object({
-    management: z.string().optional().nullable(),
+    management: z.boolean().optional().nullable(),
     products: z
         .array(
             z.object({
@@ -102,7 +102,7 @@ const VerificationBlockSchema = z.object({
     signature: z.string().optional().nullable(),
     date: z.string().optional().nullable(),
     time: z.string().optional().nullable(),
-    auth: z.string().optional().nullable(),
+    auth: z.boolean().optional().nullable(),
 });
 
 const TwoBlocksSchema = z.object({

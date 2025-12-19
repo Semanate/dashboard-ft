@@ -47,8 +47,6 @@
   });
 
   async function generateExcel(data) {
-    console.log("Generating Excel for:", data);
-
     // const formData = await getSarlaftById(data.id);
     const res = await fetch("/excel", {
       method: "POST",
@@ -56,13 +54,14 @@
       body: JSON.stringify({ id: data.id }),
     });
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+    console.log(await res.json(), "EXCEL RESPONSE");
+    // const blob = await res.blob();
+    // const url = URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Formulario_Llenado.xlsx";
-    a.click();
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = "Formulario_Llenado.xlsx";
+    // a.click();
   }
 
   const columns = [

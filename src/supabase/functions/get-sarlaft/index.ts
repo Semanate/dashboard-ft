@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
@@ -69,12 +70,14 @@ serve(async (req) => {
 
     const mapped = rows.map((row: any) => {
         const fullPayload = buildSarlaftObject(row);
-
+        console.log("Full Payload:", fullPayload.dateAggrement);
+        const values = mapPayloadToFlatObject(fullPayload, excelMappings);
+        // console.log("Mapped Values:", values);
         return {
             id: row.id,
             status: row.status,
             createdAt: row.created_at,
-            values: mapPayloadToFlatObject(fullPayload, excelMappings),
+            values,
         };
     });
 

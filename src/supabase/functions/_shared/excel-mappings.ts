@@ -13,8 +13,8 @@ const getDocTypeString = (docType: DocType): string => {
 
 export const excelMappings = {
     // Document info
-    DATE: "date",
-    CITY: "city",
+    DATE: "dateAggrement",
+    CITY: "cityAggrement",
     TYPE_DOCUMENT: "typeDocument",
 
     // Legal representative
