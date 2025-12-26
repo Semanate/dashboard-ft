@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { updated } from "$app/state";
   import { getSarlaftById } from "$lib/api/admin/sarlaft";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
@@ -7,19 +8,6 @@
   import { getValues } from "$lib/utils/forms";
   import { onMount } from "svelte";
   import type { ComponentType } from "vitest-browser-svelte";
-
-  async function descargar() {
-    const rest = await fetch("/excel");
-    const { data } = await rest.json();
-    console.log(data);
-    // const blob = await res.blob();
-    // const url = URL.createObjectURL(blob);
-
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = "SARLAFT.xlsx";
-    // a.click();
-  }
 
   let FormList: FormDataType[] = $state([]);
 
@@ -54,14 +42,13 @@
       body: JSON.stringify({ id: data.id }),
     });
 
-    console.log(await res.json(), "EXCEL RESPONSE");
-    // const blob = await res.blob();
-    // const url = URL.createObjectURL(blob);
+    const blob = await res.blob();
+     const url = URL.createObjectURL(blob);
 
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = "Formulario_Llenado.xlsx";
-    // a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Formulario_Llenado.xlsx";
+    a.click();
   }
 
   const columns = [
@@ -77,6 +64,8 @@
   const rows = $derived(
     FormList.map((f: any) => ({
       ...f,
+      updated_at: new Date(f.updated_at).toLocaleString(),
+      created_at: new Date(f.created_at).toLocaleString(),
     })),
   );
 

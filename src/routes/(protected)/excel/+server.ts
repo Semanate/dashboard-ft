@@ -169,42 +169,42 @@ export async function POST({ request, cookies }) {
             return json({ error: "Formulario inválido" }, { status: 400 });
         }
 
-        return json({ formData });
-        // const templatePath = resolve("static/forms/FT-GFI-001.xlsx");
-        // const workbook = new ExcelJS.Workbook();
-        // await workbook.xlsx.readFile(templatePath);
+        // return json({ formData });
+        const templatePath = resolve("static/forms/FT-GFI-001.xlsx");
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(templatePath);
 
-        // const sheet = workbook.worksheets[0];
-        // if (!sheet) {
-        //     return json({ error: "Worksheet not found" }, { status: 404 });
-        // }
+        const sheet = workbook.worksheets[0];
+        if (!sheet) {
+            return json({ error: "Worksheet not found" }, { status: 404 });
+        }
 
-        // function set(name: string, value: any) {
-        //     const { ranges } = workbook.definedNames.getRanges(name);
-        //     if (!ranges || ranges.length === 0) return;
+        function set(name: string, value: any) {
+            const { ranges } = workbook.definedNames.getRanges(name);
+            if (!ranges || ranges.length === 0) return;
 
-        //     const [sheetName, cellRef] = ranges[0].split("!");
-        //     const targetSheet = workbook.getWorksheet(sheetName.replace(/'/g, ""));
-        //     if (!targetSheet) return;
+            const [sheetName, cellRef] = ranges[0].split("!");
+            const targetSheet = workbook.getWorksheet(sheetName.replace(/'/g, ""));
+            if (!targetSheet) return;
 
-        //     targetSheet.getCell(cellRef).value = value;
-        // }
+            targetSheet.getCell(cellRef).value = value;
+        }
 
-        // for (const [namedRange, value] of Object.entries(formData.values)) {
-        //     if (value !== undefined && value !== null) {
-        //         set(namedRange, value);
-        //     }
-        // }
+        for (const [namedRange, value] of Object.entries(formData.values)) {
+            if (value !== undefined && value !== null) {
+                set(namedRange, value);
+            }
+        }
 
-        // const buffer = await workbook.xlsx.writeBuffer();
+        const buffer = await workbook.xlsx.writeBuffer();
 
-        // return new Response(buffer, {
-        //     headers: {
-        //         "Content-Type":
-        //             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        //         "Content-Disposition": `attachment; filename=SARLAFT_${formData.id}.xlsx`,
-        //     },
-        // });
+        return new Response(buffer, {
+            headers: {
+                "Content-Type":
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Content-Disposition": `attachment; filename=SARLAFT_${formData.id}.xlsx`,
+            },
+        });
     } catch (err: any) {
         console.error("Error generating Excel:", err);
         return json({ error: err.message }, { status: 500 });

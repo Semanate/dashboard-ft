@@ -1016,7 +1016,7 @@ export const sarlaftCategories = [
                 label:
                     "¿Maneja productos financieros en moneda extranjera o activos virtuales? (SI/NO)",
                 required: false,
-                value: "",
+                value: false,
             },
         ],
     },
@@ -1113,7 +1113,7 @@ export const sarlaftCategories = [
             {
                 id: "ver1Sign",
                 name: "verification.block1.signature",
-                type: "text",
+                type: "signature",
                 label: "Firma",
                 required: false,
                 value: "",
@@ -1124,7 +1124,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Fecha",
                 required: false,
-                value: "",
+                value: new Date().toLocaleDateString(),
             },
             {
                 id: "ver1Time",
@@ -1132,7 +1132,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Hora",
                 required: false,
-                value: "",
+                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
             {
                 id: "ver1Auth",
@@ -1140,7 +1140,7 @@ export const sarlaftCategories = [
                 type: "checkbox",
                 label: "Autorización (SI/NO)",
                 required: false,
-                value: "",
+                value: false,
             },
         ],
     },
@@ -1159,7 +1159,7 @@ export const sarlaftCategories = [
             {
                 id: "ver2Sign",
                 name: "verification.block2.signature",
-                type: "text",
+                type: "signature",
                 label: "Firma",
                 required: false,
                 value: "",
@@ -1170,7 +1170,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Fecha",
                 required: false,
-                value: "",
+                value: new Date().toLocaleDateString(),
             },
             {
                 id: "ver2Time",
@@ -1178,7 +1178,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Hora",
                 required: false,
-                value: "",
+                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
             {
                 id: "ver2Auth",
@@ -1186,7 +1186,7 @@ export const sarlaftCategories = [
                 type: "checkbox",
                 label: "Autorización (SI/NO)",
                 required: false,
-                value: "",
+                value: false,
             },
         ],
     },
@@ -1208,7 +1208,7 @@ export const sarlaftCategories = [
             {
                 id: "pepA1Sign",
                 name: "pepAuthorization.block1.signature",
-                type: "text",
+                type: "signature",
                 label: "Firma",
                 required: false,
                 value: "",
@@ -1219,7 +1219,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Fecha",
                 required: false,
-                value: "",
+                value: new Date().toLocaleDateString(),
             },
             {
                 id: "pepA1Time",
@@ -1227,7 +1227,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Hora",
                 required: false,
-                value: "",
+                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
             {
                 id: "pepA1Auth",
@@ -1235,7 +1235,7 @@ export const sarlaftCategories = [
                 type: "checkbox",
                 label: "Autorización (SI/NO)",
                 required: false,
-                value: "",
+                value: false,
             },
         ],
     },
@@ -1254,7 +1254,7 @@ export const sarlaftCategories = [
             {
                 id: "pepA2Sign",
                 name: "pepAuthorization.block2.signature",
-                type: "text",
+                type: "signature",
                 label: "Firma",
                 required: false,
                 value: "",
@@ -1266,7 +1266,7 @@ export const sarlaftCategories = [
                 label: "Fecha",
                 placeholder: "MM/DD/AAAA",
                 required: false,
-                value: "",
+                value: new Date().toLocaleDateString(),
             },
             {
                 id: "pepA2Time",
@@ -1275,7 +1275,7 @@ export const sarlaftCategories = [
                 label: "Hora",
                 placeholder: "HH:MM",
                 required: false,
-                value: "",
+                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             },
             {
                 id: "pepA2Auth",
@@ -1283,7 +1283,7 @@ export const sarlaftCategories = [
                 type: "checkbox",
                 label: "Autorización (SI/NO)",
                 required: false,
-                value: "",
+                value: false,
             },
         ],
     },

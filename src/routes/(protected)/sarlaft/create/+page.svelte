@@ -54,14 +54,14 @@
   async function descargar() {
     const rest = await fetch("/excel");
     const { data } = await rest.json();
-    console.log(data);
-    // const blob = await res.blob();
-    // const url = URL.createObjectURL(blob);
+    console.log("DATA", data);
+    const blob = await rest.blob();
+    const url = URL.createObjectURL(blob);
 
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = "SARLAFT.xlsx";
-    // a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "SARLAFT.xlsx";
+    a.click();
   }
 
   async function generateExcel() {
