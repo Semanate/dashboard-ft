@@ -78,6 +78,7 @@
   <input
     {id}
     type="checkbox"
+    name={id}
     {checked}
     {disabled}
     onchange={(e) => {

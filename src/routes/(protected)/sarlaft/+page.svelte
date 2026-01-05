@@ -1,13 +1,9 @@
 <script lang="ts">
-    import { updated } from "$app/state";
-  import { getSarlaftById } from "$lib/api/admin/sarlaft";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
-  import { getValues } from "$lib/utils/forms";
   import { onMount } from "svelte";
-  import type { ComponentType } from "vitest-browser-svelte";
 
   let FormList: FormDataType[] = $state([]);
 

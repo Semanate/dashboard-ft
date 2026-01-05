@@ -1,13 +1,20 @@
 import type { ApiResponse } from '$lib/types/api'
-import { PUBLIC_EDGE_BASE_URL } from '$env/static/public'
+import { browser } from '$app/environment'
+import { env } from '$env/dynamic/private'
 
-const EDGE_BASE_URL = PUBLIC_EDGE_BASE_URL
+export function edgeBaseUrl() {
+  return browser
+    ? env.PUBLIC_EDGE_BASE_URL
+    : env.EDGE_INTERNAL_URL
+}
+
+const EDGE_BASE_URL = edgeBaseUrl();
 export async function callEdge<T>(
   path: string,
   accessToken: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
-
+  console.log("CALL EDGE", `${EDGE_BASE_URL}/${path}`, accessToken, options);
   const res = await fetch(`${EDGE_BASE_URL}/${path}`, {
     ...options,
     headers: {
@@ -15,16 +22,26 @@ export async function callEdge<T>(
       Authorization: `Bearer ${accessToken}`
     }
   })
+  try {
+    const body = await res.json() as ApiResponse<T>
 
-  const body = await res.json() as ApiResponse<T>
+    if (!res.ok) {
+      return {
+        success: false,
+        data: null,
+        error: body.error ?? 'Request failed'
+      }
+    }
 
-  if (!res.ok) {
+    return body
+  }
+  catch (error) {
+    console.error("Error response:", error);
     return {
       success: false,
       data: null,
-      error: body.error ?? 'Request failed'
+      error: 'Invalid JSON response'
     }
   }
 
-  return body
 }

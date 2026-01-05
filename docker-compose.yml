@@ -9,7 +9,7 @@ services:
         - PORT=3000
         - SUPABASE_URL=${SUPABASE_URL}
         - SUPABASE_ANON_KEY=${SUPABASE_PUBLISHABLE_DEFAULT_KEY}
-        - PUBLIC_EDGE_BASE_URL=${PUBLIC_EDGE_BASE_URL}
+        - EDGE_INTERNAL_URL=${EDGE_INTERNAL_URL}
     ports:
       - "3001:3000"
     container_name: dashboard-${ENVIRONMENT:-production}
@@ -19,7 +19,7 @@ services:
       - PORT=3000
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_ANON_KEY=${SUPABASE_PUBLISHABLE_DEFAULT_KEY}
-      - PUBLIC_EDGE_BASE_URL=${PUBLIC_EDGE_BASE_URL}
+      - EDGE_INTERNAL_URL=${EDGE_INTERNAL_URL}
     networks:
       - dokploy-network
 

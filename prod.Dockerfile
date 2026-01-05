@@ -11,16 +11,14 @@ COPY . .
 
 ARG SUPABASE_URL
 ARG SUPABASE_PUBLISHABLE_DEFAULT_KEY
-ARG PUBLIC_EDGE_BASE_URL
-ENV PUBLIC_EDGE_BASE_URL=$PUBLIC_EDGE_BASE_URL
+ARG EDGE_INTERNAL_URL
+ENV EDGE_INTERNAL_URL=$EDGE_INTERNAL_URL
 ENV SUPABASE_URL=${SUPABASE_URL}
 ENV SUPABASE_PUBLISHABLE_DEFAULT_KEY=${SUPABASE_PUBLISHABLE_DEFAULT_KEY}
 ENV NODE_ENV=production
 
-# Construir la aplicación
 RUN npm run build
 
-# Etapa 2: Producción
 FROM node:20-alpine
 
 WORKDIR /app
@@ -30,6 +28,7 @@ RUN apk add --no-cache dumb-init
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
 COPY package*.json ./
+COPY static ./static
 
 RUN npm ci --only=production
 

@@ -40,6 +40,10 @@
       ${variant === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"}
     `;
   }
+
+  const logout = () => {
+    // Implement logout functionality here
+  };
 </script>
 
 <div class={sidebarClasses()}>
@@ -48,7 +52,7 @@
     class={`${collapsed ? "p-2.5" : "p-4"} flex items-center justify-between border-b`}
   >
     {#if !collapsed}
-      <h2 class="text-xl font-bold">Mi App</h2>
+      <h2 class="text-xl font-bold">RiesgosLaft</h2>
     {/if}
     <Tooltip
       active={collapsed}
@@ -101,11 +105,19 @@
     <div class="mt-auto p-4 text-sm text-gray-500">© 2025 Mi App</div>
   {/if}
   {#if collapsed}
-    <img
-      src="https://img.icons8.com/ios-glyphs/30/000000/copyright.png"
-      alt="copyright"
-      class="mt-auto mx-auto my-4"
-      transition:fade={{ duration: 200 }}
-    />
+    <div class="flex flex-col mt-auto mb-4 items-center">
+      <img
+        src="https://img.icons8.com/ios-glyphs/30/000000/copyright.png"
+        alt="copyright"
+        class="mt-auto mx-auto my-4"
+        transition:fade={{ duration: 200 }}
+      />
+      <ButtonWithIcon
+        label={`${collapsed ? "" : "Cerrar sesión"}`}
+        iconButton="LogOut"
+        onclick={logout}
+        variant="ghost"
+      />
+    </div>
   {/if}
 </div>

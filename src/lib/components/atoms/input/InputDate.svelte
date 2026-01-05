@@ -36,7 +36,7 @@
   let show = $state(false);
   let calendarRef: HTMLDivElement | null = $state(null);
 
-  let locale = navigator.language || "en-US";
+  let locale = "en-US";
 
   let current = $state(new Date());
   const currentValue = initialValue ? new Date(initialValue) : null;
