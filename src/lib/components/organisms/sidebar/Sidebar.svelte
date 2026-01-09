@@ -41,9 +41,14 @@
     `;
   }
 
-  const logout = () => {
-    // Implement logout functionality here
-  };
+  async function logout() {
+    localStorage.clear();
+    sessionStorage.clear();
+
+    await fetch("/logout", { method: "POST" });
+
+    window.location.replace("/login");
+  }
 </script>
 
 <div class={sidebarClasses()}>

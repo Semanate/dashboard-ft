@@ -19,6 +19,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } =
         await supabase.auth.getUser()
 
+    console.log("User fetched in list-users function:", user, userError);
     if (userError || !user) {
         return jsonResponse({
             success: false,

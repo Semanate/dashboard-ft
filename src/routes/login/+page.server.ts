@@ -6,7 +6,6 @@ import { fetchPublishedNews } from '$lib/api/admin/news.js';
 export async function load() {
     const res = await fetchPublishedNews();
     const news = res.data || [];
-    console.log("Fetched news items:", news);
     return {
         news
     };

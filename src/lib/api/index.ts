@@ -14,7 +14,6 @@ export async function callEdge<T>(
   accessToken: string,
   options?: RequestInit
 ): Promise<ApiResponse<T>> {
-  console.log("CALL EDGE", `${EDGE_BASE_URL}/${path}`, accessToken, options);
   const res = await fetch(`${EDGE_BASE_URL}/${path}`, {
     ...options,
     headers: {
