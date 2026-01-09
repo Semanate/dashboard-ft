@@ -1,289 +1,178 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ExcelJS from "exceljs";
-import { resolve } from "node:path";
 import { json } from "@sveltejs/kit";
 import { getSarlaftById } from "$lib/api/admin/sarlaft";
 import type { RequestHandler } from '@sveltejs/kit';
 
+export const POST: RequestHandler = async ({ request, cookies }) => {
+  try {
+    const accessToken = cookies.get('sb-access-token');
+    if (!accessToken) {
+      return json({ error: 'No autorizado' }, { status: 401 });
+    }
 
-export async function GET() {
-    const pathExcel = resolve("static/forms/FT-GFI-001.xlsx");
+    const { id } = await request.json();
+    if (!id) {
+      return json({ error: 'ID requerido' }, { status: 400 });
+    }
+
+    const { data: sarlaft } = await getSarlaftById(accessToken, id);
+    if (!sarlaft) {
+      return json({ error: 'Formulario no encontrado' }, { status: 404 });
+    }
+
+    /* ================== WORKBOOK ================== */
 
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(pathExcel);
+    const sheet = workbook.addWorksheet('SARLAFT');
 
-    const pages = workbook.worksheets;
-    const sheet = pages[0];
+    sheet.columns = [
+      { width: 25 },
+      { width: 25 },
+      { width: 25 },
+      { width: 30 }
+    ];
 
-    if (!sheet) {
-        return json({ error: "Worksheet not found" }, { status: 404 });
-    }
+    let row = 1;
 
-    function get(nm: string) {
-        const { ranges } = workbook.definedNames.getRanges(nm);
+    /* ================== TITLE ================== */
 
-        const firstRange = ranges[0];
-        const isValid = !!firstRange && firstRange.includes("!");
-        if (!isValid) {
-            return "";
-        }
+    sheet.mergeCells(`A${row}:D${row}`);
+    sheet.getCell(`A${row}`).value = 'FORMULARIO SARLAFT';
+    sheet.getCell(`A${row}`).font = { size: 16, bold: true };
+    sheet.getCell(`A${row}`).alignment = { horizontal: 'center' };
+    row += 2;
 
-        const cell = sheet.getCell(firstRange.split("!")[1]);
-        return cell.value?.toString() ?? "";
-    }
+    /* ================== INFO GENERAL ================== */
 
-    const data = {
-        title: get("TITLE"),
-        version: get("VERSION"),
-        date: get("DATE"),
-        dateUpdated: get("DATEUPDATED"),
-
-        representativeLegal: {
-            firstName: get("REPRESENTATIVELEGALFIRSTNAME"),
-            lastName1: get("REPRESENTATIVELEGALLASTNAME1"),
-            lastName2: get("REPRESENTATIVELEGALLASTNAME2"),
-            typeDoc: get("REPRESENTATIVELEGALTYPEDOC"),
-            docNumber: get("REPRESENTATIVELEGALDOCNUMBER"),
-            phone: get("REPRESENTATIVELEGALPHONE"),
-            email: get("REPRESENTATIVELEGALEMAIL"),
-            activitySector: get("REPRESENTATIVELEGALACTIVITYSECTOR"),
-            city: get("REPRESENTATIVELEGALCITY"),
-            address: get("REPRESENTATIVELEGALADDRESS")
-        },
-
-        naturalPerson: {
-            firstName: get("NATURALPERSONFIRSTNAME"),
-            lastName1: get("NATURALPERSONLASTNAME1"),
-            lastName2: get("NATURALPERSONLASTNAME2"),
-            typeDoc: get("NATURALPERSONTYPEDOC"),
-            docNumber: get("NATURALPERSONDOCNUMBER"),
-            dateOfBirth: get("NATURALPERSONDATEOFBIRTH"),
-            placeOfBirth: get("NATURALPERSONPLACEOFBIRTH"),
-            phone: get("NATURALPERSONPHONE"),
-            email: get("NATURALPERSONEMAIL"),
-            activitySector: get("NATURALPERSONACTIVITYSECTOR"),
-            city: get("NATURALPERSONCITY"),
-            address: get("NATURALPERSONADDRESS"),
-
-            // Nuevos campos SARLAFT
-            nationality: get("NATURALPERSONNATIONALITY"),
-            gender: get("NATURALPERSONGENDER"),
-            civilStatus: get("NATURALPERSONCIVILSTATUS"),
-            cellPhone: get("NATURALPERSONCELLPHONE"),
-            country: get("NATURALPERSONCOUNTRY"),
-            postalCode: get("NATURALPERSONPOSTALCODE"),
-        },
-
-        // Nueva información financiera SARLAFT
-        financialInfo: {
-            monthlyIncome: get("FINANCIALMONTHLYINCOME"),
-            otherIncome: get("FINANCIALOTIERINCOME"),
-            monthlyExpenses: get("FINANCIALMONTHLYEXPENSES"),
-            assets: get("FINANCIALASSETS"),
-            liabilities: get("FINANCIALLIABILITIES"),
-            patrimony: get("FINANCIALPATRIMONY"),
-            incomeSource: get("FINANCIALINCOMESOURCE"),
-            incomeSourceDescription: get("FINANCIALINCOMEDESCRPTION"),
-            operationCurrency: get("FINANCIALCURRENCY"),
-        },
-
-        // Nueva información laboral SARLAFT
-        laboralInfo: {
-            company: get("LABORALCOMPANY"),
-            position: get("LABORALPOSITION"),
-            workTime: get("LABORALWORKTIME"),
-            companyAddress: get("LABORALCOMPANYADDRESS"),
-            companyCity: get("LABORALCOMPANYCITY"),
-            companyCountry: get("LABORALCOMPANYCOUNTRY"),
-            companyPhone: get("LABORALCOMPANYPHONE"),
-            economicActivity: get("LABORALECONOMICACTIVITY"),
-            taxRegime: get("LABORALTAXREGIME"),
-        },
-
-        juridicalPerson: {
-            businessName: get("JURIDICALPERSONBUSINESSNAME"),
-            nit: get("JURIDICALPERSONNIT"),
-            phone: get("JURIDICALPERSONPHONE"),
-            email: get("JURIDICALPERSONEMAIL"),
-            activitySector: get("JURIDICALPERSONACTIVITYSECTOR"),
-            address: get("JURIDICALPERSONADDRESS"),
-            address2: get("JURIDICALPERSONADDRESS2"),
-            phone2: get("JURIDICALPERSONPHONE2"),
-            constitutionDate: get("JURIDICALPERSONCONSTITUTIONDATE"),
-            city: get("JURIDICALPERSONCITY"),
-        },
-
-        // Información PEP ampliada
-        pep: {
-            managePublicResources: get("PEPMANAGEPUBLIC"),
-            publicPower: get("PEPPUBLICPOWER"),
-            relation: get("PEPRELATION"),
-            relationName: get("PEPRELATIONNAME"),
-            taxObligations: get("PEPTAXOBLIGATIONS"),
-        },
-
-        // Autorizaciones
-        authorizations: {
-            dataProcessing: get("AUTHDATA"),
-            dataProcessingDate: get("AUTHDATADATE"),
-            centralConsultation: get("AUTHCENTRAL"),
-            centralConsultationDate: get("AUTHCENTRALDATE"),
-            emailCommunication: get("AUTHEMAIL"),
-            truthDeclaration: get("AUTHTRUTH"),
-            truthDeclarationDate: get("AUTHTRUTHDATE"),
-        }
+    sheet.mergeCells(`A${row}:D${row}`);
+    sheet.getCell(`A${row}`).value = 'INFORMACIÓN GENERAL';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`A${row}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'E5E7EB' }
     };
+    row++;
 
-    return json({ data });
-}
+    const infoRows = [
+      ['ID Transacción', sarlaft.id],
+      ['Estado', sarlaft.status],
+      ['Tipo de Persona', sarlaft.typePersonAggrement],
+      ['Fecha creación', new Date(sarlaft.created_at).toLocaleString()],
+      ['Última actualización', new Date(sarlaft.updated_at).toLocaleString()]
+    ];
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
-    try {
-        const accessToken = cookies.get('sb-access-token');
-        if (!accessToken) {
-            return json({ error: 'No autorizado' }, { status: 401 });
-        }
+    infoRows.forEach(([label, value]) => {
+      sheet.getCell(`A${row}`).value = label;
+      sheet.getCell(`B${row}`).value = value;
+      sheet.getCell(`A${row}`).font = { bold: true };
+      row++;
+    });
 
-        const { id } = await request.json();
-        if (!id) {
-            return json({ error: 'ID requerido' }, { status: 400 });
-        }
+    row++;
 
-        const response = await getSarlaftById(accessToken, id);
-        const sarlaft = response.data;
+    /* ================== SOLICITANTE ================== */
 
-        if (!sarlaft) {
-            return json({ error: 'Formulario no encontrado' }, { status: 404 });
-        }
+    sheet.mergeCells(`A${row}:D${row}`);
+    sheet.getCell(`A${row}`).value = 'DATOS DEL SOLICITANTE';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`A${row}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'E5E7EB' }
+    };
+    row++;
 
-        /* ================== WORKBOOK ================== */
+    const p = sarlaft.naturalPerson ?? sarlaft.juridicalPerson;
 
-        const workbook = new ExcelJS.Workbook();
-        const sheet = workbook.addWorksheet('SARLAFT');
+    const applicantRows = [
+      ['Tipo documento', sarlaft.naturalPerson?.docType ?? 'NIT'],
+      ['N° identificación', sarlaft.naturalPerson?.docNumber ?? sarlaft.juridicalPerson?.nit],
+      ['Nombre / Razón social',
+        sarlaft.naturalPerson
+          ? `${p.firstName} ${p.lastName}`
+          : p.businessName
+      ],
+      ['Dirección', p.address],
+      ['Teléfono', p.phone],
+      ['Email', p.email]
+    ];
 
-        /* ================== HEADER ================== */
+    applicantRows.forEach(([label, value]) => {
+      sheet.getCell(`A${row}`).value = label;
+      sheet.getCell(`B${row}`).value = value ?? '-';
+      sheet.getCell(`A${row}`).font = { bold: true };
+      row++;
+    });
 
-        const headers = [
-            'ID Transacción',
-            'Tipo documento',
-            'N° identificación',
-            'Nombre / Razón social',
-            'Dirección',
-            'Teléfono',
-            'Email',
-            'Tipo documento accionista',
-            'N° identificación',
-            'Nombre / Razón social',
-            'ETC'
-        ];
+    row++;
 
-        sheet.addRow(headers);
+    /* ================== RELACIONES ================== */
 
-        const headerRow = sheet.getRow(1);
-        headerRow.eachCell(cell => {
-            cell.fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: 'FFFF00' } // amarillo
-            };
-            cell.font = { bold: true };
-            cell.alignment = { vertical: 'middle', horizontal: 'center' };
-            cell.border = {
-                top: { style: 'thin' },
-                left: { style: 'thin' },
-                bottom: { style: 'thin' },
-                right: { style: 'thin' }
-            };
-        });
+    sheet.mergeCells(`A${row}:D${row}`);
+    sheet.getCell(`A${row}`).value = 'RELACIONES / ACCIONISTAS / VINCULADOS';
+    sheet.getCell(`A${row}`).font = { bold: true };
+    sheet.getCell(`A${row}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'E5E7EB' }
+    };
+    row++;
 
-        /* ================== DATA ================== */
+    // Encabezado tabla
+    const tableHeader = [
+      'Tipo Doc.',
+      'N° Identificación',
+      'Nombre / Razón social',
+      '% Participación'
+    ];
 
-        const baseRow = {
-            id: sarlaft.id,
-            tipoDoc: sarlaft.naturalPerson?.docType ?? sarlaft.juridicalPerson?.nitType,
-            doc: sarlaft.naturalPerson?.docNumber ?? sarlaft.juridicalPerson?.nit,
-            nombre:
-                sarlaft.naturalPerson
-                    ? `${sarlaft.naturalPerson.firstName} ${sarlaft.naturalPerson.lastName}`
-                    : sarlaft.juridicalPerson?.businessName,
-            direccion:
-                sarlaft.naturalPerson?.address ??
-                sarlaft.juridicalPerson?.address,
-            telefono:
-                sarlaft.naturalPerson?.phone ??
-                sarlaft.juridicalPerson?.phone,
-            email:
-                sarlaft.naturalPerson?.email ??
-                sarlaft.juridicalPerson?.email
-        };
+    sheet.addRow(tableHeader);
+    sheet.getRow(row).eachCell(cell => {
+      cell.font = { bold: true };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FEF08A' }
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+    row++;
 
-        /* === Si no hay relaciones, igual sacamos una fila === */
-        if (!sarlaft.relations?.length) {
-            sheet.addRow([
-                baseRow.id,
-                baseRow.tipoDoc,
-                baseRow.doc,
-                baseRow.nombre,
-                baseRow.direccion,
-                baseRow.telefono,
-                baseRow.email,
-                '',
-                '',
-                '',
-                ''
-            ]);
-        }
-
-        /* === Relaciones / accionistas === */
-        sarlaft.relations?.forEach(rel => {
-            sheet.addRow([
-                baseRow.id,
-                baseRow.tipoDoc,
-                baseRow.doc,
-                baseRow.nombre,
-                baseRow.direccion,
-                baseRow.telefono,
-                baseRow.email,
-                rel.typeDoc ?? '',
-                rel.docNumber ?? '',
-                rel.socialName ?? '',
-                `${rel.percentageParticipation ?? ''}%`
-            ]);
-        });
-
-        /* ================== STYLES ================== */
-
-        sheet.eachRow((row, rowNumber) => {
-            if (rowNumber === 1) return;
-
-            row.eachCell(cell => {
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
-                };
-                cell.alignment = { vertical: 'middle', horizontal: 'left' };
-            });
-        });
-
-        sheet.columns.forEach(col => {
-            col.width = 22;
-        });
-
-        /* ================== RESPONSE ================== */
-
-        const buffer = await workbook.xlsx.writeBuffer();
-
-        return new Response(buffer, {
-            headers: {
-                'Content-Type':
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition': `attachment; filename=SARLAFT_${sarlaft.id}.xlsx`
-            }
-        });
-    } catch (err: any) {
-        console.error('Error generating Excel:', err);
-        return json({ error: err.message }, { status: 500 });
+    if (!sarlaft.relations?.length) {
+      sheet.addRow(['-', '-', '-', '-']);
+      row++;
+    } else {
+      sarlaft.relations.forEach(rel => {
+        sheet.addRow([
+          rel.typeDoc ?? '-',
+          rel.docNumber ?? '-',
+          rel.socialName ?? '-',
+          `${rel.percentageParticipation ?? ''}%`
+        ]);
+        row++;
+      });
     }
+
+    /* ================== RESPONSE ================== */
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    return new Response(buffer, {
+      headers: {
+        'Content-Type':
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename=SARLAFT_${sarlaft.id}.xlsx`
+      }
+    });
+  } catch (err: any) {
+    console.error('Error generating Excel:', err);
+    return json({ error: err.message }, { status: 500 });
+  }
 };
