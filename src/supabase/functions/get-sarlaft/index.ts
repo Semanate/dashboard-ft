@@ -2,9 +2,6 @@
 import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
-import { excelMappings } from "../_shared/excel-mappings.ts";
-import { mapPayloadToFlatObject } from "../_shared/map-payload.ts";
-import { buildSarlaftObject } from "../_shared/build-sarlaft-object.ts";
 
 serve(async (req) => {
     if (req.method !== "GET") {
@@ -70,7 +67,7 @@ serve(async (req) => {
     const rows = sarlaftId ? [data] : data;
 
     const mapped = rows.map((row: any) => {
-          const { payload, ...rest } = row;
+        const { payload, ...rest } = row;
 
         //const fullPayload = buildSarlaftObject(row);
         // const values = mapPayloadToFlatObject(fullPayload, excelMappings);

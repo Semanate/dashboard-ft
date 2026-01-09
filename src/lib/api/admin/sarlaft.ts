@@ -51,3 +51,16 @@ export function getSarlaftById(
         },
     });
 }
+
+export function deleteSarlaftById(
+    accessToken: string,
+    sarlaftId: string
+): Promise<ApiResponse<void>> {
+    return callEdge<void>(`delete-sarlaft`, accessToken, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-sarlaft-id': sarlaftId
+        },
+    });
+}

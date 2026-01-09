@@ -50,6 +50,11 @@
   async function deleteForm(data) {
     console.log("Deleting form with ID:", data.id);
     // Implement deletion logic here
+    const res = await fetch("/sarlaft", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: data.id }),
+    });
   }
 
   const columns = [
