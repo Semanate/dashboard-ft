@@ -2,11 +2,12 @@
   import Button from "$lib/components/atoms/button/Button.svelte";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
+  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
 
   let { form }: { form?: any } = $props();
 
   function handleCancel() {
-    goto('/admin/news');
+    goto("/admin/news");
   }
 </script>
 
@@ -15,33 +16,34 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
-  <div class="max-w-4xl mx-auto">
+  <div class="w-full mx-auto">
     <div class="flex items-center mb-6">
-      <button 
-        type="button" 
+      <ButtonWithIcon
+        type="button"
+        iconButton="ArrowLeftIcon"
         onclick={handleCancel}
         class="mr-4 text-gray-600 hover:text-gray-900"
-      >
-        ← Volver
-      </button>
+        label="Volver"
+      />
       <h1 class="text-3xl font-bold text-gray-900">Crear Nueva Noticia</h1>
     </div>
 
     {#if form?.error}
-      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+      <div
+        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4"
+      >
         {form.error}
       </div>
     {/if}
 
-    <form 
-      method="POST" 
-      use:enhance
-      class="bg-white rounded-lg shadow-lg p-6"
-    >
+    <form method="POST" use:enhance class="bg-white rounded-lg shadow-lg p-6">
       <div class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="title"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Título *
             </label>
             <input
@@ -54,7 +56,10 @@
             />
           </div>
           <div>
-            <label for="author" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="author"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Autor *
             </label>
             <input
@@ -69,7 +74,10 @@
         </div>
 
         <div>
-          <label for="excerpt" class="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            for="excerpt"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
             Resumen
           </label>
           <textarea
@@ -82,7 +90,10 @@
         </div>
 
         <div>
-          <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            for="content"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
             Contenido *
           </label>
           <textarea
@@ -97,7 +108,10 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="status"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Estado
             </label>
             <select
@@ -111,7 +125,10 @@
             </select>
           </div>
           <div>
-            <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              for="featured_image"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
               Imagen destacada (URL)
             </label>
             <input
@@ -125,7 +142,10 @@
         </div>
 
         <div>
-          <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            for="tags"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
             Etiquetas (separadas por comas)
           </label>
           <input
@@ -139,19 +159,15 @@
       </div>
 
       <div class="flex justify-end space-x-4 mt-8">
-        <Button 
-          variant="secondary"
-          label="Cancelar"
-          onclick={handleCancel}
-        >
+        <Button variant="secondary" label="Cancelar" onclick={handleCancel}>
           Cancelar
         </Button>
-        <button 
+        <ButtonWithIcon
           type="submit"
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-        >
-          Crear Noticia
-        </button>
+          variant="primary"
+          iconButton="SaveIcon"
+          label="Guardar Noticia"
+        />
       </div>
     </form>
   </div>
