@@ -8,12 +8,12 @@ export const load = async ({ locals }) => {
         throw redirect(303, '/login');
     }
     const accessToken = locals.accessToken;
-    
+
     if (!accessToken) {
         throw new Error('No session')
     }
 
-    const res = fetchAdminUsers(accessToken);
+    const res = await fetchAdminUsers(accessToken);
     const { data: users, success } = await res;
 
 
@@ -28,14 +28,14 @@ export const actions = {
     updateRole: async ({ request, locals }) => {
         const formData = await request.formData();
         const accessToken = (locals as any).accessToken;
-        
+
         if (!accessToken) {
             return { error: 'No tienes autorización' };
         }
-        
+
         const userId = formData.get('userId')?.toString();
         const role = formData.get('role')?.toString();
-        
+
         if (!userId || !role) {
             return { error: 'ID de usuario y rol son requeridos' };
         }
