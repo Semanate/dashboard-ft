@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ApiResponse } from '$lib/types/api';
 import { supabase } from '$lib/db/client';
 
@@ -30,7 +31,7 @@ export interface UpdateNewsData extends Partial<CreateNewsData> {
     id: number;
 }
 
-export async function fetchNews(): Promise<ApiResponse<NewsItem[]>> {
+export async function fetchNews(): Promise<ApiResponse<NewsItem[] | []>> {
     try {
         const { data, error } = await supabase
             .from('news')
@@ -38,12 +39,12 @@ export async function fetchNews(): Promise<ApiResponse<NewsItem[]>> {
             .order('created_at', { ascending: false });
 
         if (error) {
-            return { error: error.message };
+            return { data: [], error: error.message, success: false };
         }
 
-        return { data: data || [] };
+        return { data: data, success: true };
     } catch (error) {
-        return { error: 'Error al obtener las noticias' };
+        return { error: 'Error al obtener las noticias', data: [], success: false };
     }
 }
 
@@ -56,16 +57,16 @@ export async function fetchNewsById(id: number): Promise<ApiResponse<NewsItem>> 
             .single();
 
         if (error) {
-            return { error: error.message };
+            return { error: error.message, data: null, success: false };
         }
 
         if (!data) {
-            return { error: 'Noticia no encontrada' };
+            return { error: 'Noticia no encontrada', data: null, success: false };
         }
 
-        return { data };
+        return { data, success: true };
     } catch (error) {
-        return { error: 'Error al obtener la noticia' };
+        return { error: 'Error al obtener la noticia', data: null, success: false };
     }
 }
 
@@ -89,21 +90,21 @@ export async function createNews(newsData: CreateNewsData): Promise<ApiResponse<
             .single();
 
         if (error) {
-            return { error: error.message };
+            return { error: error.message, data: null, success: false };
         }
 
-        return { data };
+        return { data, success: true };
     } catch (error) {
-        return { error: 'Error al crear la noticia' };
+        return { error: 'Error al crear la noticia', data: null, success: false };
     }
 }
 
 export async function updateNews(updateData: UpdateNewsData): Promise<ApiResponse<NewsItem>> {
     try {
         const { id, ...newsData } = updateData;
-        
+
         // Generate new slug if title changed
-        let dataToUpdate = { ...newsData };
+        const dataToUpdate: Partial<NewsItem> = { ...newsData };
         if (newsData.title) {
             dataToUpdate.slug = newsData.title.toLowerCase()
                 .replace(/[^\w ]+/g, '')
@@ -123,12 +124,12 @@ export async function updateNews(updateData: UpdateNewsData): Promise<ApiRespons
             .single();
 
         if (error) {
-            return { error: error.message };
+            return { error: error.message, data: null, success: false };
         }
 
-        return { data };
+        return { data, success: true };
     } catch (error) {
-        return { error: 'Error al actualizar la noticia' };
+        return { error: 'Error al actualizar la noticia', data: null, success: false };
     }
 }
 
@@ -140,12 +141,12 @@ export async function deleteNews(id: number): Promise<ApiResponse<void>> {
             .eq('id', id);
 
         if (error) {
-            return { error: error.message };
+            return { error: error.message, data: undefined, success: false };
         }
 
-        return { data: undefined };
+        return { data: undefined, success: true };
     } catch (error) {
-        return { error: 'Error al eliminar la noticia' };
+        return { error: 'Error al eliminar la noticia', data: undefined, success: false };
     }
 }
 
@@ -159,11 +160,11 @@ export async function fetchPublishedNews(): Promise<ApiResponse<NewsItem[]>> {
             .order('published_at', { ascending: false });
 
         if (error) {
-            return { error: error.message };
+            return { error: error.message, data: [], success: false };
         }
 
-        return { data: data || [] };
+        return { data: data || [], success: true };
     } catch (error) {
-        return { error: 'Error al obtener las noticias' };
+        return { error: 'Error al obtener las noticias', data: [], success: false };
     }
 }

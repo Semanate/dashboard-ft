@@ -1,6 +1,16 @@
 import { ErrorCodes } from '$lib/constants/error.codes';
 import { fail, redirect } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
+import { fetchPublishedNews } from '$lib/api/admin/news.js';
+
+export async function load() {
+    const res = await fetchPublishedNews();
+    const news = res.data || [];
+    console.log("Fetched news items:", news);
+    return {
+        news
+    };
+}
 
 
 export const actions = {

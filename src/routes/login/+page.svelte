@@ -1,85 +1,105 @@
 <script lang="ts">
   import ButtonWithLoading from "$lib/components/atoms/button/ButtonWithLoading.svelte";
-  import IMAGE_URL from "$lib/assets/Login-cuate.svg";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
   import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
+
   export let form;
   export let loading = false;
+  export let data;
+  const { news } = data;
 </script>
 
-<main class="min-h-screen grid place-items-center bg-primary/30 p-6">
+<main class="min-h-screen flex items-center justify-center bg-primary/10 p-6">
   <Card
-    title=""
     content=""
-    class="w-full max-w-4xl! bg-white shadow-2xl rounded-3xl overflow-hidden grid grid-cols-1 md:grid-cols-2"
+    title=""
+    class="w-full max-w-6xl overflow-hidden rounded-3xl shadow-xl grid grid-cols-1 lg:grid-cols-2 bg-white"
   >
-    <div class="p-10 flex flex-col justify-center">
-      <h1 class="text-3xl font-bold mb-2">Hola!</h1>
-      <p class="text-gray-500 mb-6">Hey, Bienvenido!</p>
+    <!-- LOGIN -->
+    <section class="p-10 lg:p-14 flex flex-col justify-center">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">¡Bienvenido!</h1>
+        <p class="text-gray-500 mt-1">Inicia sesión para continuar</p>
+      </header>
 
-      <form class="space-y-4 w-full" method="POST">
+      <form method="POST" class="space-y-6">
         <FormSection
-          title=""
           fields={[
             {
               id: "email",
               type: "email",
               label: "Correo electrónico",
-              placeholder: "Ingrese su correo electrónico",
+              placeholder: "correo@ejemplo.com",
               value: "",
-              onChange: () => {},
             },
             {
               id: "password",
               type: "password",
               label: "Contraseña",
-              placeholder: "Ingrese su contraseña",
+              placeholder: "••••••••",
               value: "",
-              onChange: () => {},
             },
           ]}
         />
 
-        <div class="flex justify-between items-center text-sm text-gray-500">
-          <div class="flex items-center gap-2">
-            <InputCheck id="remember-me" label="Recordarme" />
-          </div>
-          <!-- <a href="#" class="hover:underline">Recordar contraseña?</a> -->
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <InputCheck id="remember" label="Recordarme" />
+          <a href="#" class="hover:underline">¿Olvidaste tu contraseña?</a>
         </div>
 
         {#if form?.code}
-          <div class="p-2 bg-red-50 text-red-600 rounded">
+          <div class="rounded-lg bg-red-50 px-4 py-3 text-red-600 text-sm">
             {form.message}
           </div>
         {/if}
 
         <ButtonWithLoading
           type="submit"
-          label="Iniciar Sesión"
+          label="Iniciar sesión"
           variant="primary"
           size="large"
-          class="w-full justify-center"
+          class="w-full items-center justify-center"
           {loading}
         />
       </form>
 
-      <p class="mt-6 text-sm">
+      <footer class="mt-8 text-sm text-gray-600">
         ¿No tienes una cuenta?
-        <a href="#" class="text-primary font-semibold hover:underline"
-          >Regístrate</a
-        >
-      </p>
-    </div>
+        <a href="#" class="font-semibold text-primary hover:underline">
+          Crear cuenta
+        </a>
+      </footer>
+    </section>
 
-    <div
-      class="bg-linear-to-b from-white to-primary/20 flex items-center justify-center p-8 hover:shadow-lg transition-shadow duration-300 hover:border-linear-to-b hover:from-white hover:to-primary/40"
-    >
-      <img
-        src={IMAGE_URL}
-        alt="Illustration"
-        class="w-[80%] max-h-[480px] object-contain hover:scale-105 transition-transform duration-300"
-      />
-    </div>
+    <!-- INFO / TRUST -->
+
+    <aside class="hidden lg:flex flex-col justify-center bg-primary/5 px-12">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2">
+        Últimas noticias
+      </h2>
+
+      <p class="text-gray-600 mb-6 text-sm">
+        Actualizaciones recientes sobre normativa y cumplimiento
+      </p>
+
+      <ul class="space-y-5">
+        {#each news as item}
+          <li class="border-l-4 border-primary pl-4">
+            <p class="text-sm font-semibold text-gray-900 leading-snug">
+              {item.title}
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+              {new Date(item.date).toLocaleDateString("es-CO")}
+            </p>
+
+            <p class="text-sm text-gray-600 mt-2 leading-relaxed line-clamp-2">
+              {item.summary}
+            </p>
+          </li>
+        {/each}
+      </ul>
+    </aside>
   </Card>
 </main>
