@@ -2,25 +2,9 @@
 import ExcelJS from "exceljs";
 import { resolve } from "node:path";
 import { json } from "@sveltejs/kit";
-import type { FormDataType } from "$lib/types";
 import { getSarlaftById } from "$lib/api/admin/sarlaft";
-import { applyExcelMappings } from "$lib/utils/applyExcelMappings";
+import type { RequestHandler } from '@sveltejs/kit';
 
-// Función para formatear valores monetarios
-function formatCurrency(value: number): string {
-    return new Intl.NumberFormat('es-CO', {
-        style: 'currency',
-        currency: 'COP',
-        minimumFractionDigits: 0,
-    }).format(value);
-}
-
-// Función para formatear fechas
-function formatDate(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-CO');
-}
 
 export async function GET() {
     const pathExcel = resolve("static/forms/FT-GFI-001.xlsx");
@@ -153,60 +137,153 @@ export async function GET() {
     return json({ data });
 }
 
-export async function POST({ request, cookies }) {
+export const POST: RequestHandler = async ({ request, cookies }) => {
     try {
-        const accessToken = cookies.get("sb-access-token");
+        const accessToken = cookies.get('sb-access-token');
         if (!accessToken) {
-            return json({ error: "No autorizado" }, { status: 401 });
+            return json({ error: 'No autorizado' }, { status: 401 });
         }
 
-        const payload = await request.json();
-
-        const response = await getSarlaftById(accessToken, payload.id);
-        const formData = response.data;
-
-        if (!formData?.values) {
-            return json({ error: "Formulario inválido" }, { status: 400 });
+        const { id } = await request.json();
+        if (!id) {
+            return json({ error: 'ID requerido' }, { status: 400 });
         }
 
-        // return json({ formData });
-        const templatePath = resolve("static/forms/FT-GFI-001.xlsx");
+        const response = await getSarlaftById(accessToken, id);
+        const sarlaft = response.data;
+
+        if (!sarlaft) {
+            return json({ error: 'Formulario no encontrado' }, { status: 404 });
+        }
+
+        /* ================== WORKBOOK ================== */
+
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.readFile(templatePath);
+        const sheet = workbook.addWorksheet('SARLAFT');
 
-        const sheet = workbook.worksheets[0];
-        if (!sheet) {
-            return json({ error: "Worksheet not found" }, { status: 404 });
+        /* ================== HEADER ================== */
+
+        const headers = [
+            'ID Transacción',
+            'Tipo documento',
+            'N° identificación',
+            'Nombre / Razón social',
+            'Dirección',
+            'Teléfono',
+            'Email',
+            'Tipo documento accionista',
+            'N° identificación',
+            'Nombre / Razón social',
+            'ETC'
+        ];
+
+        sheet.addRow(headers);
+
+        const headerRow = sheet.getRow(1);
+        headerRow.eachCell(cell => {
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFFF00' } // amarillo
+            };
+            cell.font = { bold: true };
+            cell.alignment = { vertical: 'middle', horizontal: 'center' };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        /* ================== DATA ================== */
+
+        const baseRow = {
+            id: sarlaft.id,
+            tipoDoc: sarlaft.naturalPerson?.docType ?? sarlaft.juridicalPerson?.nitType,
+            doc: sarlaft.naturalPerson?.docNumber ?? sarlaft.juridicalPerson?.nit,
+            nombre:
+                sarlaft.naturalPerson
+                    ? `${sarlaft.naturalPerson.firstName} ${sarlaft.naturalPerson.lastName}`
+                    : sarlaft.juridicalPerson?.businessName,
+            direccion:
+                sarlaft.naturalPerson?.address ??
+                sarlaft.juridicalPerson?.address,
+            telefono:
+                sarlaft.naturalPerson?.phone ??
+                sarlaft.juridicalPerson?.phone,
+            email:
+                sarlaft.naturalPerson?.email ??
+                sarlaft.juridicalPerson?.email
+        };
+
+        /* === Si no hay relaciones, igual sacamos una fila === */
+        if (!sarlaft.relations?.length) {
+            sheet.addRow([
+                baseRow.id,
+                baseRow.tipoDoc,
+                baseRow.doc,
+                baseRow.nombre,
+                baseRow.direccion,
+                baseRow.telefono,
+                baseRow.email,
+                '',
+                '',
+                '',
+                ''
+            ]);
         }
 
-        function set(name: string, value: any) {
-            const { ranges } = workbook.definedNames.getRanges(name);
-            if (!ranges || ranges.length === 0) return;
+        /* === Relaciones / accionistas === */
+        sarlaft.relations?.forEach(rel => {
+            sheet.addRow([
+                baseRow.id,
+                baseRow.tipoDoc,
+                baseRow.doc,
+                baseRow.nombre,
+                baseRow.direccion,
+                baseRow.telefono,
+                baseRow.email,
+                rel.typeDoc ?? '',
+                rel.docNumber ?? '',
+                rel.socialName ?? '',
+                `${rel.percentageParticipation ?? ''}%`
+            ]);
+        });
 
-            const [sheetName, cellRef] = ranges[0].split("!");
-            const targetSheet = workbook.getWorksheet(sheetName.replace(/'/g, ""));
-            if (!targetSheet) return;
+        /* ================== STYLES ================== */
 
-            targetSheet.getCell(cellRef).value = value;
-        }
+        sheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return;
 
-        for (const [namedRange, value] of Object.entries(formData.values)) {
-            if (value !== undefined && value !== null) {
-                set(namedRange, value);
-            }
-        }
+            row.eachCell(cell => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+                cell.alignment = { vertical: 'middle', horizontal: 'left' };
+            });
+        });
+
+        sheet.columns.forEach(col => {
+            col.width = 22;
+        });
+
+        /* ================== RESPONSE ================== */
 
         const buffer = await workbook.xlsx.writeBuffer();
 
         return new Response(buffer, {
             headers: {
-                "Content-Type":
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "Content-Disposition": `attachment; filename=SARLAFT_${formData.id}.xlsx`,
-            },
+                'Content-Type':
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition': `attachment; filename=SARLAFT_${sarlaft.id}.xlsx`
+            }
         });
     } catch (err: any) {
-        console.error("Error generating Excel:", err);
+        console.error('Error generating Excel:', err);
         return json({ error: err.message }, { status: 500 });
     }
-}
+};
