@@ -15,7 +15,7 @@ export const load = async ({ locals }) => {
 
     const res = await fetchAdminUsers(accessToken);
     const { data: users, success, error } = await res;
-
+    console.log("Fetch users result:", error);
     if (!success) {
         throw new Error('Failed to fetch users');
     }

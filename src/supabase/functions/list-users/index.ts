@@ -19,7 +19,6 @@ serve(async (req) => {
     const { data: { user }, error: userError } =
         await supabase.auth.getUser()
 
-    console.log("User fetched in list-users function:", user, userError);
     if (userError || !user) {
         return jsonResponse({
             success: false,
@@ -42,6 +41,7 @@ serve(async (req) => {
         }, 403)
     }
 
+    console.log("Authorized admin user:", user.id, profile.role);
     const admin = createAdminClient()
 
     const { data, error } = await admin.auth.admin.listUsers()

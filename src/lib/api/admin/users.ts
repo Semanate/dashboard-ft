@@ -5,7 +5,12 @@ import type { ApiResponse } from '$lib/types/api'
 export function fetchAdminUsers(
     accessToken: string
 ): Promise<ApiResponse<AdminUser[]>> {
-    return callEdge<AdminUser[]>('list-users', accessToken)
+    return callEdge<AdminUser[]>('list-users', accessToken, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
 }
 export function updateUserRole(
     accessToken: string,
