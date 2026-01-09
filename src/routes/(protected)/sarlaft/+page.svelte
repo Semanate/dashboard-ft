@@ -39,12 +39,17 @@
     });
 
     const blob = await res.blob();
-     const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
     a.download = "Formulario_Llenado.xlsx";
     a.click();
+  }
+
+  async function deleteForm(data) {
+    console.log("Deleting form with ID:", data.id);
+    // Implement deletion logic here
   }
 
   const columns = [
@@ -116,6 +121,13 @@
               iconClass: "text-blue-300/80",
               onclick: (row) => {
                 generateExcel(row);
+              },
+            },
+            {
+              iconName: "Delete",
+              iconClass: "text-red-300/80",
+              onclick: (row) => {
+                deleteForm(row);
               },
             },
           ]}

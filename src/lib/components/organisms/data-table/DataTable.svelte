@@ -4,7 +4,6 @@
     import TableCell from "$lib/components/atoms/table-cell/TableCell.svelte";
     import Table from "$lib/components/molecules/table-row/Table.svelte";
     import TableRow from "$lib/components/molecules/table-row/TableRow.svelte";
-    import type { SvelteComponent } from "svelte";
 
     const {
         table,
