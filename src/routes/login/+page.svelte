@@ -3,11 +3,12 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Card from "$lib/components/molecules/card/Card.svelte";
   import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
+    import type { NewsItem } from "$lib/types/news.js";
 
   export let form;
   export let loading = false;
   export let data;
-  const { news } = data;
+  const { news }: { news: NewsItem[] } = data;
 </script>
 
 <main class="min-h-screen flex items-center justify-center bg-primary/10 p-6">
@@ -91,11 +92,11 @@
             </p>
 
             <p class="text-xs text-gray-500 mt-1">
-              {new Date(item.date).toLocaleDateString("es-CO")}
+              {new Date(item.created_at).toLocaleDateString("es-CO")}
             </p>
 
             <p class="text-sm text-gray-600 mt-2 leading-relaxed line-clamp-2">
-              {item.summary}
+              {item.excerpt}
             </p>
           </li>
         {/each}
