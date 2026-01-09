@@ -26,6 +26,7 @@ serve(async (req) => {
         .select(`
       id,
       status,
+      updated_at,
       created_at,
       payload,
 
@@ -69,15 +70,17 @@ serve(async (req) => {
     const rows = sarlaftId ? [data] : data;
 
     const mapped = rows.map((row: any) => {
-        const fullPayload = buildSarlaftObject(row);
-        console.log("Full Payload:", fullPayload.dateAggrement);
-        const values = mapPayloadToFlatObject(fullPayload, excelMappings);
+          const { payload, ...rest } = row;
+
+        //const fullPayload = buildSarlaftObject(row);
+        // const values = mapPayloadToFlatObject(fullPayload, excelMappings);
         // console.log("Mapped Values:", values);
         return {
             id: row.id,
             status: row.status,
-            createdAt: row.created_at,
-            values,
+            // createdAt: row.created_at,
+            ...rest,
+            ...payload,
         };
     });
 

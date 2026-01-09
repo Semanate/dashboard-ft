@@ -41,7 +41,6 @@ serve(async (req) => {
         }, 403)
     }
 
-    console.log("Authorized admin user:", user.id, profile.role);
     const admin = createAdminClient()
 
     const { data, error } = await admin.auth.admin.listUsers()

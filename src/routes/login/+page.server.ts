@@ -49,19 +49,18 @@ export const actions = {
         cookies.set("sb-access-token", data.session.access_token, {
             path: "/",
             httpOnly: true,
-            sameSite: "strict",
-            secure: true,
+            sameSite: "lax",
+            secure: false,
             maxAge: 60 * 60 * 24 * 7 // 7 días
         });
 
         cookies.set("sb-refresh-token", data.session.refresh_token, {
             path: "/",
             httpOnly: true,
-            sameSite: "strict",
-            secure: true,
+            sameSite: "lax",
+            secure: false,
             maxAge: 60 * 60 * 24 * 30 // 30 días
         });
-
 
         throw redirect(303, '/dashboard');
     }
