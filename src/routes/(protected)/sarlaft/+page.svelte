@@ -31,7 +31,6 @@
   });
 
   async function generateExcel(data) {
-    // const formData = await getSarlaftById(data.id);
     const res = await fetch("/excel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,13 +47,14 @@
   }
 
   async function deleteForm(data) {
-    console.log("Deleting form with ID:", data.id);
     // Implement deletion logic here
     const res = await fetch("/sarlaft", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: data.id }),
     });
+
+    await loadForms();
   }
 
   const columns = [

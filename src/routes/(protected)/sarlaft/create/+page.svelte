@@ -4,6 +4,10 @@
   import { sarlaftCategories } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
+  import { goto } from "$app/navigation";
+
+  let showSuccessModal = $state(false);
+  let successMessage = $state("");
 
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
   let formData: FormDataType = getValues(formDataState) as FormDataType;
@@ -38,6 +42,14 @@
       const save = await saveFormData(formData);
       if (save) {
         console.log("Auto-guardado exitoso");
+
+        successMessage = "Formulario guardado correctamente.";
+        showSuccessModal = true;
+
+        setTimeout(() => {
+          showSuccessModal = false;
+          goto("/sarlaft/");
+        }, 1800);
       }
     }
   }
@@ -180,6 +192,25 @@
         Última actualización: {new Date(
           getValues<FormDataType>(formData).updatedAt,
         ).toLocaleString("es-CO")}
+      </div>
+    {/if}
+    {#if showSuccessModal}
+      <div
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">
+            ✔ Operación exitosa
+          </h2>
+
+          <p class="text-gray-600 mb-4">
+            {successMessage}
+          </p>
+
+          <p class="text-sm text-gray-400">Redirigiendo…</p>
+        </div>
       </div>
     {/if}
 
