@@ -122,7 +122,8 @@
       ontouchstart={startDrawing}
       ontouchmove={draw}
       ontouchend={stopDrawing}
-    />
+    >
+    </canvas>
   </div>
 
   <div class="flex gap-3 items-center">

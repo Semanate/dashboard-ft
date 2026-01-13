@@ -325,7 +325,7 @@ const typesForeignCurrencyArray = Object.entries(typesForeignCurrency).map(([key
 const typesPerson: Record<string, string> = {
     NAT: "Persona Natural",
     JUR: "Persona Jurídica",
-   // LGL: "Representante Legal",
+    // LGL: "Representante Legal",
 };
 
 const typesPersonArray = Object.entries(typesPerson).map(([key, value]) => ({
@@ -389,7 +389,7 @@ export const sarlaftCategories = [
                 id: "repLastName1",
                 name: "representative.lastName1",
                 type: "text",
-                label: "Apellido 1",
+                label: "Primer Apellido",
                 required: false,
                 value: "",
             },
@@ -397,7 +397,7 @@ export const sarlaftCategories = [
                 id: "repLastName2",
                 name: "representative.lastName2",
                 type: "text",
-                label: "Apellido 2",
+                label: "Segundo Apellido",
                 required: false,
                 value: "",
             },
@@ -414,7 +414,7 @@ export const sarlaftCategories = [
             {
                 id: "repDocNumber",
                 name: "representative.docNumber",
-                type: "text",
+                type: "number",
                 label: "Número de documento",
                 required: false,
                 value: "",
@@ -422,7 +422,7 @@ export const sarlaftCategories = [
             {
                 id: "repPhone",
                 name: "representative.phone",
-                type: "text",
+                type: "number",
                 label: "Teléfono",
                 required: false,
                 value: "",
@@ -430,7 +430,7 @@ export const sarlaftCategories = [
             {
                 id: "repEmail",
                 name: "representative.email",
-                type: "text",
+                type: "email",
                 label: "Email",
                 required: false,
                 value: "",
@@ -448,13 +448,22 @@ export const sarlaftCategories = [
             {
                 id: "repActivity",
                 name: "representative.activitySector",
-                type: "select",
-                label: "Sector de actividad",
-                placeholder: "Seleccione un sector de actividad",
+                type: "text",
+                label: "Codigo CIIU - Principal actividad económica",
+                placeholder: "Ej: CIIU 4711 - Comercio al por mayor de vehículos automotores",
                 required: false,
-                options: activitySectorsArray,
                 value: "",
             },
+            {
+                id: "repActivitySecondary",
+                name: "representative.activitySectorSecondary",
+                type: "text",
+                label: "Codigo CIIU - Secundario",
+                placeholder: "Ej: CIIU 4791 - Comercio al por menor de prendas de vestir y calzado en establecimientos especializados",
+                required: false,
+                value: "",
+            },
+
             {
                 id: "repAddress",
                 name: "representative.address",
@@ -485,7 +494,7 @@ export const sarlaftCategories = [
                 id: "natLast1",
                 name: "naturalPerson.lastName1",
                 type: "text",
-                label: "Apellido 1",
+                label: "Primer Apellido",
                 required: false,
                 value: "",
             },
@@ -493,7 +502,7 @@ export const sarlaftCategories = [
                 id: "natLast2",
                 name: "naturalPerson.lastName2",
                 type: "text",
-                label: "Apellido 2",
+                label: "Segundo Apellido",
                 required: false,
                 value: "",
             },
@@ -510,7 +519,7 @@ export const sarlaftCategories = [
             {
                 id: "natDocNumber",
                 name: "naturalPerson.docNumber",
-                type: "text",
+                type: "number",
                 label: "Número de documento",
                 required: false,
                 value: "",
@@ -536,7 +545,7 @@ export const sarlaftCategories = [
             {
                 id: "natPhone",
                 name: "naturalPerson.phone",
-                type: "text",
+                type: "number",
                 label: "Teléfono",
                 required: false,
                 value: "",
@@ -567,13 +576,22 @@ export const sarlaftCategories = [
                 required: false,
                 value: "",
             },
+
             {
                 id: "natActivity",
                 name: "naturalPerson.activitySector",
-                type: "select",
-                label: "Sector de actividad",
-                options: activitySectorsArray,
-                placeholder: "Seleccione un sector de actividad",
+                type: "text",
+                label: "Codigo CIIU - Principal actividad económica",
+                placeholder: "Ej: CIIU 4711 - Comercio al por mayor de vehículos automotores",
+                required: false,
+                value: "",
+            },
+            {
+                id: "natActivitySecondary",
+                name: "naturalPerson.activitySectorSecondary",
+                type: "text",
+                label: "Codigo CIIU - Secundario",
+                placeholder: "Ej: CIIU 4791 - Comercio al por menor de prendas de vestir y calzado en establecimientos especializados",
                 required: false,
                 value: "",
             },
@@ -606,7 +624,7 @@ export const sarlaftCategories = [
             {
                 id: "jurPhone",
                 name: "juridicalPerson.phone",
-                type: "text",
+                type: "number",
                 label: "Teléfono",
                 required: false,
                 value: "",
@@ -1008,17 +1026,25 @@ export const sarlaftCategories = [
     // 8. MONEDA EXTRANJERA
     // ============================================================
     {
-        label: "Moneda Extranjera / Activos Virtuales",
+        label: "Moneda Extranjera y Activos Virtuales",
         fields: [
             {
                 id: "fxManage",
                 name: "foreignCurrency.management",
                 type: "checkbox",
                 label:
-                    "¿Maneja productos financieros en moneda extranjera o activos virtuales? (SI/NO)",
+                    "¿Maneja productos financieros en moneda extranjera?",
                 required: false,
                 value: false,
             },
+            {
+                id: "fxInfo",
+                name: "foreignCurrency.infoVirtualAssets",
+                type: "textarea",
+                label: "¿Maneja activos virtuales o criptomonedas?",
+                required: false,
+                value: "",
+            }
         ],
     },
 
