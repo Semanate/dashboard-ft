@@ -246,8 +246,8 @@ const activitySectorsArray = Object.entries(activitySectors).map(([key, value]) 
 const accountTypes: Record<string, string> = {
     SAV: "Ahorros",
     CHK: "Corriente",
-    BUS: "Negocios",
-    INV: "Inversión",
+    // BUS: "Negocios",
+    // INV: "Inversión",
 };
 
 const accountTypesArray = Object.entries(accountTypes).map(([key, value]) => ({
@@ -325,7 +325,7 @@ const typesForeignCurrencyArray = Object.entries(typesForeignCurrency).map(([key
 const typesPerson: Record<string, string> = {
     NAT: "Persona Natural",
     JUR: "Persona Jurídica",
-    LGL: "Representante Legal",
+   // LGL: "Representante Legal",
 };
 
 const typesPersonArray = Object.entries(typesPerson).map(([key, value]) => ({
@@ -640,7 +640,7 @@ export const sarlaftCategories = [
                 id: "jurPhone2",
                 name: "juridicalPerson.phone2",
                 type: "text",
-                label: "Teléfono 2",
+                label: "Celular",
                 required: false,
                 value: "",
             },
@@ -964,7 +964,7 @@ export const sarlaftCategories = [
                 id: "pepPublic",
                 name: "pep.managePublicResources",
                 type: "checkbox",
-                label: "¿Maneja recursos públicos? (SI/NO)",
+                label: "¿Maneja recursos públicos?",
                 required: false,
                 value: "",
             },
@@ -972,7 +972,7 @@ export const sarlaftCategories = [
                 id: "pepPower",
                 name: "pep.publicPower",
                 type: "checkbox",
-                label: "¿Ejerce poder público? (SI/NO)",
+                label: "¿Ejerce poder público?",
                 required: false,
                 value: "",
             },
@@ -980,7 +980,7 @@ export const sarlaftCategories = [
                 id: "pepRelation",
                 name: "pep.relation",
                 type: "checkbox",
-                label: "¿Tiene relación con persona PEP? (SI/NO)",
+                label: "¿Tiene relación con persona PEP?",
                 required: false,
                 value: "",
             },
@@ -996,7 +996,7 @@ export const sarlaftCategories = [
                 id: "pepTax",
                 name: "pep.taxObligations",
                 type: "checkbox",
-                label: "¿Tiene obligaciones tributarias en otro país? (SI/NO)",
+                label: "¿Tiene obligaciones tributarias en otro país?",
                 required: false,
                 value: "",
             },
