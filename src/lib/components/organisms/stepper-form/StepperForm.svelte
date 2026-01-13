@@ -252,7 +252,7 @@
       />
     </div>
 
-    <div class="bg-white border rounded-md p-5 shadow-sm">
+    <div>
       {#if visibleIndexes.length === 0}
         <div class="text-gray-600">No hay secciones visibles.</div>
       {:else}
