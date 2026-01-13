@@ -520,6 +520,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.dateOfBirth",
                 type: "date",
                 label: "Fecha de nacimiento",
+                mode: "birthdate",
                 placeholder: "MM/DD/AAAA",
                 required: false,
                 value: "",

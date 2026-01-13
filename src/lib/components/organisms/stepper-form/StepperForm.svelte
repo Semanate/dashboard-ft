@@ -58,11 +58,6 @@
 
   let values = $derived.by(() => getValues(formData));
 
-  function isCategoryVisible(category) {
-    if (!category.isVisible) return true;
-    return category.isVisible(values);
-  }
-
   /**
    * Índices reales de categories que están visibles
    */
