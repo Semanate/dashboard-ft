@@ -1,10 +1,11 @@
 <script lang="ts">
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
-  import { sarlaftCategories } from "$lib/constants";
+  import { documentTypesArray, sarlaftCategories } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
+  import { createRelation } from "$lib/utils/object";
 
   let showSuccessModal = $state(false);
   let successMessage = $state("");
@@ -91,6 +92,60 @@
     a.download = "Formulario_Llenado.xlsx";
     a.click();
   }
+
+  let relations = $state([createRelation()]);
+
+  let totalPercentage = $derived.by(() =>
+    relations.reduce((sum, r) => {
+      const n = parseFloat(r.percentageParticipation);
+      return sum + (isNaN(n) ? 0 : n);
+    }, 0),
+  );
+
+  const relationsSections = $derived.by(() =>
+    relations.map((_, i) => ({
+      label: `Accionista / Relación ${i + 1}`,
+      fields: [
+        {
+          id: `relTypeDoc_${i}`,
+          name: `relations[${i}].typeDoc`,
+          type: "select",
+          label: "Tipo documento",
+          options: documentTypesArray,
+        },
+        {
+          id: `relDoc_${i}`,
+          name: `relations[${i}].docNumber`,
+          type: "text",
+          label: "Número documento",
+        },
+        {
+          id: `relName_${i}`,
+          name: `relations[${i}].socialName`,
+          type: "text",
+          label: "Nombre / Razón social",
+        },
+        {
+          id: `relPercent_${i}`,
+          name: `relations[${i}].percentageParticipation`,
+          type: "number",
+          label: "% Participación",
+        },
+        {
+          id: `relActAdmin_${i}`,
+          name: `relations[${i}].activityAdminResource`,
+          type: "text",
+          label: "Actividad recursos admin.",
+        },
+        {
+          id: `relRepGrade_${i}`,
+          name: `relations[${i}].activityReputationGradePublic`,
+          type: "text",
+          label: "Grado reputación pública",
+        },
+      ],
+    })),
+  );
 </script>
 
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
@@ -221,6 +276,33 @@
         console.log(data, "FORM DATA");
         autoSave();
       }}
-    />
+    >
+      <ButtonWithIcon
+        hidden={totalPercentage >= 100}
+        label="Agregar Accionistas"
+        iconButton="PlusCircle"
+        variant="ghost"
+        size="medium"
+        onclick={() => {}}
+      />
+
+      {#if totalPercentage < 100}
+        <p class="text-yellow-600 text-sm">
+          El porcentaje total es {totalPercentage}%. Falta completar el 100%.
+        </p>
+      {/if}
+
+      {#if totalPercentage > 100}
+        <p class="text-red-600 text-sm">
+          El porcentaje supera el 100%. Verifique los valores.
+        </p>
+      {/if}
+
+      {#if totalPercentage === 100}
+        <p class="text-green-600 text-sm">
+          El porcentaje accionarial está completo.
+        </p>
+      {/if}
+    </StepperForm>
   </div>
 </section>

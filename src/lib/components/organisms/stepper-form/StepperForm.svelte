@@ -37,6 +37,7 @@
     callbackOnSubmit?: (data: Record<string, any>) => void;
     isVisible?: boolean;
     updateNext?: () => void;
+    children?: any; // This Children Top Content
   }
 
   // activeVisible = posición dentro del listado visible
@@ -54,6 +55,7 @@
     isVisible = true,
     formData = $bindable({}),
     updateNext,
+    children,
   }: Props = $props();
 
   let values = $derived.by(() => getValues(formData));
@@ -253,6 +255,11 @@
     </div>
 
     <div>
+      {#if children}
+        <div class="mb-4">
+          {@render children()}
+        </div>
+      {/if}
       {#if visibleIndexes.length === 0}
         <div class="text-gray-600">No hay secciones visibles.</div>
       {:else}

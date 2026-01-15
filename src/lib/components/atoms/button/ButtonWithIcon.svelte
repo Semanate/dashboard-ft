@@ -9,6 +9,7 @@
     onclick?: () => void;
     loading?: boolean;
     children?: any;
+    hidden?: boolean;
     disabled?: boolean;
     class?: string;
     iconButton?: string;
@@ -18,6 +19,7 @@
     variant = "primary",
     disabled = false,
     size = "medium",
+    hidden = false,
     loading = false,
     label,
     class: classNames,
@@ -51,6 +53,7 @@
 </script>
 
 <button
+  hidden={hidden}
   type={props.type ?? "button"}
   class={buttonClass()}
   {...props}

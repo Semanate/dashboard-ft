@@ -337,39 +337,39 @@ export const sarlaftCategories = [
     // ============================================================
     // 1.1 INFORMACIÓN GENERAL
     // ============================================================F
-    {
-        label: "INFORMACIÓN GENERAL",
-        fields: [
-            {
-                id: "dateAggrement",
-                name: "dateAggrement",
-                type: "date",
-                label: "Fecha",
-                required: true,
-                placeholder: "",
-                value: new Date(),
-            },
-            {
-                id: "cityAggrement",
-                name: "cityAggrement",
-                type: "select",
-                label: "Ciudad",
-                required: true,
-                options: citysArray,
-                placeholder: "Seleccione una ciudad",
-                value: "",
-            },
-            {
-                id: "typePersonAggrement",
-                name: "typePersonAggrement",
-                placeholder: "Seleccione un tipo de persona",
-                type: "select",
-                label: "Tipo de persona",
-                required: true,
-                options: typesPersonArray,
-            },
-        ],
-    },
+    // {
+    //     label: "INFORMACIÓN GENERAL",
+    //     fields: [
+    //         {
+    //             id: "dateAggrement",
+    //             name: "dateAggrement",
+    //             type: "date",
+    //             label: "Fecha",
+    //             required: true,
+    //             placeholder: "",
+    //             value: new Date(),
+    //         },
+    //         {
+    //             id: "cityAggrement",
+    //             name: "cityAggrement",
+    //             type: "select",
+    //             label: "Ciudad",
+    //             required: true,
+    //             options: citysArray,
+    //             placeholder: "Seleccione una ciudad",
+    //             value: "",
+    //         },
+    //         {
+    //             id: "typePersonAggrement",
+    //             name: "typePersonAggrement",
+    //             placeholder: "Seleccione un tipo de persona",
+    //             type: "select",
+    //             label: "Tipo de persona",
+    //             required: true,
+    //             options: typesPersonArray,
+    //         },
+    //     ],
+    // },
     // ============================================================
     // 2. REPRESENTANTE LEGAL
     // ============================================================
@@ -880,61 +880,61 @@ export const sarlaftCategories = [
     // ============================================================
     // 5. RELACIONES (8 ACCIONISTAS)
     // ============================================================
-    ...Array.from({ length: 8 }).map((_, i) => ({
-        label: `Accionista / Relación ${i + 1}`,
-        fields: [
-            {
-                id: `relTypeDoc_${i}`,
-                name: `relations[${i}].typeDoc`,
-                type: "select",
-                placeholder: "Seleccione un tipo de documento",
-                label: "Tipo documento",
-                options: documentTypesArray,
-                required: false,
-                value: "",
-            },
-            {
-                id: `relDoc_${i}`,
-                name: `relations[${i}].docNumber`,
-                type: "text",
-                label: "Número documento",
-                required: false,
-                value: "",
-            },
-            {
-                id: `relName_${i}`,
-                name: `relations[${i}].socialName`,
-                type: "text",
-                label: "Nombre / Razón social",
-                required: false,
-                value: "",
-            },
-            {
-                id: `relPercent_${i}`,
-                name: `relations[${i}].percentageParticipation`,
-                type: "text",
-                label: "% Participación",
-                required: false,
-                value: "",
-            },
-            {
-                id: `relActAdmin_${i}`,
-                name: `relations[${i}].activityAdminResource`,
-                type: "text",
-                label: "Actividad recursos admin.",
-                required: false,
-                value: "",
-            },
-            {
-                id: `relRepGrade_${i}`,
-                name: `relations[${i}].activityReputationGradePublic`,
-                type: "text",
-                label: "Grado reputación pública",
-                required: false,
-                value: "",
-            },
-        ],
-    })),
+    // ...Array.from({ length: 8 }).map((_, i) => ({
+    //     label: `Accionista / Relación ${i + 1}`,
+    //     fields: [
+    //         {
+    //             id: `relTypeDoc_${i}`,
+    //             name: `relations[${i}].typeDoc`,
+    //             type: "select",
+    //             placeholder: "Seleccione un tipo de documento",
+    //             label: "Tipo documento",
+    //             options: documentTypesArray,
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `relDoc_${i}`,
+    //             name: `relations[${i}].docNumber`,
+    //             type: "text",
+    //             label: "Número documento",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `relName_${i}`,
+    //             name: `relations[${i}].socialName`,
+    //             type: "text",
+    //             label: "Nombre / Razón social",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `relPercent_${i}`,
+    //             name: `relations[${i}].percentageParticipation`,
+    //             type: "text",
+    //             label: "% Participación",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `relActAdmin_${i}`,
+    //             name: `relations[${i}].activityAdminResource`,
+    //             type: "text",
+    //             label: "Actividad recursos admin.",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `relRepGrade_${i}`,
+    //             name: `relations[${i}].activityReputationGradePublic`,
+    //             type: "text",
+    //             label: "Grado reputación pública",
+    //             required: false,
+    //             value: "",
+    //         },
+    //     ],
+    // })),
 
     // ============================================================
     // 6. CUENTAS FINANCIERAS (3)
