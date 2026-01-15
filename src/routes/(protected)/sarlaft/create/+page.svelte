@@ -105,11 +105,12 @@
           type: "select",
           label: "Tipo documento",
           options: documentTypesArray,
+          placeholder: "Seleccione el tipo de documento",
         },
         {
           id: `relDoc_${i}`,
           name: `relations[${i}].docNumber`,
-          type: "text",
+          type: "number",
           label: "Número documento",
         },
         {
@@ -123,6 +124,7 @@
           name: `relations[${i}].percentageParticipation`,
           type: "number",
           label: "% Participación",
+          placeholder: "Ingrese el porcentaje de participación",
         },
         {
           id: `relActAdmin_${i}`,
@@ -293,7 +295,6 @@
         size="medium"
         onclick={() => {
           relations = [...relations, createRelation()];
-          let values: FormDataType = getValues(formDataState) as FormDataType;
         }}
       />
 
