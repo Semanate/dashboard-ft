@@ -14,7 +14,12 @@
     { key: "created_at", label: "Creado el", sortable: true },
   ];
 
-  const table = createDataTable(data.news, columns);
+  const items = data.news.map((newsItem: any) => ({
+    ...newsItem,
+    created_at: new Date(newsItem.created_at).toLocaleDateString('es-ES'),
+    status: newsItem.status == 'published' ? 'Publicado' : 'Borrador'
+  }));
+  const table = createDataTable(items, columns);
 
   function editNews(newsItem: any) {
     goto(`/admin/news/edit/${newsItem.id}`);
