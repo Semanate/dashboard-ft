@@ -939,39 +939,39 @@ export const sarlaftCategories = [
     // ============================================================
     // 6. CUENTAS FINANCIERAS (3)
     // ============================================================
-    ...Array.from({ length: 3 }).map((_, i) => ({
-        label: `Cuenta financiera ${i + 1}`,
-        fields: [
-            {
-                id: `accType_${i}`,
-                name: `accountEntityFinancials[${i}].accountType`,
-                type: "select",
-                label: "Tipo de cuenta",
-                required: false,
-                value: "",
-                placeholder: "Seleccione un tipo de cuenta",
-                options: accountTypesArray,
-            },
-            {
-                id: `accNumber_${i}`,
-                name: `accountEntityFinancials[${i}].accountNumber`,
-                type: "text",
-                label: "Número de cuenta",
-                required: false,
-                value: "",
-            },
-            {
-                id: `accEntity_${i}`,
-                name: `accountEntityFinancials[${i}].accountNameEntity`,
-                type: "select",
-                label: "Entidad financiera",
-                required: false,
-                value: "",
-                placeholder: "Seleccione una entidad financiera",
-                options: entityAccountFinancialsArray,
-            },
-        ],
-    })),
+    // ...Array.from({ length: 3 }).map((_, i) => ({
+    //     label: `Cuenta financiera ${i + 1}`,
+    //     fields: [
+    //         {
+    //             id: `accType_${i}`,
+    //             name: `accountEntityFinancials[${i}].accountType`,
+    //             type: "select",
+    //             label: "Tipo de cuenta",
+    //             required: false,
+    //             value: "",
+    //             placeholder: "Seleccione un tipo de cuenta",
+    //             options: accountTypesArray,
+    //         },
+    //         {
+    //             id: `accNumber_${i}`,
+    //             name: `accountEntityFinancials[${i}].accountNumber`,
+    //             type: "text",
+    //             label: "Número de cuenta",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: `accEntity_${i}`,
+    //             name: `accountEntityFinancials[${i}].accountNameEntity`,
+    //             type: "select",
+    //             label: "Entidad financiera",
+    //             required: false,
+    //             value: "",
+    //             placeholder: "Seleccione una entidad financiera",
+    //             options: entityAccountFinancialsArray,
+    //         },
+    //     ],
+    // })),
 
     // ============================================================
     // 7. PEP - AMPLIADO PARA SARLAFT

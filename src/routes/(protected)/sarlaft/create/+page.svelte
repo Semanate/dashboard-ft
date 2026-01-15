@@ -1,11 +1,15 @@
 <script lang="ts">
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
-  import { documentTypesArray, sarlaftCategories } from "$lib/constants";
+  import {
+    accountTypesArray,
+    documentTypesArray,
+    sarlaftCategories,
+  } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
-  import { createRelation } from "$lib/utils/object";
+  import { createAccountFinancials, createRelation } from "$lib/utils/object";
 
   let showSuccessModal = $state(false);
   let successMessage = $state("");
@@ -94,6 +98,7 @@
   }
 
   let relations = $state([createRelation()]);
+  let accountsFinancials = $state([createAccountFinancials()]);
 
   const relationsSections = $derived.by(() =>
     relations.map((_, i) => ({
@@ -142,8 +147,37 @@
     })),
   );
 
+  const accountsFinancialsSections = $derived.by(() =>
+    accountsFinancials.map((_, i) => ({
+      label: `Cuenta Financiera ${i + 1}`,
+      fields: [
+        {
+          id: `accType_${i}`,
+          name: `accountsFinancials[${i}].accountType`,
+          type: "select",
+          label: "Tipo de cuenta",
+          placeholder: "Seleccione el tipo de cuenta",
+          options: accountTypesArray,
+        },
+        {
+          id: `accNumber_${i}`,
+          name: `accountsFinancials[${i}].accountNumber`,
+          type: "text",
+          label: "Número de cuenta",
+        },
+        {
+          id: `accNameEntity_${i}`,
+          name: `accountsFinancials[${i}].accountNameEntity`,
+          type: "text",
+          label: "Nombre de la entidad",
+        },
+      ],
+    })),
+  );
+
   const fieldsSarlaft = $derived.by(() => [
     ...relationsSections,
+    ...accountsFinancialsSections,
     ...sarlaftCategories,
   ]);
 
@@ -287,16 +321,31 @@
         autoSave();
       }}
     >
-      <ButtonWithIcon
-        hidden={totalPercentage >= 100}
-        label="Agregar Accionistas"
-        iconButton="PlusCircle"
-        variant="ghost"
-        size="medium"
-        onclick={() => {
-          relations = [...relations, createRelation()];
-        }}
-      />
+      <div class="flex">
+        <ButtonWithIcon
+          hidden={totalPercentage >= 100}
+          label="Agregar Accionistas"
+          iconButton="PlusCircle"
+          variant="ghost"
+          size="medium"
+          onclick={() => {
+            relations = [...relations, createRelation()];
+          }}
+        />
+        <ButtonWithIcon
+          hidden={accountsFinancials.length >= 3}
+          label="Agregar Cuenta Financiera"
+          iconButton="PlusCircle"
+          variant="ghost"
+          size="medium"
+          onclick={() => {
+            accountsFinancials = [
+              ...accountsFinancials,
+              createAccountFinancials(),
+            ];
+          }}
+        />
+      </div>
 
       {#if totalPercentage < 100}
         <p class="text-yellow-600 text-sm">

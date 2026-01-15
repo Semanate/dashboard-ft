@@ -15,3 +15,11 @@ export function createRelation() {
         activityReputationGradePublic: "",
     };
 }
+
+export function createAccountFinancials() { 
+    return {
+        accountType: "",
+        accountNumber: "",
+        accountNameEntity: "",
+    };
+}
