@@ -95,13 +95,6 @@
 
   let relations = $state([createRelation()]);
 
-  let totalPercentage = $derived.by(() =>
-    relations.reduce((sum, r) => {
-      const n = parseFloat(r.percentageParticipation);
-      return sum + (isNaN(n) ? 0 : n);
-    }, 0),
-  );
-
   const relationsSections = $derived.by(() =>
     relations.map((_, i) => ({
       label: `Accionista / Relación ${i + 1}`,
@@ -146,6 +139,21 @@
       ],
     })),
   );
+
+  const fieldsSarlaft = $derived.by(() => [
+    ...relationsSections,
+    ...sarlaftCategories,
+  ]);
+
+  let totalPercentage = $derived.by(() => {
+    let data: FormDataType = getValues(formDataState) as FormDataType;
+    return data.relations
+      ? data.relations.reduce(
+          (sum, rel) => sum + Number(rel.percentageParticipation || 0),
+          0,
+        )
+      : 0;
+  });
 </script>
 
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
@@ -271,7 +279,7 @@
 
     <StepperForm
       bind:formData={formDataState}
-      categories={sarlaftCategories}
+      categories={fieldsSarlaft}
       callbackOnSubmit={(data) => {
         console.log(data, "FORM DATA");
         autoSave();
@@ -283,7 +291,10 @@
         iconButton="PlusCircle"
         variant="ghost"
         size="medium"
-        onclick={() => {}}
+        onclick={() => {
+          relations = [...relations, createRelation()];
+          let values: FormDataType = getValues(formDataState) as FormDataType;
+        }}
       />
 
       {#if totalPercentage < 100}

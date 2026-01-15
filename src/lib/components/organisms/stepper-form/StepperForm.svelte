@@ -50,7 +50,7 @@
   let didInit = $state(false);
 
   const {
-    categories,
+    categories: items,
     callbackOnSubmit,
     isVisible = true,
     formData = $bindable({}),
@@ -60,6 +60,7 @@
 
   let values = $derived.by(() => getValues(formData));
 
+  let categories = $derived.by(() => items);
   /**
    * Índices reales de categories que están visibles
    */
