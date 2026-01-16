@@ -16,10 +16,19 @@ export function createRelation() {
     };
 }
 
-export function createAccountFinancials() { 
+export function createAccountFinancials() {
     return {
         accountType: "",
         accountNumber: "",
         accountNameEntity: "",
     };
+}
+
+export function createProductForeignCurrency() {
+    return {
+        type: "",
+        entity: "",
+        country: "",
+        currency: "",
+    }
 }

@@ -333,6 +333,31 @@ const typesPersonArray = Object.entries(typesPerson).map(([key, value]) => ({
     value: key,
 }));
 
+
+export const foreignCurrencyBaseSection = {
+    label: "Moneda Extranjera y Activos Virtuales",
+    isVisible: () => true,
+    fields: [
+        {
+            id: "fxManage",
+            name: "foreignCurrency.management",
+            type: "checkbox",
+            label: "¿Maneja productos financieros en moneda extranjera?",
+            required: false,
+            value: false,
+        },
+        {
+            id: "fxInfo",
+            name: "foreignCurrency.infoVirtualAssets",
+            type: "checkbox",
+            label: "¿Maneja activos virtuales o criptomonedas?",
+            required: false,
+            value: false,
+        },
+    ],
+};
+
+
 export const sarlaftCategories = [
     // ============================================================
     // 1.1 INFORMACIÓN GENERAL
@@ -375,7 +400,7 @@ export const sarlaftCategories = [
     // 3. PERSONA NATURAL
     // ============================================================
     {
-        label: "IDENTIFICACIÓN PERSONA NATURAL O EXTRANJERA",
+        label: "Persona Natural - Identificación",
         isVisible: (v) => v.typePersonAggrement === "NAT",
         fields: [
             {
@@ -498,7 +523,7 @@ export const sarlaftCategories = [
     // 4. PERSONA JURÍDICA
     // ============================================================
     {
-        label: "IDENTIFICACIÓN PERSONA JURÍDICA",
+        label: "Persona Jurídica - Identificación",
         isVisible: (v) => v.typePersonAggrement === "JUR",
         fields: [
             {
@@ -585,7 +610,7 @@ export const sarlaftCategories = [
             },
         ],
     },
-  
+
     // ============================================================
     // 7. PEP - AMPLIADO PARA SARLAFT
     // ============================================================
@@ -634,74 +659,6 @@ export const sarlaftCategories = [
             },
         ],
     },
-
-    // ============================================================
-    // 8. MONEDA EXTRANJERA
-    // ============================================================
-    {
-        label: "Moneda Extranjera y Activos Virtuales",
-        fields: [
-            {
-                id: "fxManage",
-                name: "foreignCurrency.management",
-                type: "checkbox",
-                label:
-                    "¿Maneja productos financieros en moneda extranjera?",
-                required: false,
-                value: false,
-            },
-            {
-                id: "fxInfo",
-                name: "foreignCurrency.infoVirtualAssets",
-                type: "textarea",
-                label: "¿Maneja activos virtuales o criptomonedas?",
-                required: false,
-                value: "",
-            }
-        ],
-    },
-
-    ...Array.from({ length: 2 }).map((_, i) => ({
-        label: `Producto en moneda extranjera ${i + 1}`,
-        fields: [
-            {
-                id: `fxType_${i}`,
-                name: `foreignCurrency.products[${i}].type`,
-                type: "select",
-                placeholder: "Seleccione un tipo de producto",
-                options: typesForeignCurrencyArray,
-                label: "Tipo de producto",
-                required: false,
-                value: "",
-            },
-            {
-                id: `fxEntity_${i}`,
-                name: `foreignCurrency.products[${i}].entity`,
-                type: "select",
-                placeholder: "Seleccione una entidad",
-                label: "Entidad",
-                required: false,
-                options: entityAccountFinancialsArray,
-                value: "",
-            },
-            {
-                id: `fxCountry_${i}`,
-                name: `foreignCurrency.products[${i}].country`,
-                type: "text",
-                label: "País",
-                required: false,
-                value: "",
-            },
-            {
-                id: `fxCurrency_${i}`,
-                name: `foreignCurrency.products[${i}].currency`,
-                type: "text",
-                label: "Moneda",
-                required: false,
-                value: "",
-            },
-        ],
-    })),
 
     // ============================================================
     // 9. FIRMA SOLICITANTE

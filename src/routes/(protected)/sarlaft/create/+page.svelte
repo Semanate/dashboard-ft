@@ -4,12 +4,19 @@
   import {
     accountTypesArray,
     documentTypesArray,
+    entityAccountFinancialsArray,
+    foreignCurrencyBaseSection,
     sarlaftCategories,
+    typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
-  import { createAccountFinancials, createRelation } from "$lib/utils/object";
+  import {
+    createAccountFinancials,
+    createProductForeignCurrency,
+    createRelation,
+  } from "$lib/utils/object";
 
   let showSuccessModal = $state(false);
   let successMessage = $state("");
@@ -99,6 +106,7 @@
 
   let relations = $state([createRelation()]);
   let accountsFinancials = $state([createAccountFinancials()]);
+  let productsForeignCurrency = $state([createProductForeignCurrency()]);
 
   const relationsSections = $derived.by(() =>
     relations.map((_, i) => ({
@@ -123,6 +131,7 @@
           name: `relations[${i}].socialName`,
           type: "text",
           label: "Nombre / Razón social",
+          placeholder: "Ingrese el nombre o razón social",
         },
         {
           id: `relPercent_${i}`,
@@ -144,6 +153,7 @@
           name: `relations[${i}].activityReputationGradePublic`,
           type: "select",
           label: "Grado reputación pública",
+          placeholder: "Seleccione el grado de reputación pública",
           options: [
             { label: "Bajo", value: "low" },
             { label: "Medio", value: "medium" },
@@ -175,8 +185,55 @@
         {
           id: `accNameEntity_${i}`,
           name: `accountsFinancials[${i}].accountNameEntity`,
-          type: "text",
+          type: "select",
           label: "Nombre de la entidad",
+          placeholder: "Seleccione la entidad financiera",
+          options: entityAccountFinancialsArray,
+        },
+      ],
+    })),
+  );
+
+  const productsForeignCurrencySections = $derived.by(() =>
+    productsForeignCurrency.map((_, i) => ({
+      isVisible: (v) => v.foreignCurrency?.management === true,
+      label: `Producto de Divisas ${i + 1}`,
+      fields: [
+        {
+          id: `fxType_${i}`,
+          name: `foreignCurrency.products[${i}].type`,
+          type: "select",
+          placeholder: "Seleccione un tipo de producto",
+          options: typesForeignCurrencyArray,
+          label: "Tipo de producto",
+          required: false,
+          value: "",
+        },
+        {
+          id: `fxEntity_${i}`,
+          name: `foreignCurrency.products[${i}].entity`,
+          type: "select",
+          placeholder: "Seleccione una entidad",
+          label: "Entidad",
+          required: false,
+          options: entityAccountFinancialsArray,
+          value: "",
+        },
+        {
+          id: `fxCountry_${i}`,
+          name: `foreignCurrency.products[${i}].country`,
+          type: "text",
+          label: "País",
+          required: false,
+          value: "",
+        },
+        {
+          id: `fxCurrency_${i}`,
+          name: `foreignCurrency.products[${i}].currency`,
+          type: "text",
+          label: "Moneda",
+          required: false,
+          value: "",
         },
       ],
     })),
@@ -186,10 +243,13 @@
     ...sarlaftCategories,
     ...relationsSections,
     ...accountsFinancialsSections,
+    foreignCurrencyBaseSection,
+    ...productsForeignCurrencySections,
   ]);
 
   let totalPercentage = $derived.by(() => {
     let data: FormDataType = getValues(formDataState) as FormDataType;
+
     return data.relations
       ? data.relations.reduce(
           (sum, rel) => sum + Number(rel.percentageParticipation || 0),
@@ -335,8 +395,9 @@
           iconButton="PlusCircle"
           variant="ghost"
           size="medium"
-          onclick={() => {
+          onclick={async () => {
             relations = [...relations, createRelation()];
+            console.log(await getValues(formDataState), "FORM DATA");
           }}
         />
         <ButtonWithIcon
