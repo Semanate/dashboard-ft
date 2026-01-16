@@ -135,13 +135,20 @@
           id: `relActAdmin_${i}`,
           name: `relations[${i}].activityAdminResource`,
           type: "text",
-          label: "Actividad recursos admin.",
+          label: "Origen de fondos / actividad económica",
+          placeholder:
+            "Describa la actividad económica o el origen de los fondos",
         },
         {
           id: `relRepGrade_${i}`,
           name: `relations[${i}].activityReputationGradePublic`,
-          type: "text",
+          type: "select",
           label: "Grado reputación pública",
+          options: [
+            { label: "Bajo", value: "low" },
+            { label: "Medio", value: "medium" },
+            { label: "Alto", value: "high" },
+          ],
         },
       ],
     })),
@@ -176,9 +183,9 @@
   );
 
   const fieldsSarlaft = $derived.by(() => [
+    ...sarlaftCategories,
     ...relationsSections,
     ...accountsFinancialsSections,
-    ...sarlaftCategories,
   ]);
 
   let totalPercentage = $derived.by(() => {
