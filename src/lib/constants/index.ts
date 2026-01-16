@@ -694,53 +694,8 @@ export const sarlaftCategories = [
     },
 
     // ============================================================
-    // 10. VERIFICACIÓN INTERNA 1 Y 2
+    // 10. VERIFICACIÓN INTERNA OFICIAL DE CUMPLIMIENTO
     // ============================================================
-    {
-        label: "Verificación Interna — Comercial",
-        fields: [
-            {
-                id: "ver1Name",
-                name: "verification.block1.name",
-                type: "text",
-                label: "Nombre",
-                required: false,
-                value: "",
-            },
-            {
-                id: "ver1Sign",
-                name: "verification.block1.signature",
-                type: "signature",
-                label: "Firma",
-                required: false,
-                value: "",
-            },
-            {
-                id: "ver1Date",
-                name: "verification.block1.date",
-                type: "text",
-                label: "Fecha",
-                required: false,
-                value: new Date().toLocaleDateString(),
-            },
-            {
-                id: "ver1Time",
-                name: "verification.block1.time",
-                type: "text",
-                label: "Hora",
-                required: false,
-                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            },
-            {
-                id: "ver1Auth",
-                name: "verification.block1.auth",
-                type: "checkbox",
-                label: "Autorización Cumplimiento LAFT",
-                required: false,
-                value: false,
-            },
-        ],
-    },
 
     {
         label: "Verificación Interna — Cumplimiento",
@@ -788,61 +743,12 @@ export const sarlaftCategories = [
         ],
     },
 
-    // ============================================================
-    // 11. AUTORIZACIÓN PEP INTERNA
-    // ============================================================
-    {
-        label: "Autorización PEP — Gerente Administrativa",
-        fields: [
-            {
-                id: "pepA1Name",
-                name: "pepAuthorization.block1.name",
-                type: "text",
-                label: "Nombre",
-                required: false,
-                value: "",
-            },
-            {
-                id: "pepA1Sign",
-                name: "pepAuthorization.block1.signature",
-                type: "signature",
-                label: "Firma",
-                required: false,
-                value: "",
-            },
-            {
-                id: "pepA1Date",
-                name: "pepAuthorization.block1.date",
-                type: "text",
-                label: "Fecha",
-                required: false,
-                value: new Date().toLocaleDateString(),
-            },
-            {
-                id: "pepA1Time",
-                name: "pepAuthorization.block1.time",
-                type: "text",
-                label: "Hora",
-                required: false,
-                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            },
-            {
-                id: "pepA1Auth",
-                name: "pepAuthorization.block1.auth",
-                type: "checkbox",
-                label: "Autorización Cumplimiento LAFT",
-                required: false,
-                value: false,
-            },
-        ],
-    },
-
     {
         label: "Autorización PEP — Oficial de Cumplimiento",
         fields: [
             {
                 id: "pepA2Name",
-                name: "pepAuthorization.block2.name",
+                name: "pepAuthorization.block.name",
                 type: "text",
                 label: "Nombre",
                 required: false,
@@ -850,7 +756,7 @@ export const sarlaftCategories = [
             },
             {
                 id: "pepA2Sign",
-                name: "pepAuthorization.block2.signature",
+                name: "pepAuthorization.block.signature",
                 type: "signature",
                 label: "Firma",
                 required: false,
@@ -858,7 +764,7 @@ export const sarlaftCategories = [
             },
             {
                 id: "pepA2Date",
-                name: "pepAuthorization.block2.date",
+                name: "pepAuthorization.block.date",
                 type: "date",
                 label: "Fecha",
                 placeholder: "MM/DD/AAAA",
@@ -867,7 +773,7 @@ export const sarlaftCategories = [
             },
             {
                 id: "pepA2Time",
-                name: "pepAuthorization.block2.time",
+                name: "pepAuthorization.block.time",
                 type: "text",
                 label: "Hora",
                 placeholder: "HH:MM",
@@ -876,7 +782,7 @@ export const sarlaftCategories = [
             },
             {
                 id: "pepA2Auth",
-                name: "pepAuthorization.block2.auth",
+                name: "pepAuthorization.block.auth",
                 type: "checkbox",
                 label: "Autorización Cumplimiento LAFT",
                 required: false,
