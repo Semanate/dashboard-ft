@@ -17,6 +17,7 @@
     createProductForeignCurrency,
     createRelation,
   } from "$lib/utils/object";
+
   let showSuccessModal = $state(false);
   let successMessage = $state("");
 
@@ -285,13 +286,31 @@
     ],
   };
 
+  // const privacyConsentSection = {
+  //   label: "Consentimiento de Privacidad",
+  //   fields: [
+  //     {
+  //       id: "privacyConsent",
+  //       type: "privacy",
+  //       value: false,
+  //       content: `
+  //   Autorizo de manera expresa, previa e informada el tratamiento de mis
+  //   datos personales conforme a la Ley 1581 de 2012.
+  // `,
+  //       onchange: (v) => {
+  //         console.log("Consentimiento:", v);
+  //       },
+  //     },
+  //   ],
+  // };
   const fieldsSarlaft = $derived.by(() => [
-    // ...sarlaftCategories,
-    // ...relationsSections,
-    // ...accountsFinancialsSections,
-    // foreignCurrencyBaseSection,
-    // ...productsForeignCurrencySections,
+    ...sarlaftCategories,
+    ...relationsSections,
+    ...accountsFinancialsSections,
+    foreignCurrencyBaseSection,
+    ...productsForeignCurrencySections,
     filesSarlaftSection,
+    // privacyConsentSection,
   ]);
 
   let totalPercentage = $derived.by(() => {

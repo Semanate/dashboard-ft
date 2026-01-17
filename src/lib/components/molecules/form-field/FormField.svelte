@@ -7,6 +7,7 @@
   import type { OptionsSelects } from "$lib/types";
   import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
   import InputSignature from "$lib/components/atoms/input/InputSignature.svelte";
+  import PrivacyConsent from "../privacy-consent/PrivacyConsent.svelte";
   interface Field {
     id: string;
     type:
@@ -19,13 +20,15 @@
       | "number"
       | "checkbox"
       | "signature"
-      | "password";
+      | "password"
+      | "privacy";
     label: string;
     required?: boolean;
     placeholder?: string;
     options?: Array<OptionsSelects<any>>;
     error?: string;
     value: any;
+    content: string;
     onchange?: (value: any) => void;
   }
 
@@ -36,8 +39,8 @@
 </script>
 
 <div class="w-full">
-  {#if field.type === "text" || field.type === "password" || (field.type === "email") || (field.type === "number")}
-    <InputText {...field} />
+  {#if field.type === "text" || field.type === "password" || field.type === "email" || field.type === "number"}
+    <InputText {...{ ...field, type: field.type }} />
   {:else if field.type === "select" && Object.values(field.options ?? {}).length > 0}
     <InputSelect {...field} />
   {:else if field.type === "checkbox"}
@@ -50,6 +53,14 @@
     <InputTextarea {...field} />
   {:else if field.type === "signature"}
     <InputSignature {...field} />
+  {:else if field.type === "privacy"}
+    <PrivacyConsent
+      title={field.label}
+      value={field.value}
+      error={field.error}
+      content={field.content}
+      onChange={field.onchange}
+    />
   {:else}
     <div class="text-red-500 text-sm">
       ❌ Field type "{field.type}" not supported

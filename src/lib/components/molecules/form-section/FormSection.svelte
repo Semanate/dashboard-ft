@@ -15,12 +15,14 @@
         | "checkbox"
         | "password"
         | "email"
-        | "signature";
+        | "signature"
+        | "privacy";
       label: string;
       placeholder?: string;
       options?: Array<OptionsSelects<any>>;
       error?: string;
       value: any;
+      content?: string;
       onchange?: (value: any) => void;
       accept?: string;
     }>;
@@ -35,6 +37,6 @@
   {/if}
 
   {#each fields as field}
-    <FormField {field} />
+    <FormField field={{ ...field, content: field.content ?? "" }} />
   {/each}
 </div>
