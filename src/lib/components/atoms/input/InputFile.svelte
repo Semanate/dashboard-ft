@@ -19,6 +19,7 @@
     disabled?: boolean;
     value?: File | null;
     size?: "small" | "medium" | "large";
+    placeholder?: string;
   }
   let file: File | null = $state(null);
 
@@ -30,6 +31,8 @@
     id = "",
     error = "",
     disabled = false,
+    placeholder = "",
+    value = null,
   }: Props = $props();
 
   function handleChange(e: Event) {
@@ -97,6 +100,7 @@
     {disabled}
     onchange={handleChange}
     class={inputClass()}
+    placeholder={placeholder}
   />
 
   {#if error}

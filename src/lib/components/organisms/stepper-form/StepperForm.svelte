@@ -221,6 +221,7 @@
                 onchange: (value: any) => {
                   updateField(realI, field.name, value);
                 },
+                accept: field.type === "file" ? (field as any).accept : undefined,
               }))}
             />
           {/if}

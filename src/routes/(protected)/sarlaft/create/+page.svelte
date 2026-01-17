@@ -238,12 +238,60 @@
     })),
   );
 
+  const filesSarlaftSection = {
+    label: "Cargar Documentos Soporte",
+    fields: [
+      {
+        id: "legalRepresentativeId",
+        name: "supportingDocuments.legalRepresentativeId",
+        type: "file",
+        label: "Cédula del Representante Legal",
+        required: true,
+        accept: ".pdf,.jpg,.png",
+        placeholder: "Seleccione la cédula del representante legal",
+        value: null,
+      },
+      {
+        id: "chamberOfCommerceCertificate",
+        name: "supportingDocuments.chamberOfCommerceCertificate",
+        type: "file",
+        label:
+          "Certificado de Existencia y Representación Legal (Cámara de Comercio)",
+        required: true,
+        accept: ".pdf,.jpg,.png",
+        placeholder: "Seleccione el certificado de Cámara de Comercio",
+        value: null,
+      },
+      {
+        id: "shareholdingCompositionCertificate",
+        name: "supportingDocuments.shareholdingCompositionCertificate",
+        type: "file",
+        label: "Certificado de Composición Accionaria",
+        required: true,
+        placeholder: "Seleccione el certificado de composición accionaria",
+        value: null,
+        accept: ".pdf,.jpg,.png",
+      },
+      {
+        id: "companyRut",
+        name: "supportingDocuments.companyRut",
+        type: "file",
+        label: "RUT de la Empresa",
+        required: true,
+        placeholder: "Seleccione el RUT de la empresa",
+        value: null,
+        accept: ".pdf,.jpg,.png",
+      },
+    ],
+  };
+
   const fieldsSarlaft = $derived.by(() => [
-    ...sarlaftCategories,
-    ...relationsSections,
-    ...accountsFinancialsSections,
-    foreignCurrencyBaseSection,
-    ...productsForeignCurrencySections,
+    // ...sarlaftCategories,
+    // ...relationsSections,
+    // ...accountsFinancialsSections,
+    // foreignCurrencyBaseSection,
+    // ...productsForeignCurrencySections,
+    filesSarlaftSection,
   ]);
 
   let totalPercentage = $derived.by(() => {

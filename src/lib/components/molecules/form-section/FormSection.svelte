@@ -22,6 +22,7 @@
       error?: string;
       value: any;
       onchange?: (value: any) => void;
+      accept?: string;
     }>;
   }
 
