@@ -17,7 +17,6 @@
     createProductForeignCurrency,
     createRelation,
   } from "$lib/utils/object";
-
   let showSuccessModal = $state(false);
   let successMessage = $state("");
 

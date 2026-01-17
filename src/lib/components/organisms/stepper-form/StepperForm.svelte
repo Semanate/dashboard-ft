@@ -3,7 +3,7 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects } from "$lib/types";
-  import { getValues } from "$lib/utils/forms";
+  import { getValues, isValid, validateStep } from "$lib/utils/forms";
 
   interface CategoryFormField {
     name: string;
@@ -37,14 +37,10 @@
     callbackOnSubmit?: (data: Record<string, any>) => void;
     isVisible?: boolean;
     updateNext?: () => void;
-    children?: any; // This Children Top Content
+    children?: any;
   }
 
-  // activeVisible = posición dentro del listado visible
   let activeVisible = $state(0);
-
-  // active = índice real dentro de categories (derivado)
-  // let formData = $state<Record<number, Record<string, any>>>({});
   let fieldErrors = $state<Record<number, Record<string, string>>>({});
   let hasAttemptedNext = $state(false);
   let didInit = $state(false);
@@ -128,60 +124,13 @@
     return true; // default visible
   }
 
-  /**
-   * Valida un step específico
-   * Nota: si la categoría está oculta, NO la validamos (para que no bloquee el submit)
-   */
-  function validateStep(index: number) {
-    const currentCategory = categories[index];
-    if (!currentCategory) {
-      return { isValid: true, errors: {} as Record<string, string> };
-    }
 
-    if (!resolveVisibility(currentCategory)) {
-      fieldErrors[index] = {};
-      return { isValid: true, errors: {} as Record<string, string> };
-    }
-
-    // if ((currentCategory.isVisible(values) ?? true) === false) {
-    //   fieldErrors[index] = {};
-    //   return { isValid: true, errors: {} as Record<string, string> };
-    // }
-
-    let isValid = true;
-    const newErrors: Record<string, string> = {};
-
-    currentCategory.fields.forEach((field) => {
-      if (field.required === false) {
-        newErrors[field.name] = "";
-        return;
-      }
-
-      const value = formData[index]?.[field.name];
-      const isEmpty =
-        value === null ||
-        value === undefined ||
-        (typeof value === "string" && value.trim() === "") ||
-        (Array.isArray(value) && value.length === 0);
-
-      if (isEmpty) {
-        newErrors[field.name] = "Este campo es requerido";
-        isValid = false;
-      } else {
-        newErrors[field.name] = "";
-      }
-    });
-
-    fieldErrors[index] = newErrors;
-
-    return { isValid, errors: newErrors };
-  }
 
   /**
    * Valid Step Active
    */
   function validateCurrentStep() {
-    const { isValid } = validateStep(active);
+    const { isValid } = validateStep(active, categories, formData, resolveVisibility, fieldErrors);
     return isValid;
   }
 
@@ -192,7 +141,7 @@
   function updateField(categoryIndex: number, fieldName: string, value: any) {
     formData[categoryIndex][fieldName] = value;
     if (hasAttemptedNext && categoryIndex === active) {
-      validateStep(categoryIndex);
+      validateStep(categoryIndex, categories, formData, resolveVisibility, fieldErrors);
     }
   }
 
@@ -231,13 +180,6 @@
       activeVisible--;
       hasAttemptedNext = false;
     }
-  }
-
-  /**
-   * Valida SOLO visibles
-   */
-  export function isValid() {
-    return visibleIndexes.every((realIndex) => validateStep(realIndex).isValid);
   }
 </script>
 
@@ -302,7 +244,7 @@
         <Button
           onclick={() => {
             hasAttemptedNext = true;
-            if (validateCurrentStep() && isValid() && callbackOnSubmit) {
+            if (validateCurrentStep() && isValid(visibleIndexes, categories, formData, resolveVisibility, fieldErrors) && callbackOnSubmit) {
               callbackOnSubmit(getValues(formData));
             }
           }}
