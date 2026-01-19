@@ -30,8 +30,7 @@ RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 COPY package*.json ./
 COPY static ./static
 
-RUN npm ci --only=production
-
+RUN npm ci
 COPY --from=builder --chown=nodejs:nodejs /app/build ./build
 
 USER nodejs

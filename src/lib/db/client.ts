@@ -24,8 +24,8 @@ function createSupabaseClient(): SupabaseClient {
         env.SUPABASE_KEY ??
         '';
 
-    console.log("Supabase URL:", supabaseUrl ? "Loaded" : "Missing");
-    console.log("Supabase Key:", supabaseKey ? "Loaded" : "Missing");
+    // console.log("Supabase URL:", supabaseUrl ? "Loaded" : "Missing");
+    // console.log("Supabase Key:", supabaseKey ? "Loaded" : "Missing");
     if (!supabaseUrl) {
         throw new Error('Missing Supabase URL. Set SUPABASE_URL or SUPABASE_URL.');
     }
