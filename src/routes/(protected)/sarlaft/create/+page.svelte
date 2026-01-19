@@ -9,7 +9,7 @@
     sarlaftCategories,
     typesForeignCurrencyArray,
   } from "$lib/constants";
-  import type { FormDataType } from "$lib/types";
+  import type { FormDataType, StepActive } from "$lib/types";
   import { getValues } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
   import {
@@ -21,6 +21,7 @@
   let showSuccessModal = $state(false);
   let successMessage = $state("");
 
+  let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
   let formData: FormDataType = getValues(formDataState) as FormDataType;
 
@@ -304,7 +305,7 @@
   //   ],
   // };
   const fieldsSarlaft = $derived.by(() => [
-    ...sarlaftCategories,
+    // ...sarlaftCategories,
     ...relationsSections,
     ...accountsFinancialsSections,
     foreignCurrencyBaseSection,
@@ -448,6 +449,7 @@
 
     <StepperForm
       bind:formData={formDataState}
+      bind:activeStep
       categories={fieldsSarlaft}
       callbackOnSubmit={(data) => {
         console.log(data, "FORM DATA");
@@ -456,18 +458,23 @@
     >
       <div class="flex">
         <ButtonWithIcon
-          hidden={totalPercentage >= 100}
+          hidden={totalPercentage < 100 &&
+          activeStep.label.includes("Accionista")
+            ? false
+            : true}
           label="Agregar Accionistas"
           iconButton="PlusCircle"
           variant="ghost"
           size="medium"
           onclick={async () => {
             relations = [...relations, createRelation()];
-            console.log(await getValues(formDataState), "FORM DATA");
+            // console.log(await getValues(formDataState), "FORM DATA");
           }}
         />
         <ButtonWithIcon
-          hidden={accountsFinancials.length >= 3}
+          hidden={activeStep.label.includes("Cuenta Financiera")
+            ? false
+            : true}
           label="Agregar Cuenta Financiera"
           iconButton="PlusCircle"
           variant="ghost"
@@ -481,19 +488,19 @@
         />
       </div>
 
-      {#if totalPercentage < 100}
+      {#if totalPercentage < 100 && activeStep.label.includes("Accionista")}
         <p class="text-yellow-600 text-sm">
           El porcentaje total es {totalPercentage}%. Falta completar el 100%.
         </p>
       {/if}
 
-      {#if totalPercentage > 100}
+      {#if totalPercentage > 100 && activeStep.label.includes("Accionista")}
         <p class="text-red-600 text-sm">
           El porcentaje supera el 100%. Verifique los valores.
         </p>
       {/if}
 
-      {#if totalPercentage === 100}
+      {#if totalPercentage === 100 && activeStep.label.includes("Accionista")}
         <p class="text-green-600 text-sm">
           El porcentaje accionarial está completo.
         </p>

@@ -2,7 +2,7 @@
   import Stepper from "$lib/components/molecules/stepper/Stepper.svelte";
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
-  import type { OptionsSelects } from "$lib/types";
+  import type { OptionsSelects, StepActive } from "$lib/types";
   import { getValues, isValid, validateStep } from "$lib/utils/forms";
 
   interface CategoryFormField {
@@ -38,6 +38,7 @@
     isVisible?: boolean;
     updateNext?: () => void;
     children?: any;
+    activeStep: StepActive;
   }
 
   let activeVisible = $state(0);
@@ -52,8 +53,12 @@
     formData = $bindable({}),
     updateNext,
     children,
+    activeStep = $bindable({
+      step: 0,
+      isActive: false,
+      label: "",
+    }),
   }: Props = $props();
-
   let values = $derived.by(() => getValues(formData));
 
   let categories = $derived.by(() => items);
@@ -71,6 +76,11 @@
    */
   let active = $derived.by(() => visibleIndexes[activeVisible] ?? 0);
 
+  $effect(() => {
+    activeStep.isActive = true;
+    activeStep.step = activeVisible;
+    activeStep.label = categories[active]?.label || "";
+  });
   /**
    * Si cambia la visibilidad y el activeVisible queda fuera de rango, lo ajustamos
    */
@@ -124,13 +134,17 @@
     return true; // default visible
   }
 
-
-
   /**
    * Valid Step Active
    */
   function validateCurrentStep() {
-    const { isValid } = validateStep(active, categories, formData, resolveVisibility, fieldErrors);
+    const { isValid } = validateStep(
+      active,
+      categories,
+      formData,
+      resolveVisibility,
+      fieldErrors,
+    );
     return isValid;
   }
 
@@ -141,7 +155,13 @@
   function updateField(categoryIndex: number, fieldName: string, value: any) {
     formData[categoryIndex][fieldName] = value;
     if (hasAttemptedNext && categoryIndex === active) {
-      validateStep(categoryIndex, categories, formData, resolveVisibility, fieldErrors);
+      validateStep(
+        categoryIndex,
+        categories,
+        formData,
+        resolveVisibility,
+        fieldErrors,
+      );
     }
   }
 
@@ -173,6 +193,8 @@
       activeVisible++;
       hasAttemptedNext = false;
     }
+    // console.log("Next called", activeVisible);
+    // console.log("Active Step Prop", activeSteProp);
   }
 
   function prev() {
@@ -221,7 +243,8 @@
                 onchange: (value: any) => {
                   updateField(realI, field.name, value);
                 },
-                accept: field.type === "file" ? (field as any).accept : undefined,
+                accept:
+                  field.type === "file" ? (field as any).accept : undefined,
               }))}
             />
           {/if}
@@ -245,7 +268,17 @@
         <Button
           onclick={() => {
             hasAttemptedNext = true;
-            if (validateCurrentStep() && isValid(visibleIndexes, categories, formData, resolveVisibility, fieldErrors) && callbackOnSubmit) {
+            if (
+              validateCurrentStep() &&
+              isValid(
+                visibleIndexes,
+                categories,
+                formData,
+                resolveVisibility,
+                fieldErrors,
+              ) &&
+              callbackOnSubmit
+            ) {
               callbackOnSubmit(getValues(formData));
             }
           }}

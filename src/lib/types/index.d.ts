@@ -232,3 +232,9 @@ export type { NewsItem, CreateNewsData, UpdateNewsData, NewsStatus } from './new
 
 // Re-export SARLAFT types
 export type { SarlaftFormData, SarlaftListItem, SarlaftValidation, SarlaftExportOptions } from './sarlaft.js';
+
+export interface StepActive {
+    step: number;
+    isActive: boolean;
+    label: string;
+  }
