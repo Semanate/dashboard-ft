@@ -9,6 +9,7 @@ export const POST = async ({ request, cookies }) => {
     }
 
     const formData = await request.formData();
+    
     const response = await invokeCreateSarlaft(accessToken, formData);
 
     return json(response);

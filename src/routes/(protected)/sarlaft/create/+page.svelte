@@ -26,49 +26,28 @@
   let formData: FormDataType = getValues(formDataState) as FormDataType;
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
-    try {
+    // try {
       const fd = toFormData(formData);
 
-      const response = await fetch("/sarlaft", {
-        method: "POST",
-        body: fd,
-      });
+      console.log("FormData to be sent:", fd);
+    //   const response = await fetch("/sarlaft", {
+    //     method: "POST",
+    //     body: fd,
+    //   });
 
-      const res = await response.json();
+    //   const res = await response.json();
 
-      if (res.success) {
-        formData.id = res.data.id;
-        formData.updatedAt = res.data.updatedAt;
-        return true;
-      }
-    } catch (error) {
-      console.error("Error saving form data:", error);
-    }
+    //   if (res.success) {
+    //     formData.id = res.data.id;
+    //     formData.updatedAt = res.data.updatedAt;
+    //     return true;
+    //   }
+    // } catch (error) {
+    //   console.error("Error saving form data:", error);
+    // }
     return false;
   }
 
-  // async function saveFormData(formData: FormDataType): Promise<boolean> {
-  //   try {
-  //     const response = await fetch("/sarlaft", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     const res = await response.json();
-  //     console.log(res, "SAVE RESPONSE");
-  //     if (res.success) {
-  //       formData.id = res.data.id;
-  //       formData.updatedAt = res.data.updatedAt;
-  //       return true;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error saving form data:", error);
-  //   }
-  //   return false;
-  // }
 
   async function autoSave() {
     let formData: FormDataType = getValues(formDataState) as FormDataType;
@@ -328,11 +307,11 @@
   //   ],
   // };
   const fieldsSarlaft = $derived.by(() => [
-    ...sarlaftCategories,
-    ...relationsSections,
-    ...accountsFinancialsSections,
-    foreignCurrencyBaseSection,
-    ...productsForeignCurrencySections,
+    // ...sarlaftCategories,
+    // ...relationsSections,
+    // ...accountsFinancialsSections,
+    // foreignCurrencyBaseSection,
+    // ...productsForeignCurrencySections,
     filesSarlaftSection,
     // privacyConsentSection,
   ]);
@@ -477,8 +456,8 @@
       callbackOnSubmit={async (data) => {
         // console.log(data, "FORM DATA");
         // autoSave();
-        const values = getValues<FormDataType>(formDataState);
-        await saveFormData(values);
+        console.log("Submitting form data...", formDataState);
+        // await saveFormData(formDataState);
       }}
     >
       <div class="flex">

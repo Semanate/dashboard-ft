@@ -16,6 +16,7 @@ export async function uploadDocuments(
         "supportingDocuments.companyRut",
     ];
 
+
     for (const field of FILE_FIELDS) {
         const file = formData.get(field);
 
@@ -24,6 +25,8 @@ export async function uploadDocuments(
         if (file.size === 0) continue;
 
         const extension = file.name.split(".").pop();
+        console.log(extension, "FILE TO UPLOAD");
+
         const path = `sarlaft/${crypto.randomUUID()}.${extension}`;
 
         const { error } = await supabase.storage
