@@ -1,4 +1,4 @@
-import { createFormSarlaftPayload, deleteSarlaftById } from '$lib/api/admin/sarlaft';
+import { deleteSarlaftById, invokeCreateSarlaft } from '$lib/api/admin/sarlaft';
 import { json } from '@sveltejs/kit';
 import { getUserSarlaftPayload } from '$lib/api/admin/sarlaft';
 
@@ -8,11 +8,8 @@ export const POST = async ({ request, cookies }) => {
         return json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const payload = await request.json();
-    const response = await createFormSarlaftPayload(
-        accessToken,
-        payload
-    );
+    const formData = await request.formData();
+    const response = await invokeCreateSarlaft(accessToken, formData);
 
     return json(response);
 };

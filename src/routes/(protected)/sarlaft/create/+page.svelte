@@ -10,7 +10,7 @@
     typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType, StepActive } from "$lib/types";
-  import { getValues } from "$lib/utils/forms";
+  import { getValues, toFormData } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
   import {
     createAccountFinancials,
@@ -27,16 +27,15 @@
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
+      const fd = toFormData(formData);
+
       const response = await fetch("/sarlaft", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: fd,
       });
 
       const res = await response.json();
-      console.log(res, "SAVE RESPONSE");
+
       if (res.success) {
         formData.id = res.data.id;
         formData.updatedAt = res.data.updatedAt;
@@ -48,8 +47,32 @@
     return false;
   }
 
+  // async function saveFormData(formData: FormDataType): Promise<boolean> {
+  //   try {
+  //     const response = await fetch("/sarlaft", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     const res = await response.json();
+  //     console.log(res, "SAVE RESPONSE");
+  //     if (res.success) {
+  //       formData.id = res.data.id;
+  //       formData.updatedAt = res.data.updatedAt;
+  //       return true;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving form data:", error);
+  //   }
+  //   return false;
+  // }
+
   async function autoSave() {
     let formData: FormDataType = getValues(formDataState) as FormDataType;
+    console.log("Auto-saving form data...", formData);
     if (formData.id || hasChanges()) {
       formData.status = "draft";
       const save = await saveFormData(formData);
@@ -305,7 +328,7 @@
   //   ],
   // };
   const fieldsSarlaft = $derived.by(() => [
-    // ...sarlaftCategories,
+    ...sarlaftCategories,
     ...relationsSections,
     ...accountsFinancialsSections,
     foreignCurrencyBaseSection,
@@ -451,9 +474,11 @@
       bind:formData={formDataState}
       bind:activeStep
       categories={fieldsSarlaft}
-      callbackOnSubmit={(data) => {
-        console.log(data, "FORM DATA");
-        autoSave();
+      callbackOnSubmit={async (data) => {
+        // console.log(data, "FORM DATA");
+        // autoSave();
+        const values = getValues<FormDataType>(formDataState);
+        await saveFormData(values);
       }}
     >
       <div class="flex">
@@ -472,9 +497,7 @@
           }}
         />
         <ButtonWithIcon
-          hidden={activeStep.label.includes("Cuenta Financiera")
-            ? false
-            : true}
+          hidden={activeStep.label.includes("Cuenta Financiera") ? false : true}
           label="Agregar Cuenta Financiera"
           iconButton="PlusCircle"
           variant="ghost"

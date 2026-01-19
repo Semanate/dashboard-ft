@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
 import { validateAndNormalizeSarlaft } from "../_shared/sarlaft-validate.ts";
+import { buildSarlaftPayload } from "../_shared/build-sarlaft-object.ts";
+import { uploadDocuments } from "../_shared/upload-documents.ts";
 
 serve(async (req) => {
   const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -12,7 +14,9 @@ serve(async (req) => {
     return jsonResponse({ success: false, data: null, error: "Unauthorized" }, 401);
   }
 
-  const payload = await req.json();
+  const formData = await req.formData();
+  const uploadedDocs = await uploadDocuments(formData);
+  const payload = await buildSarlaftPayload(formData, uploadedDocs);
 
   const validation = validateAndNormalizeSarlaft(payload);
 

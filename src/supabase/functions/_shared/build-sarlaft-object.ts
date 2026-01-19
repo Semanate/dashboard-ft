@@ -35,3 +35,69 @@ export function buildSarlaftObject(row: any) {
         },
     };
 }
+
+
+function parseValue(value: string) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    if (value === "") return null;
+
+    // number secure
+    // if (!isNaN(Number(value)) && value.trim() !== "") {
+    //     return Number(value);
+    // }
+
+    return value;
+}
+
+function setDeep(obj: any, path: string, value: any) {
+    const keys = path
+        .replace(/\[(\d+)\]/g, ".$1")
+        .split(".");
+
+    let current = obj;
+
+    keys.forEach((key, index) => {
+        const isLast = index === keys.length - 1;
+        const nextKey = keys[index + 1];
+
+        if (isLast) {
+            current[key] = value;
+            return;
+        }
+
+        if (!(key in current)) {
+
+            // Determine if the next key indicates an array
+            current[key] = isNumeric(nextKey) ? [] : {};
+        }
+
+        current = current[key];
+    });
+}
+
+function isNumeric(value: string | undefined) {
+    return value !== undefined && !isNaN(Number(value));
+}
+
+
+type UploadedDocs = Record<string, string>;
+
+export function buildSarlaftPayload(
+    formData: FormData,
+    uploadedDocs: UploadedDocs
+) {
+    const payload: Record<string, any> = {};
+
+    for (const [rawKey, value] of formData.entries()) {
+        if (value instanceof File) continue;
+
+        const parsedValue = parseValue(value);
+        setDeep(payload, rawKey, parsedValue);
+    }
+
+    payload.supportingDocuments = uploadedDocs;
+    payload.updatedAt = new Date().toISOString();
+
+    return payload;
+}

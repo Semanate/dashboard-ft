@@ -84,7 +84,7 @@ export function validateStep(index: number, categories: any, formData: any, reso
     const newErrors: Record<string, string> = {};
 
     currentCategory.fields.forEach((field: any) => {
-        if (field.required === false) {
+        if (field.required === false || field.type === "file") {
             newErrors[field.name] = "";
             return;
         }
@@ -121,3 +121,32 @@ export function validateStep(index: number, categories: any, formData: any, reso
 export function isValid(visibleIndexes: number[], categories: any, formData: any, resolveVisibility: any, fieldErrors: Record<number, Record<string, string>>): boolean {
     return visibleIndexes.every((realIndex) => validateStep(realIndex, categories, formData, resolveVisibility, fieldErrors).isValid);
 }
+
+
+export function toFormData(obj: any, form = new FormData(), parentKey = "") {
+    if (obj === null || obj === undefined) return form;
+
+    if (obj instanceof File) {
+        form.append(parentKey, obj);
+        return form;
+    }
+
+    if (Array.isArray(obj)) {
+        obj.forEach((value, index) => {
+            toFormData(value, form, `${parentKey}[${index}]`);
+        });
+        return form;
+    }
+
+    if (typeof obj === "object") {
+        Object.entries(obj).forEach(([key, value]) => {
+            const fullKey = parentKey ? `${parentKey}.${key}` : key;
+            toFormData(value, form, fullKey);
+        });
+        return form;
+    }
+
+    form.append(parentKey, String(obj));
+    return form;
+}
+
