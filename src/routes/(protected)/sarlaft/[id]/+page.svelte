@@ -172,14 +172,14 @@
                     <span class="text-gray-500">Nombre</span>
                     <p class="font-medium">
                         {sarlaft.naturalPerson.firstName}
-                        {sarlaft.naturalPerson.lastName}
+                        {sarlaft.naturalPerson.lastName1}
                     </p>
                 </div>
 
                 <div>
                     <span class="text-gray-500">Documento</span>
                     <p class="font-medium">
-                        {sarlaft.naturalPerson.docType}
+                        {sarlaft.naturalPerson.typeDoc}
                         {sarlaft.naturalPerson.docNumber}
                     </p>
                 </div>

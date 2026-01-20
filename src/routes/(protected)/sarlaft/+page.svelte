@@ -29,7 +29,7 @@
     loadForms();
   });
 
-  async function generateExcel(data) {
+  async function generateExcel(data: FormDataType) {
     const res = await fetch("/excel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -45,8 +45,7 @@
     a.click();
   }
 
-  async function deleteForm(data) {
-    // Implement deletion logic here
+  async function deleteForm(data: FormDataType) {
     const res = await fetch("/sarlaft", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
