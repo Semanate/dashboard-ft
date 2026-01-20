@@ -20,10 +20,10 @@
     value?: File | null;
     size?: "small" | "medium" | "large";
     placeholder?: string;
+    onchange?: (file: File | null) => void; // ⚡ IMPORTANTE: Callback del padre
   }
-  let file: File | null = $state(null);
 
-  const {
+  let {
     label = "",
     accept = "",
     variant = "default",
@@ -32,17 +32,29 @@
     error = "",
     disabled = false,
     placeholder = "",
-    value = null,
+    value = $bindable(null), // ⚡ USAR $bindable para sincronización bidireccional
+    onchange, // ⚡ Callback del padre
   }: Props = $props();
 
+  // ⚡ CRITICAL: Llamar al onchange del padre cuando cambie el archivo
   function handleChange(e: Event) {
     const target = e.target as HTMLInputElement;
-    file = target.files?.[0] ?? null;
+    const selectedFile = target.files?.[0] ?? null;
+    
+    // ⚡ 1. Actualizar el value local (si es bindable)
+    value = selectedFile;
+    
+    // ⚡ 2. Llamar al callback del padre (si existe)
+    if (onchange) {
+      onchange(selectedFile);
+    }
+    
+    console.log("📎 Archivo seleccionado:", selectedFile?.name || "ninguno");
   }
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =
-      "w-full border rounded-md px-3 py-2 text-sm transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";
+      "w-full border rounded-md px-3 py-2 text-sm transition-all duration-150 outline-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-gray-100 focus:ring-2 hover:cursor-pointer";
 
     const sizes: Record<string, string> = {
       small: "text-sm h-10",
@@ -94,13 +106,12 @@
 
   <input
     type="file"
-    id={id}
+    {id}
     {accept}
-    {value}
     {disabled}
     onchange={handleChange}
     class={inputClass()}
-    placeholder={placeholder}
+    {placeholder}
   />
 
   {#if error}
@@ -110,8 +121,10 @@
     </div>
   {/if}
 
-  {#if file}
-    <p class="mt-1 text-sm text-gray-600">Archivo seleccionado: {file.name}</p>
+  {#if value}
+    <p class="mt-1 text-sm text-gray-600">
+      Archivo seleccionado: {value.name} ({Math.round(value.size / 1024)} KB)
+    </p>
     <div class="mt-1 flex items-center text-red-600">
       <ShieldAlert class="mr-1" size="16" />
       <span>Recuerda que este archivo será revisado por nuestro equipo.</span>

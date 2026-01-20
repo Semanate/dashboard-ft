@@ -3,7 +3,7 @@
   import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects, StepActive } from "$lib/types";
-  import { getValues, isValid, validateStep } from "$lib/utils/forms";
+  import { getValuesRobust, isValid, validateStep } from "$lib/utils/forms";
 
   interface CategoryFormField {
     name: string;
@@ -46,7 +46,7 @@
   let hasAttemptedNext = $state(false);
   let didInit = $state(false);
 
-  const {
+  let {
     categories: items,
     callbackOnSubmit,
     isVisible = true,
@@ -59,9 +59,11 @@
       label: "",
     }),
   }: Props = $props();
-  let values = $derived.by(() => getValues(formData));
+  
+  let values = $derived.by(() => getValuesRobust(formData));
 
   let categories = $derived.by(() => items);
+  
   /**
    * Índices reales de categories que están visibles
    */
@@ -81,6 +83,7 @@
     activeStep.step = activeVisible;
     activeStep.label = categories[active]?.label || "";
   });
+  
   /**
    * Si cambia la visibilidad y el activeVisible queda fuera de rango, lo ajustamos
    */
@@ -94,16 +97,14 @@
       activeVisible = last;
     }
   });
-  function replaceRecord(target: Record<any, any>, next: Record<any, any>) {
-    for (const k in target) delete target[k];
-    Object.assign(target, next);
-  }
+
   /**
    * Inicializar formData y fieldErrors una vez con base en categories
    */
   $effect(() => {
     if (didInit) return;
     didInit = true;
+    
     const initial: Record<number, Record<string, any>> = {};
     const initialErrors: Record<number, Record<string, string>> = {};
 
@@ -117,11 +118,10 @@
       });
     });
 
-    replaceRecord(formData, initial);
-    replaceRecord(fieldErrors, initialErrors);
-    // formData = initial;
-    // fieldErrors = initialErrors;
+    Object.assign(formData, initial);
+    Object.assign(fieldErrors, initialErrors);
   });
+  
   function resolveVisibility(category: Category): boolean {
     if (typeof category.isVisible === "function") {
       return category.isVisible(values);
@@ -153,7 +153,15 @@
    * y revalidar el step si ya intentamos avanzar
    */
   function updateField(categoryIndex: number, fieldName: string, value: any) {
+    if (!formData[categoryIndex]) {
+      formData[categoryIndex] = {};
+    }
+    
     formData[categoryIndex][fieldName] = value;
+    
+    // CRUCIAL: Forzar la actualización del objeto para que Svelte detecte el cambio
+    formData = { ...formData };
+    
     if (hasAttemptedNext && categoryIndex === active) {
       validateStep(
         categoryIndex,
@@ -193,8 +201,6 @@
       activeVisible++;
       hasAttemptedNext = false;
     }
-    // console.log("Next called", activeVisible);
-    // console.log("Active Step Prop", activeSteProp);
   }
 
   function prev() {
@@ -203,10 +209,32 @@
       hasAttemptedNext = false;
     }
   }
+
+  /**
+   * Submit Of the form
+   */
+  function handleSubmit(event: Event) {
+    event.preventDefault(); 
+    
+    hasAttemptedNext = true;
+    if (
+      validateCurrentStep() &&
+      isValid(
+        visibleIndexes,
+        categories,
+        formData,
+        resolveVisibility,
+        fieldErrors,
+      ) &&
+      callbackOnSubmit
+    ) {
+      callbackOnSubmit(getValuesRobust(formData));
+    }
+  }
 </script>
 
 {#if isVisible}
-  <div class="w-full space-y-6">
+  <form onsubmit={handleSubmit} class="w-full space-y-6">
     <div class="h-14">
       <Stepper
         steps={visibleIndexes.map((i) => ({
@@ -258,34 +286,25 @@
         onclick={prev}
         disabled={activeVisible === 0}
         variant="ghost"
+        type="button"
       />
 
       {#if activeVisible < visibleIndexes.length - 1}
-        <Button onclick={next} label="Siguiente" variant="ghost" />
+        <Button 
+          onclick={next} 
+          label="Siguiente" 
+          variant="ghost"
+          type="button"
+        />
       {/if}
 
       {#if activeVisible === visibleIndexes.length - 1 && visibleIndexes.length > 0}
         <Button
-          onclick={() => {
-            hasAttemptedNext = true;
-            if (
-              validateCurrentStep() &&
-              isValid(
-                visibleIndexes,
-                categories,
-                formData,
-                resolveVisibility,
-                fieldErrors,
-              ) &&
-              callbackOnSubmit
-            ) {
-              callbackOnSubmit(getValues(formData));
-            }
-          }}
           label="Enviar"
           variant="primary"
+          type="submit"
         />
       {/if}
     </div>
-  </div>
+  </form>
 {/if}

@@ -10,7 +10,7 @@
     typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType, StepActive } from "$lib/types";
-  import { getValues, toFormData } from "$lib/utils/forms";
+  import { getValuesRobust, toFormData } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
   import {
     createAccountFinancials,
@@ -22,41 +22,60 @@
   let successMessage = $state("");
 
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
+  
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
-  let formData: FormDataType = getValues(formDataState) as FormDataType;
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
-    // try {
+    try {
       const fd = toFormData(formData);
 
-      console.log("FormData to be sent:", fd);
-    //   const response = await fetch("/sarlaft", {
-    //     method: "POST",
-    //     body: fd,
-    //   });
+      console.log("\n📦 === FormData a enviar ===");
+      
+      let fileCount = 0;
+      let fieldCount = 0;
+      
+      for (let [key, value] of fd.entries()) {
+        if (value instanceof File) {
+          fileCount++;
+          console.log(`📎 ${key}: File("${value.name}", ${value.size} bytes, ${value.type})`);
+        } else {
+          fieldCount++;
+          console.log(`📝 ${key}: ${value}`);
+        }
+      }
+      
+      console.log(`\n📊 Total: ${fileCount} archivos, ${fieldCount} campos`);
+      console.log("=========================\n");
+      
+      const response = await fetch("/sarlaft", {
+        method: "POST",
+        body: fd,
+      });
 
-    //   const res = await response.json();
+      const res = await response.json();
 
-    //   if (res.success) {
-    //     formData.id = res.data.id;
-    //     formData.updatedAt = res.data.updatedAt;
-    //     return true;
-    //   }
-    // } catch (error) {
-    //   console.error("Error saving form data:", error);
-    // }
+      if (res.success) {
+        formData.id = res.data.id;
+        formData.updatedAt = res.data.updatedAt;
+        return true;
+      }
+      
+      return true; 
+    } catch (error) {
+      console.error("❌ Error saving form data:", error);
+    }
     return false;
   }
 
-
   async function autoSave() {
-    let formData: FormDataType = getValues(formDataState) as FormDataType;
-    console.log("Auto-saving form data...", formData);
+    const formData: FormDataType = getValuesRobust(formDataState) as FormDataType;
+    console.log("🔄 Auto-saving form data...", formData);
+    
     if (formData.id || hasChanges()) {
       formData.status = "draft";
       const save = await saveFormData(formData);
       if (save) {
-        console.log("Auto-guardado exitoso");
+        console.log("✅ Auto-guardado exitoso");
 
         successMessage = "Formulario guardado correctamente.";
         showSuccessModal = true;
@@ -70,11 +89,11 @@
   }
 
   function hasChanges(): boolean {
-    let formData: FormDataType = getValues(formDataState) as FormDataType;
+    const formData: FormDataType = getValuesRobust(formDataState) as FormDataType;
     return (
-      formData.naturalPerson.firstName.length > 0 ||
-      formData.naturalPerson.docNumber.length > 0 ||
-      formData.representative.firstName.length > 0
+      formData.naturalPerson?.firstName?.length > 0 ||
+      formData.naturalPerson?.docNumber?.length > 0 ||
+      formData.representative?.firstName?.length > 0
     );
   }
 
@@ -92,6 +111,8 @@
   }
 
   async function generateExcel() {
+    const formData = getValuesRobust(formDataState) as FormDataType;
+    
     const res = await fetch("/excel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -114,6 +135,7 @@
   const relationsSections = $derived.by(() =>
     relations.map((_, i) => ({
       label: `Accionista / Relación ${i + 1}`,
+      isVisible: () => true,
       fields: [
         {
           id: `relTypeDoc_${i}`,
@@ -122,12 +144,14 @@
           label: "Tipo documento",
           options: documentTypesArray,
           placeholder: "Seleccione el tipo de documento",
+          value: "",
         },
         {
           id: `relDoc_${i}`,
           name: `relations[${i}].docNumber`,
           type: "number",
           label: "Número documento",
+          value: "",
         },
         {
           id: `relName_${i}`,
@@ -135,6 +159,7 @@
           type: "text",
           label: "Nombre / Razón social",
           placeholder: "Ingrese el nombre o razón social",
+          value: "",
         },
         {
           id: `relPercent_${i}`,
@@ -142,6 +167,7 @@
           type: "number",
           label: "% Participación",
           placeholder: "Ingrese el porcentaje de participación",
+          value: "",
         },
         {
           id: `relActAdmin_${i}`,
@@ -150,6 +176,7 @@
           label: "Origen de fondos / actividad económica",
           placeholder:
             "Describa la actividad económica o el origen de los fondos",
+          value: "",
         },
         {
           id: `relRepGrade_${i}`,
@@ -162,6 +189,7 @@
             { label: "Medio", value: "medium" },
             { label: "Alto", value: "high" },
           ],
+          value: "",
         },
       ],
     })),
@@ -170,6 +198,7 @@
   const accountsFinancialsSections = $derived.by(() =>
     accountsFinancials.map((_, i) => ({
       label: `Cuenta Financiera ${i + 1}`,
+      isVisible: () => true,
       fields: [
         {
           id: `accType_${i}`,
@@ -178,12 +207,14 @@
           label: "Tipo de cuenta",
           placeholder: "Seleccione el tipo de cuenta",
           options: accountTypesArray,
+          value: "",
         },
         {
           id: `accNumber_${i}`,
           name: `accountsFinancials[${i}].accountNumber`,
           type: "text",
           label: "Número de cuenta",
+          value: "",
         },
         {
           id: `accNameEntity_${i}`,
@@ -192,6 +223,7 @@
           label: "Nombre de la entidad",
           placeholder: "Seleccione la entidad financiera",
           options: entityAccountFinancialsArray,
+          value: "",
         },
       ],
     })),
@@ -244,6 +276,7 @@
 
   const filesSarlaftSection = {
     label: "Cargar Documentos Soporte",
+    isVisible: () => true,
     fields: [
       {
         id: "legalRepresentativeId",
@@ -289,35 +322,17 @@
     ],
   };
 
-  // const privacyConsentSection = {
-  //   label: "Consentimiento de Privacidad",
-  //   fields: [
-  //     {
-  //       id: "privacyConsent",
-  //       type: "privacy",
-  //       value: false,
-  //       content: `
-  //   Autorizo de manera expresa, previa e informada el tratamiento de mis
-  //   datos personales conforme a la Ley 1581 de 2012.
-  // `,
-  //       onchange: (v) => {
-  //         console.log("Consentimiento:", v);
-  //       },
-  //     },
-  //   ],
-  // };
   const fieldsSarlaft = $derived.by(() => [
-    // ...sarlaftCategories,
-    // ...relationsSections,
-    // ...accountsFinancialsSections,
-    // foreignCurrencyBaseSection,
-    // ...productsForeignCurrencySections,
+    ...sarlaftCategories,
+    ...relationsSections,
+    ...accountsFinancialsSections,
+    foreignCurrencyBaseSection,
+    ...productsForeignCurrencySections,
     filesSarlaftSection,
-    // privacyConsentSection,
   ]);
 
   let totalPercentage = $derived.by(() => {
-    let data: FormDataType = getValues(formDataState) as FormDataType;
+    const data: FormDataType = getValuesRobust(formDataState) as FormDataType;
 
     return data.relations
       ? data.relations.reduce(
@@ -339,22 +354,23 @@
           Sistema de Administración del Riesgo de Lavado de Activos y de la
           Financiación del Terrorismo
         </p>
-        {#if formData.status ?? false}
+        <!-- {@const currentFormData = getValuesRobust(formDataState)}
+        {#if currentFormData.status}
           <span
             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            {formData.status === 'completed'
+            {currentFormData.status === 'completed'
               ? 'bg-green-100 text-green-800'
-              : formData.status === 'validated'
+              : currentFormData.status === 'validated'
                 ? 'bg-blue-100 text-blue-800'
                 : 'bg-yellow-100 text-yellow-800'}"
           >
-            {formData.status === "completed"
+            {currentFormData.status === "completed"
               ? "Completado"
-              : formData.status === "validated"
+              : currentFormData.status === "validated"
                 ? "Validado"
                 : "Borrador"}
           </span>
-        {/if}
+        {/if} -->
       </div>
 
       <div class="flex gap-2">
@@ -370,7 +386,7 @@
             const res = await response.json();
             console.log(res, "CARGAR DATOS");
             // if (res.success && res.data.payload) {
-            //   formDataState = $state(res.data.payload);
+            //   formDataState = res.data.payload;
             // } else {
             //   alert("No se encontraron datos guardados.");
             // }
@@ -379,6 +395,7 @@
         <button
           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
           onclick={async () => {
+            const formData = getValuesRobust(formDataState) as FormDataType;
             formData.status = "draft";
             const success = await saveFormData(formData);
             if (success) {
@@ -394,6 +411,7 @@
         <button
           class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
           onclick={async () => {
+            const formData = getValuesRobust(formDataState) as FormDataType;
             formData.status = "completed";
             const success = await saveFormData(formData);
             if (success) {
@@ -422,13 +440,15 @@
       </div>
     </div>
 
-    {#if getValues(formData).length > 0 && getValues(formData).updatedAt}
+    <!-- {@const currentFormData = getValuesRobust(formDataState)}
+    {#if currentFormData.updatedAt}
       <div class="mb-4 text-sm text-gray-500">
         Última actualización: {new Date(
-          getValues<FormDataType>(formData).updatedAt,
+          currentFormData.updatedAt,
         ).toLocaleString("es-CO")}
       </div>
-    {/if}
+    {/if} -->
+    
     {#if showSuccessModal}
       <div
         class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -454,10 +474,7 @@
       bind:activeStep
       categories={fieldsSarlaft}
       callbackOnSubmit={async (data) => {
-        // console.log(data, "FORM DATA");
-        // autoSave();
-        console.log("Submitting form data...", formDataState);
-        // await saveFormData(formDataState);
+        await saveFormData(data);
       }}
     >
       <div class="flex">
@@ -472,7 +489,6 @@
           size="medium"
           onclick={async () => {
             relations = [...relations, createRelation()];
-            // console.log(await getValues(formDataState), "FORM DATA");
           }}
         />
         <ButtonWithIcon

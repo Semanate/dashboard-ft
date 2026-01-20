@@ -4,51 +4,99 @@
  * Get Values del formData expand
  * @param formData
  */
+
 export function getValues<T>(formData: Record<string, any>): T | any {
     const arr = Object.values(formData);
-    const clean = JSON.parse(JSON.stringify(arr));
+
+    // En lugar de JSON.parse(JSON.stringify()), hacemos una copia profunda manual
+    // que preserve los objetos File
+    const clean = arr.map(obj => {
+        const newObj: Record<string, any> = {};
+        for (const key in obj) {
+            const value = obj[key];
+            // Preservar File, FileList y otros objetos especiales
+            if (value instanceof File || value instanceof FileList || value instanceof Blob) {
+                newObj[key] = value;
+            } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+                // Para objetos anidados, hacer copia profunda
+                newObj[key] = JSON.parse(JSON.stringify(value));
+            } else {
+                // Para valores primitivos y arrays
+                newObj[key] = value;
+            }
+        }
+        return newObj;
+    });
+
     const merged = Object.assign({}, ...clean);
     const fullObject = expand(merged);
     return fullObject;
 }
 
+export function getValuesRobust<T>(formData: Record<string, any>): T | any {
+    const arr = Object.values(formData);
+
+    // Función auxiliar para clonar profundamente preservando Files
+    function deepClone(obj: any): any {
+        if (obj === null || obj === undefined) return obj;
+
+        // Preservar objetos especiales del DOM/navegador
+        if (obj instanceof File ||
+            obj instanceof FileList ||
+            obj instanceof Blob ||
+            obj instanceof Date) {
+            return obj;
+        }
+
+        // Arrays
+        if (Array.isArray(obj)) {
+            return obj.map(item => deepClone(item));
+        }
+
+        // Objetos
+        if (typeof obj === 'object') {
+            const cloned: Record<string, any> = {};
+            for (const key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    cloned[key] = deepClone(obj[key]);
+                }
+            }
+            return cloned;
+        }
+
+        // Primitivos
+        return obj;
+    }
+
+    const clean = arr.map(obj => deepClone(obj));
+    const merged = Object.assign({}, ...clean);
+    const fullObject = expand(merged);
+    return fullObject;
+}
 /**
  * 
  * @param obj 
  * @returns 
  * @description This Expand
  */
-export function expand(obj: any) {
-    const result: any = {};
+function expand(obj: Record<string, any>): any {
+    const result: Record<string, any> = {};
 
     for (const key in obj) {
-        const parts = key.split(".");
-        let ref = result;
+        const value = obj[key];
+        const keys = key.split('.');
 
-        parts.forEach((part, i) => {
-            const arrayMatch = part.match(/(.*)\[(\d+)\]/);
-
-            if (arrayMatch) {
-                const name = arrayMatch[1];
-                const index = Number(arrayMatch[2]);
-
-                ref[name] = ref[name] || [];
-                ref[name][index] = ref[name][index] || {};
-
-                if (i === parts.length - 1) {
-                    ref[name][index] = obj[key];
-                } else {
-                    ref = ref[name][index];
-                }
-            } else {
-                if (i === parts.length - 1) {
-                    ref[part] = obj[key];
-                } else {
-                    ref[part] = ref[part] || {};
-                    ref = ref[part];
-                }
+        let current = result;
+        for (let i = 0; i < keys.length - 1; i++) {
+            const k = keys[i];
+            if (!current[k]) {
+                current[k] = {};
             }
-        });
+            current = current[k];
+        }
+
+        const lastKey = keys[keys.length - 1];
+        current[lastKey] = value;
     }
 
     return result;
@@ -124,13 +172,38 @@ export function isValid(visibleIndexes: number[], categories: any, formData: any
 
 
 export function toFormData(obj: any, form = new FormData(), parentKey = "") {
-    if (obj === null || obj === undefined) return form;
+    // 1. Verificar null/undefined PRIMERO
+    if (obj === null || obj === undefined) {
+        return form;
+    }
 
+    // 2. Verificar File ANTES que object (File es un objeto!)
     if (obj instanceof File) {
         form.append(parentKey, obj);
         return form;
     }
 
+    // 3. Verificar Blob (por si acaso)
+    if (obj instanceof Blob) {
+        form.append(parentKey, obj);
+        return form;
+    }
+
+    // 4. Verificar FileList
+    if (obj instanceof FileList) {
+        Array.from(obj).forEach((file, index) => {
+            form.append(`${parentKey}[${index}]`, file);
+        });
+        return form;
+    }
+
+    // 5. Verificar Date (antes de array/object)
+    if (obj instanceof Date) {
+        form.append(parentKey, obj.toISOString());
+        return form;
+    }
+
+    // 6. Ahora sí, arrays
     if (Array.isArray(obj)) {
         obj.forEach((value, index) => {
             toFormData(value, form, `${parentKey}[${index}]`);
@@ -138,6 +211,7 @@ export function toFormData(obj: any, form = new FormData(), parentKey = "") {
         return form;
     }
 
+    // 7. Objetos planos (DESPUÉS de todas las verificaciones especiales)
     if (typeof obj === "object") {
         Object.entries(obj).forEach(([key, value]) => {
             const fullKey = parentKey ? `${parentKey}.${key}` : key;
@@ -146,7 +220,9 @@ export function toFormData(obj: any, form = new FormData(), parentKey = "") {
         return form;
     }
 
+    // 8. Primitivos (string, number, boolean)
     form.append(parentKey, String(obj));
     return form;
 }
+
 

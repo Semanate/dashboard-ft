@@ -15,9 +15,7 @@ serve(async (req) => {
   }
 
   const formData = await req.formData();
-  const file = formData.get("supportingDocuments.legalRepresentativeId");
-  console.log(file instanceof File, "FILE RECEIVED");
-  const uploadedDocs = await uploadDocuments(formData);
+  const uploadedDocs = await uploadDocuments(formData, supabase);
   const payload = await buildSarlaftPayload(formData, uploadedDocs);
 
   const validation = validateAndNormalizeSarlaft(payload);
