@@ -60,9 +60,9 @@
   const columns = [
     { label: "ID", key: "id" },
     { label: "Estado", key: "status" },
-    { label: "Tipo de Persona", key: "type_person_agreement" },
-    { label: "Nombre Solicitante", key: "naturalPerson.firstName" },
-    { label: "Número de Documento", key: "naturalPerson.docNumber" },
+    { label: "Tipo de Persona", key: "typePersonAggrement" },
+    { label: "Nombre Solicitante", key: "firstName" },
+    { label: "Número de Documento", key: "docNumber" },
     { label: "Fecha de Creación", key: "created_at" },
     { label: "Última Actualización", key: "updated_at" },
   ];
@@ -70,11 +70,27 @@
   const rows = $derived(
     FormList.map((f: any) => ({
       ...f,
-      updated_at: new Date(f.updated_at).toLocaleString(),
+
+      status: f.status === "draft" ? "Borrador" : "Enviado",
+      firstName:
+        f.typePersonAggrement === "NAT"
+          ? (f.naturalPerson?.firstName ?? "N/A")
+          : (f.juridicalPerson?.businessName ?? "N/A"),
+
+      docNumber:
+        f.typePersonAggrement === "NAT"
+          ? (f.naturalPerson?.docNumber ?? "N/A")
+          : (f.juridicalPerson?.docNumber ?? "N/A"),
+
+      typePersonAggrement:
+        f.typePersonAggrement === "NAT" ? "Natural" : "Jurídica",
+
       created_at: new Date(f.created_at).toLocaleString(),
+      updated_at: new Date(f.updated_at).toLocaleString(),
     })),
   );
 
+  console.log(rows, "TABLE ROWS");
   const table = $derived(createDataTable(rows, columns));
 </script>
 

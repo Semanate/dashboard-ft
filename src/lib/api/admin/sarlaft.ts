@@ -7,15 +7,6 @@ export async function invokeCreateSarlaft(
     accessToken: string,
     formData: FormData
 ): Promise<ApiResponse<any>> {
-
-    for (const pair of formData.entries()) {
-        // console.log(`${pair[0]}: ${pair[1]}`);
-        if (pair[1] instanceof File) {
-            console.log(`It's a file with name: ${pair[1].name}`);
-        }
-    }
-
-
     return callEdge<any>('create-sarlaft', accessToken, {
         method: 'POST',
         body: formData 

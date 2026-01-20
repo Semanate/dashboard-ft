@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
+import { isAllNull } from "../_shared/map-payload.ts";
 
 function toInt(value: string | null, fallback: number) {
     const n = Number(value);
@@ -60,10 +62,35 @@ serve(async (req) => {
         return jsonResponse({ success: false, data: null, error: error.message }, 400);
     }
 
+    const items = (data ?? []).map((row: any) => {
+        if (!includePayload || !row.payload) {
+            return row;
+        }
+
+        const { payload, ...rest } = row;
+        const cleanPayload = { ...payload };
+
+        if (
+            cleanPayload.typePersonAggrement === "NAT" ||
+            isAllNull(cleanPayload.juridicalPerson)
+        ) {
+            delete cleanPayload.juridicalPerson;
+        }
+
+        if (cleanPayload.typePersonAggrement === "JUR") {
+            delete cleanPayload.naturalPerson;
+        }
+
+        return {
+            ...rest,
+            ...cleanPayload,
+        };
+    });
+
     return jsonResponse({
         success: true,
         data: {
-            items: data ?? [],
+            items,
             pagination: {
                 total: count ?? null,
                 limit,

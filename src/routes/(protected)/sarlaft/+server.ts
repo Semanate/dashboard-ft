@@ -21,7 +21,7 @@ export const GET = async ({ cookies }) => {
         return json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const dataSarlaft = await getUserSarlaftPayload(accessToken, { includePayload: false });
+    const dataSarlaft = await getUserSarlaftPayload(accessToken, { includePayload: true, limit: 100, offset: 0 });
     return json(dataSarlaft);
 }
 

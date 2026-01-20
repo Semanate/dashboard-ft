@@ -32,3 +32,9 @@ export function mapPayloadToFlatObject(
 
     return result;
 }
+
+
+export function isAllNull(obj: Record<string, any> | null | undefined): boolean {
+    if (!obj || typeof obj !== "object") return true;
+    return Object.values(obj).every(v => v === null);
+}

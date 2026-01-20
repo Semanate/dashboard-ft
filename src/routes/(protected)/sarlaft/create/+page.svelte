@@ -19,34 +19,17 @@
   } from "$lib/utils/object";
 
   let showSuccessModal = $state(false);
+  let showLoadingModal = $state(false);
   let successMessage = $state("");
 
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
-  
+
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
       const fd = toFormData(formData);
 
-      console.log("\n📦 === FormData a enviar ===");
-      
-      let fileCount = 0;
-      let fieldCount = 0;
-      
-      for (let [key, value] of fd.entries()) {
-        if (value instanceof File) {
-          fileCount++;
-          console.log(`📎 ${key}: File("${value.name}", ${value.size} bytes, ${value.type})`);
-        } else {
-          fieldCount++;
-          console.log(`📝 ${key}: ${value}`);
-        }
-      }
-      
-      console.log(`\n📊 Total: ${fileCount} archivos, ${fieldCount} campos`);
-      console.log("=========================\n");
-      
       const response = await fetch("/sarlaft", {
         method: "POST",
         body: fd,
@@ -59,8 +42,8 @@
         formData.updatedAt = res.data.updatedAt;
         return true;
       }
-      
-      return true; 
+
+      return true;
     } catch (error) {
       console.error("❌ Error saving form data:", error);
     }
@@ -68,9 +51,11 @@
   }
 
   async function autoSave() {
-    const formData: FormDataType = getValuesRobust(formDataState) as FormDataType;
+    const formData: FormDataType = getValuesRobust(
+      formDataState,
+    ) as FormDataType;
     console.log("🔄 Auto-saving form data...", formData);
-    
+
     if (formData.id || hasChanges()) {
       formData.status = "draft";
       const save = await saveFormData(formData);
@@ -89,7 +74,9 @@
   }
 
   function hasChanges(): boolean {
-    const formData: FormDataType = getValuesRobust(formDataState) as FormDataType;
+    const formData: FormDataType = getValuesRobust(
+      formDataState,
+    ) as FormDataType;
     return (
       formData.naturalPerson?.firstName?.length > 0 ||
       formData.naturalPerson?.docNumber?.length > 0 ||
@@ -112,7 +99,7 @@
 
   async function generateExcel() {
     const formData = getValuesRobust(formDataState) as FormDataType;
-    
+
     const res = await fetch("/excel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -341,6 +328,25 @@
         )
       : 0;
   });
+
+  const handleSubmit = async (data: FormDataType) => {
+    showLoadingModal = true;
+
+    const success = await saveFormData(data);
+    showLoadingModal = false;
+
+    if (success) {
+      successMessage = "Formulario guardado correctamente.";
+      showSuccessModal = true;
+
+      setTimeout(() => {
+        showSuccessModal = false;
+        goto("/sarlaft/");
+      }, 1800);
+    } else {
+      alert("Error al guardar el formulario");
+    }
+  };
 </script>
 
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
@@ -448,7 +454,25 @@
         ).toLocaleString("es-CO")}
       </div>
     {/if} -->
-    
+
+    {#if showLoadingModal}
+      <div
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">
+            ⏳ Guardando...
+          </h2>
+
+          <p class="text-gray-600 mb-4">
+            Por favor, espere mientras se guarda el formulario.
+          </p>
+        </div>
+      </div>
+    {/if}
+
     {#if showSuccessModal}
       <div
         class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -473,9 +497,7 @@
       bind:formData={formDataState}
       bind:activeStep
       categories={fieldsSarlaft}
-      callbackOnSubmit={async (data) => {
-        await saveFormData(data);
-      }}
+      callbackOnSubmit={handleSubmit}
     >
       <div class="flex">
         <ButtonWithIcon
