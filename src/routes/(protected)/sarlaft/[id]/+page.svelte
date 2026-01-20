@@ -1,10 +1,12 @@
 <script lang="ts">
     import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+    import type { SarlaftForm } from "$lib/types/sarlaft.js";
 
     export let data;
 
-    const sarlaft = data.sarlaft;
+    const sarlaft: SarlaftForm = data.sarlaft;
 
+    console.log(sarlaft, "SARLAFT DATA");
     async function downloadPDF() {
         const res = await fetch("/pdf", {
             method: "POST",
@@ -447,6 +449,77 @@
                 alt="Firma"
                 class="mt-4 max-h-32 border rounded"
             />
+        </article>
+    {/if}
+
+    {#if sarlaft.supportingDocuments}
+        <article class="bg-white rounded-xl border p-6 space-y-4">
+            <h2 class="text-lg font-semibold text-gray-800">
+                Documentos Soporte
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                {#if sarlaft.supportingDocuments.chamberOfCommerceCertificate}
+                    <div>
+                        <span class="text-gray-500"
+                            >Certificado Cámara de Comercio</span
+                        >
+                        <p class="font-medium">
+                            <a
+                                href={sarlaft.supportingDocuments
+                                    .chamberOfCommerceCertificate}
+                                target="_blank"
+                                class="text-primary-600 underline">Ver Documento</a
+                            >
+                        </p>
+                    </div>
+                {/if}
+
+                {#if sarlaft.supportingDocuments.companyRut}
+                    <div>
+                        <span class="text-gray-500">RUT de la Empresa</span>
+                        <p class="font-medium">
+                            <a
+                                href={sarlaft.supportingDocuments.companyRut}
+                                target="_blank"
+                                class="text-primary-600 underline">Ver Documento</a
+                            >
+                        </p>
+                    </div>
+                {/if}
+
+                {#if sarlaft.supportingDocuments.legalRepresentativeId}
+                    <div>
+                        <span class="text-gray-500"
+                            >Documento del Representante Legal</span
+                        >
+                        <p class="font-medium">
+                            <a
+                                href={sarlaft.supportingDocuments
+                                    .legalRepresentativeId}
+                                target="_blank"
+                                class="text-primary-600 underline">Ver Documento</a
+                            >
+                        </p>
+                    </div>
+                {/if}
+
+                {#if sarlaft.supportingDocuments.shareholdingCompositionCertificate}
+                    <div>
+                        <span class="text-gray-500"
+                            >Certificado de Composición Accionaria</span
+                        >
+                        <p class="font-medium">
+                            <a
+                                href={sarlaft.supportingDocuments
+                                    .shareholdingCompositionCertificate}
+                                target="_blank"
+                                class="text-primary-600 underline">Ver Documento</a
+                            >
+                        </p>
+                    </div>
+                {/if}
+            </div>
         </article>
     {/if}
 </section>

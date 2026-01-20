@@ -17,7 +17,6 @@
       });
 
       const res = await response.json();
-      console.log(res, "LOAD FORMS RESPONSE");
       if (res.success) {
         FormList = res.data.items || [];
       }
@@ -69,8 +68,8 @@
 
   const rows = $derived(
     FormList.map((f: any) => ({
-      ...f,
-
+      // ...f,
+      id: f.id,
       status: f.status === "draft" ? "Borrador" : "Enviado",
       firstName:
         f.typePersonAggrement === "NAT"
@@ -90,7 +89,6 @@
     })),
   );
 
-  console.log(rows, "TABLE ROWS");
   const table = $derived(createDataTable(rows, columns));
 </script>
 
@@ -122,7 +120,7 @@
           variant="primary"
           size="medium"
           onclick={() => {
-            console.log("Recargando formularios...", rows);
+            loadForms();
           }}
         />
       </div>

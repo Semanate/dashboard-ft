@@ -215,13 +215,6 @@ export interface FormDataType {
 }
 
 
-interface CategoryField {
-    name: string;
-    type: string;
-    label: string;
-}
-
-
 export interface OptionsSelects<T> {
     label: string;
     value: T[] | string | T;
@@ -231,7 +224,7 @@ export interface OptionsSelects<T> {
 export type { NewsItem, CreateNewsData, UpdateNewsData, NewsStatus } from './news.js';
 
 // Re-export SARLAFT types
-export type { SarlaftFormData, SarlaftListItem, SarlaftValidation, SarlaftExportOptions } from './sarlaft.js';
+export type { SarlaftForm, SarlaftListItem, SarlaftValidation, SarlaftExportOptions } from './sarlaft.js';
 
 export interface StepActive {
     step: number;
