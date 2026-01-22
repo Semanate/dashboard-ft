@@ -16,7 +16,7 @@ export function getDataFromEnv(): { supabaseUrl: string; supabaseKey: string } {
 }
 
 
-function createSupabaseClient(): SupabaseClient {
+export function createSupabaseClient(): SupabaseClient {
     const supabaseUrl = env.SUPABASE_URL ?? '';
     const supabaseKey =
         env.SUPABASE_PUBLISHABLE_DEFAULT_KEY ??

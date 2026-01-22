@@ -41,6 +41,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
     event.locals.user.role = profile.role;
     event.locals.accessToken = accessToken;
+    event.locals.supabase = supabase;
 
     return resolve(event);
 };

@@ -6,7 +6,6 @@
 
     const sarlaft: SarlaftForm = data.sarlaft;
 
-    console.log(sarlaft, "SARLAFT DATA");
     async function downloadPDF() {
         const res = await fetch("/pdf", {
             method: "POST",
