@@ -1,99 +1,94 @@
 import { serve } from 'https://deno.land/std/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { jsonResponse } from '../_shared/response.ts'
-import { createAdminClient, createUserClient } from '../_shared/supabase.ts'
 
-serve(async (req) => {
-    try {
-        const authHeader = req.headers.get('Authorization')
-        if (!authHeader) {
-            return jsonResponse({
-                success: false,
-                data: null,
-                error: 'Unauthorized'
-            }, 401)
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+serve(async () => {
+  try {
+
+    const admin = createClient(
+      SUPABASE_URL,
+      SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false
         }
+      }
+    )
 
-        const jwt = authHeader.replace('Bearer ', '')
+    /* ============================
+       1. OBTENER USUARIOS AUTH
+       ============================ */
 
-        if (!jwt) {
-            return jsonResponse({
-                success: false,
-                data: null,
-                error: 'Unauthorized'
-            }, 401)
-        }
+    const { data: authData, error: authError } =
+      await admin.auth.admin.listUsers({ perPage: 1000 })
 
-        const supabase = createUserClient(jwt)
-
-        const { data: { user }, error: userError } =
-            await supabase.auth.getUser()
-
-        if (userError || !user) {
-            return jsonResponse({
-                success: false,
-                data: null,
-                error: 'Invalid token'
-            }, 401)
-        }
-
-
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-
-        if (profile?.role !== 'admin') {
-            return jsonResponse({
-                success: false,
-                data: null,
-                error: 'Forbidden'
-            }, 403)
-        }
-
-        console.log("Admin access granted for user:", profile);
-
-        const admin = createAdminClient()
-
-        const { data, error } = await admin.auth.admin.listUsers()
-        if (error || !data?.users) {
-            return jsonResponse({
-                success: false,
-                data: null,
-                error: error?.message ?? 'Failed to fetch users'
-            }, 500)
-        }
-
-        const { data: profiles } = await admin
-            .from('profiles')
-            .select('id, role')
-
-        const usersWithRoles = data.users.map(u => {
-            const profile = profiles?.find(p => p.id === u.id)
-
-            return {
-                id: u.id,
-                email: u.email,
-                name: u.user_metadata?.display_name ?? null,
-                role: profile?.role ?? 'user',
-                created_at: u.created_at
-            }
-        })
-
-        return jsonResponse({
-            success: true,
-            data: usersWithRoles,
-            meta: {
-                total: usersWithRoles.length
-            },
-            message: 'Users fetched successfully'
-        })
-    } catch (err) {
-        console.error('Error in list-users function:', err);
-        return jsonResponse({
-            success: false,
-            data: null,
-            error: 'Internal server error'
-        }, 500)
+    if (authError) {
+      console.error('AUTH ERROR:', authError)
+      return jsonResponse({
+        success: false,
+        data: null,
+        error: authError.message
+      }, 500)
     }
+
+    const authUsers = authData?.users ?? []
+
+    /* ============================
+       2. OBTENER ROLES (profiles)
+       ============================ */
+
+    const { data: profiles, error: profileError } =
+      await admin.from('profiles').select('id, role')
+
+    if (profileError) {
+      console.error('PROFILE ERROR:', profileError)
+      return jsonResponse({
+        success: false,
+        data: null,
+        error: profileError.message
+      }, 500)
+    }
+
+    /* ============================
+       3. UNIR AUTH + PROFILES
+       ============================ */
+
+    const users = authUsers.map(user => {
+      const profile = profiles?.find(p => p.id === user.id)
+
+      return {
+        id: user.id,
+        email: user.email,
+        role: profile?.role ?? 'user',
+        created_at: user.created_at
+      }
+    })
+
+    /* ============================
+       4. RESPUESTA FINAL
+       ============================ */
+
+    return jsonResponse({
+      success: true,
+      data: users,
+      meta: {
+        total: users.length
+      },
+      message: 'Users fetched successfully'
+    })
+
+  } catch (err) {
+    console.error('EDGE FUNCTION ERROR:', err)
+
+    return jsonResponse({
+      success: false,
+      data: null,
+      error: err?.message ?? String(err)
+    }, 500)
+  }
 })

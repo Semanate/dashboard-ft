@@ -1,4 +1,5 @@
-import { fetchAdminUsers, updateUserRole } from '$lib/api/admin/users.js';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { updateUserRole } from '$lib/api/admin/users.js';
 
 import { redirect } from '@sveltejs/kit';
 
@@ -7,22 +8,14 @@ export const load = async ({ locals }) => {
     if (!user) {
         throw redirect(303, '/login');
     }
-    // const accessToken = await locals.supabase.auth.getSession().then(session => session.data.session?.access_token);
-    // console.log("Access Token:", accessToken.access_token);
 
-    // if (!accessToken) {
-    //     throw new Error('No session')
-    // }
+    const { data: usersReponse } = await locals.supabase.functions.invoke('list-users');
+    const { data, success } = usersReponse;
 
-    // const res = await fetchAdminUsers(accessToken);
-    // const { data: users, success, error } = await res;
-    // console.log("Fetch users result:", error);
-    // if (!success) {
-    //     throw new Error('Failed to fetch users');
-    // }
-
-    console.log("Admin user loaded:", await locals.supabase.session.getUser());
-    return { user, users: [] };
+    if (!success) {
+        return { user, users: [] };
+    }
+    return { user, users: data ?? [] };
 };
 
 export const actions = {

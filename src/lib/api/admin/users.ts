@@ -12,6 +12,7 @@ export function fetchAdminUsers(
         },
     })
 }
+
 export function updateUserRole(
     accessToken: string,
     userId: string,
