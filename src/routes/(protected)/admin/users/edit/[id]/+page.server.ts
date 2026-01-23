@@ -56,7 +56,7 @@ export const actions = {
             }
 
 
-            throw redirect(303, '/admin/users');
+            return { success: true };
         } catch (err) {
             if (err instanceof Response && err.status === 303) {
                 throw err; // Re-throw redirect

@@ -4,13 +4,14 @@
     import { enhance } from "$app/forms";
     import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
     import InputSelect from "$lib/components/atoms/input/InputSelect.svelte";
+    import ConfirmModal from "$lib/components/atoms/modal/ConfirmModal.svelte";
 
     let { data, form }: { data: any; form?: any } = $props();
 
     const roleOptions = [
         { value: "user", label: "Usuario" },
         { value: "admin", label: "Administrador" },
-        { value: "official_compliance", label: "Oficial de Cumplimiento" }
+        { value: "official_compliance", label: "Oficial de Cumplimiento" },
     ];
 
     function handleCancel() {
