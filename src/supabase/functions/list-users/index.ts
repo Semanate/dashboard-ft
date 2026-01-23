@@ -20,9 +20,6 @@ serve(async () => {
       }
     )
 
-    /* ============================
-       1. OBTENER USUARIOS AUTH
-       ============================ */
 
     const { data: authData, error: authError } =
       await admin.auth.admin.listUsers({ perPage: 1000 })
@@ -38,9 +35,7 @@ serve(async () => {
 
     const authUsers = authData?.users ?? []
 
-    /* ============================
-       2. OBTENER ROLES (profiles)
-       ============================ */
+
 
     const { data: profiles, error: profileError } =
       await admin.from('profiles').select('id, role')
@@ -54,10 +49,6 @@ serve(async () => {
       }, 500)
     }
 
-    /* ============================
-       3. UNIR AUTH + PROFILES
-       ============================ */
-
     const users = authUsers.map(user => {
       const profile = profiles?.find(p => p.id === user.id)
 
@@ -69,9 +60,6 @@ serve(async () => {
       }
     })
 
-    /* ============================
-       4. RESPUESTA FINAL
-       ============================ */
 
     return jsonResponse({
       success: true,

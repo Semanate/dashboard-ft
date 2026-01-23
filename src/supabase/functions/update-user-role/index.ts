@@ -1,56 +1,50 @@
 import { serve } from 'https://deno.land/std/http/server.ts'
 import { jsonResponse } from '../_shared/response.ts'
-import { createAdminClient, createUserClient } from '../_shared/supabase.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 serve(async (req) => {
-    if (req.method !== 'PATCH') {
-        return jsonResponse({ success: false, error: 'Method not allowed' }, 405)
+    try {
+        const body = await req.json()
+        const { userId, role } = body
+
+        console.log("Received request to update user:", userId, "to role:", role);
+        if (!userId || !role) {
+            return jsonResponse({ success: false, error: 'Missing params' }, 400)
+        }
+
+        const admin = createClient(
+            SUPABASE_URL,
+            SUPABASE_SERVICE_ROLE_KEY,
+            {
+                auth: {
+                    persistSession: false,
+                    autoRefreshToken: false,
+                    detectSessionInUrl: false
+                }
+            }
+        )
+
+        const { error } = await admin
+            .from('profiles')
+            .update({ role })
+            .eq('id', userId)
+
+        if (error) {
+            return jsonResponse({ success: false, error: error.message }, 500)
+        }
+
+        return jsonResponse({
+            success: true,
+            message: 'Role updated successfully'
+        })
+    } catch (err) {
+        console.error('EDGE FUNCTION ERROR:', err)
+        return jsonResponse({
+            success: false,
+            error: 'Internal server error'
+        }, 500)
     }
-
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-        return jsonResponse({ success: false, error: 'Unauthorized' }, 401)
-    }
-
-    const jwt = authHeader.replace('Bearer ', '')
-
-    const supabase = createUserClient(jwt)
-
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-        return jsonResponse({ success: false, error: 'Invalid token' }, 401)
-    }
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-    if (profile?.role !== 'admin') {
-        return jsonResponse({ success: false, error: 'Forbidden' }, 403)
-    }
-
-    const body = await req.json()
-    const { userId, role } = body
-
-    if (!userId || !role) {
-        return jsonResponse({ success: false, error: 'Missing params' }, 400)
-    }
-
-    const admin = createAdminClient()
-
-    const { error } = await admin
-        .from('profiles')
-        .update({ role })
-        .eq('id', userId)
-
-    if (error) {
-        return jsonResponse({ success: false, error: error.message }, 500)
-    }
-
-    return jsonResponse({
-        success: true,
-        message: 'Role updated successfully'
-    })
 })

@@ -10,6 +10,7 @@
     const roleOptions = [
         { value: "user", label: "Usuario" },
         { value: "admin", label: "Administrador" },
+        { value: "official_compliance", label: "Oficial de Cumplimiento" }
     ];
 
     function handleCancel() {
@@ -50,7 +51,6 @@
             class="bg-white rounded-lg shadow-lg p-6"
         >
             <div class="space-y-6">
-                <!-- Información no editable -->
                 <div class="bg-gray-50 rounded-lg p-4">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">
                         Información del Usuario
@@ -107,7 +107,6 @@
                     </div>
                 </div>
 
-                <!-- Campos editables -->
                 <div>
                     <label
                         for="role"

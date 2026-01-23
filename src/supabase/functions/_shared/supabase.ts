@@ -26,11 +26,6 @@ export function createAdminClient() {
                 autoRefreshToken: false,
                 detectSessionInUrl: false
             },
-            global: {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
         }
     )
 }

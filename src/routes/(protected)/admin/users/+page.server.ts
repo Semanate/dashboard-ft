@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { updateUserRole } from '$lib/api/admin/users.js';
-
 import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
@@ -10,6 +8,11 @@ export const load = async ({ locals }) => {
     }
 
     const { data: usersReponse } = await locals.supabase.functions.invoke('list-users');
+
+    if (!usersReponse) {
+        return { user, users: [] };
+    }
+
     const { data, success } = usersReponse;
 
     if (!success) {
@@ -39,11 +42,12 @@ export const actions = {
         }
 
         try {
-            // Usar fetch directamente para llamar a la función edge
-            const response = await updateUserRole(accessToken, userId, role);
+            const response = await locals.supabase.functions.invoke('update-user-role', {
+                body: JSON.stringify({ userId, role })
+            });
+
+            console.log('Response from update-user-role:', response);
             if (!response.success) {
-                // const errorData = await response.text();
-                // console.error('Error response:', errorData);
                 return { error: 'Error al actualizar el usuario' };
             }
 
