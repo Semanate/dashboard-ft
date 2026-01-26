@@ -7,7 +7,7 @@ export const load = async ({ locals }) => {
         throw redirect(303, '/login');
     }
 
-    const { data: usersReponse } = await locals.supabase.functions.invoke('list-users');
+    const { data: usersReponse } = await locals.supabase.functions.invoke('list-users', { headers: { Authorization: `Bearer ${locals.accessToken}` } });
 
     if (!usersReponse) {
         return { user, users: [] };

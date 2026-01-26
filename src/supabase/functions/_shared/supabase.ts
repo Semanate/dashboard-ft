@@ -6,13 +6,13 @@ const SUPABASE_SERVICE_ROLE_KEY =
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 export function createUserClient(jwt: string) {
-    return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    return createClient(supabaseUrl, supabaseKey, {
         global: {
-            headers: {
-                Authorization: `Bearer ${jwt}`,
-            },
+            headers: jwt ? { Authorization: `Bearer ${jwt}` } : {},
         },
-    })
+    });
 }
 
 

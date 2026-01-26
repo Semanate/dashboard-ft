@@ -5,8 +5,7 @@ import { supabase } from '$lib/db/client';
 const PUBLIC_ROUTES = ['/login', '/register', '/'];
 
 export const handle: Handle = async ({ event, resolve }) => {
-    event.locals.supabase = supabase;
-    const pathName = event.url.pathname;
+  const pathName = event.url.pathname;
     if (PUBLIC_ROUTES.includes(pathName)) {
         return resolve(event);
     }

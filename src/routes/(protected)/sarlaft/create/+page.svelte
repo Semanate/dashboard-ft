@@ -24,8 +24,6 @@
     createCryptoWallet,
   } from "$lib/utils/object";
 
-  // Variable configurable para el nombre de la empresa
-
   let showSuccessModal = $state(false);
   let showLoadingModal = $state(false);
   let successMessage = $state("");
@@ -33,8 +31,6 @@
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
 
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
-
-  // ... (funciones existentes: saveFormData, autoSave, hasChanges, descargar, generateExcel)
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
@@ -70,7 +66,6 @@
       formData.status = "draft";
       const save = await saveFormData(formData);
       if (save) {
-        console.log("✅ Auto-guardado exitoso");
 
         successMessage = "Formulario guardado correctamente.";
         showSuccessModal = true;
@@ -129,7 +124,6 @@
   let productsForeignCurrency = $state([createProductForeignCurrency()]);
   let cryptoWallets = $state([createCryptoWallet()]);
 
-  // ... (secciones existentes: relationsAndAccountsSection, foreignCurrencySection)
 
   let relationsAndAccountsSection = $derived.by(() => ({
     label: "Accionistas y Cuentas Financieras",
@@ -385,11 +379,11 @@
 
   const fieldsSarlaft = $derived.by(() => [
     ...sarlaftCategories,
-    relationsAndAccountsSection,
-    foreignCurrencySection,
-    declarationsSection,
-    filesSarlaftSection,
-    ...signaturesSarlaftSection,
+    // relationsAndAccountsSection,
+    // foreignCurrencySection,
+    // declarationsSection,
+    // filesSarlaftSection,
+    // ...signaturesSarlaftSection,
   ]);
 
   let totalPercentage = $derived.by(() => {

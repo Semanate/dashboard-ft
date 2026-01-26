@@ -32,7 +32,6 @@ export const actions = {
             }
         });
 
-        console.log("Signup error:", error);
         if (error
         ) {
             return fail(400, { ...ErrorCodes.SUPABASE_SIGNUP_ERROR });
