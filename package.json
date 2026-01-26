@@ -16,7 +16,8 @@
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "docker": "bash ./scripts/docker-publish.sh"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.1.3",
