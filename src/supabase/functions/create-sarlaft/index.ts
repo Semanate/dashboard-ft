@@ -22,8 +22,8 @@ serve((r) =>
 
     const formData = await req.formData();
     const uploadedDocs = await uploadDocuments(formData, supabase);
+    console.log("Uploaded documents:", uploadedDocs);
     const payload = await buildSarlaftPayload(formData, uploadedDocs);
-
     const validation = validateAndNormalizeSarlaft(payload);
 
     if (!validation.ok) {
@@ -35,5 +35,6 @@ serve((r) =>
       return jsonResponse({ success: false, data: null, error: error.message }, 400);
     }
 
+    console.log("SARLAFT form saved with ID:", data);
     return jsonResponse({ success: true, data: { id: data }, error: null });
   }));

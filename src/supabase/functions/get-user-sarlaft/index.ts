@@ -3,7 +3,6 @@ import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
 import { isAllNull } from "../_shared/map-payload.ts";
-
 import { AuthMiddleware } from "../_shared/jwt/default.ts";
 
 serve((r) =>

@@ -2,25 +2,27 @@
 import { serve } from "https://deno.land/std/http/server.ts";
 import { jsonResponse } from "../_shared/response.ts";
 import { createUserClient } from "../_shared/supabase.ts";
+import { AuthMiddleware } from "../_shared/jwt/default.ts";
 
-serve(async (req) => {
-    if (req.method !== "GET") {
-        return jsonResponse({ success: false, error: "Method not allowed" }, 405);
-    }
+serve((r) =>
+    AuthMiddleware(r, async (req) => {
+        if (req.method !== "GET") {
+            return jsonResponse({ success: false, error: "Method not allowed" }, 405);
+        }
 
-    const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
-    const supabase = createUserClient(jwt);
+        const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
+        const supabase = createUserClient(jwt);
 
-    const sarlaftId = req.headers.get("x-sarlaft-id");
+        const sarlaftId = req.headers.get("x-sarlaft-id");
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    if (userError || !user) {
-        return jsonResponse({ success: false, error: "Unauthorized" }, 401);
-    }
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+            return jsonResponse({ success: false, error: "Unauthorized" }, 401);
+        }
 
-    let query = supabase
-        .from("sarlaft_forms")
-        .select(`
+        let query = supabase
+            .from("sarlaft_forms")
+            .select(`
       id,
       status,
       updated_at,
@@ -52,38 +54,38 @@ serve(async (req) => {
         currency
       )
     `)
-        .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false });
 
-    if (sarlaftId) {
-        query = query.eq("id", sarlaftId).single();
-    }
+        if (sarlaftId) {
+            query = query.eq("id", sarlaftId).single();
+        }
 
-    const { data, error } = await query;
+        const { data, error } = await query;
 
-    if (error) {
-        return jsonResponse({ success: false, error: error.message }, 400);
-    }
+        if (error) {
+            return jsonResponse({ success: false, error: error.message }, 400);
+        }
 
-    const rows = sarlaftId ? [data] : data;
+        const rows = sarlaftId ? [data] : data;
 
-    const mapped = rows.map((row: any) => {
-        const { payload, ...rest } = row;
+        const mapped = rows.map((row: any) => {
+            const { payload, ...rest } = row;
 
-        //const fullPayload = buildSarlaftObject(row);
-        // const values = mapPayloadToFlatObject(fullPayload, excelMappings);
-        // console.log("Mapped Values:", values);
-        return {
-            id: row.id,
-            status: row.status,
-            // createdAt: row.created_at,
-            ...rest,
-            ...payload,
-        };
-    });
+            //const fullPayload = buildSarlaftObject(row);
+            // const values = mapPayloadToFlatObject(fullPayload, excelMappings);
+            // console.log("Mapped Values:", values);
+            return {
+                id: row.id,
+                status: row.status,
+                // createdAt: row.created_at,
+                ...rest,
+                ...payload,
+            };
+        });
 
-    return jsonResponse({
-        success: true,
-        data: sarlaftId ? mapped[0] : mapped,
-    });
-});
+        return jsonResponse({
+            success: true,
+            data: sarlaftId ? mapped[0] : mapped,
+        });
+    }));
 
