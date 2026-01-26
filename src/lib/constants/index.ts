@@ -499,71 +499,96 @@ export const sarlaftCategories = [
         ],
     },
 
-    // ============================================================
-    // AUTORIZACIONES SARLAFT
-    // ============================================================
-    // {
-    //   label: "Autorizaciones y Declaraciones",
-    //   fields: [
-    //     {
-    //       id: "authDataProcessing",
-    //       name: "authorizations.dataProcessing",
-    //       type: "checkbox",
-    //       label: "Autorizo el tratamiento de datos personales",
-    //       required: true,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authDataDate",
-    //       name: "authorizations.dataProcessingDate",
-    //       type: "date",
-    //       label: "Fecha de autorización de datos",
-    //       required: false,
-    //       value: "",
-    //     },
-    //     {
-    //       id: "authCentral",
-    //       name: "authorizations.centralConsultation",
-    //       type: "checkbox",
-    //       label: "Autorizo consulta en centrales de riesgo",
-    //       required: false,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authCentralDate",
-    //       name: "authorizations.centralConsultationDate",
-    //       type: "date",
-    //       label: "Fecha de autorización centrales",
-    //       required: false,
-    //       value: "",
-    //     },
-    //     {
-    //       id: "authEmail",
-    //       name: "authorizations.emailCommunication",
-    //       type: "checkbox",
-    //       label: "Acepto comunicaciones por email",
-    //       required: false,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authTruth",
-    //       name: "authorizations.truthDeclaration",
-    //       type: "checkbox",
-    //       label: "Declaro que la información es verdadera",
-    //       required: true,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authTruthDate",
-    //       name: "authorizations.truthDeclarationDate",
-    //       type: "date",
-    //       label: "Fecha de declaración",
-    //       required: false,
-    //       value: "",
-    //     },
-    //   ],
-    // },
 ];
+const COMPANY_NAME = "La Empresa S.A.S.";
+export const declarationsSection = {
+    label: "Declaraciones y Autorizaciones",
+    isVisible: () => true,
+    fields: [
+        {
+            id: "assetsDeclaration",
+            name: "declarations.assetsDeclaration",
+            type: "checkbox",
+            label: `DECLARACIÓN DE LOS BIENES Y/O FONDOS: Declaro que todos los recursos y/o bienes que poseemos han sido obtenidos lícitamente a través del desarrollo de nuestro objeto social o de las actividades autorizadas por las autoridades competentes.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "terrorismDeclaration",
+            name: "declarations.terrorismDeclaration",
+            type: "checkbox",
+            label: `Declaro que los recursos que se deriven del desarrollo de este contrato no se destinarán a la financiación del terrorismo, grupos terroristas o actividades terroristas.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "informationVeracity",
+            name: "declarations.informationVeracity",
+            type: "checkbox",
+            label: `Declaro que toda la información que he suministrado y suministraré a través de cualquier medio es veraz, actual, exacta, comprobable y pertinente, y me comprometo a actualizarla anualmente.`,
+            value: false,
+            required: true,
+        },
+        // {
+        //   id: "fundsOrigin",
+        //   name: "declarations.fundsOrigin",
+        //   type: "textarea",
+        //   label: "Detalle el origen de los fondos (ocupación, oficio, actividad o negocio)",
+        //   placeholder:
+        //     "Describa en detalle las fuentes de los recursos que administra la persona natural o jurídica...",
+        //   value: "",
+        //   required: true,
+        // },
+        {
+            id: "listsAuthorization",
+            name: "authorizations.listsAuthorization",
+            type: "checkbox",
+            label: `AUTORIZACIÓN PARA CONSULTA LISTAS NACIONALES E INTERNACIONALES: Autorizo a ${COMPANY_NAME} para que verifique, solicite y/o consulte ante los organismos de seguridad del Estado, listas vinculantes/restrictivas toda la información referente a los antecedentes legales, penales y financieros.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "dataProcessingAuth1",
+            name: "authorizations.dataProcessing.informed",
+            type: "checkbox",
+            label: `AUTORIZACIÓN DE TRATAMIENTO DE DATOS PERSONALES: He sido informado por ${COMPANY_NAME} sobre las disposiciones para el tratamiento de datos personales conforme a la Ley 1581 de 2012.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "dataProcessingAuth2",
+            name: "authorizations.dataProcessing.purposeKnown",
+            type: "checkbox",
+            label: `Conozco las finalidades de la recolección de datos: prestación de servicios, fines comerciales, consulta a terceros (centrales de riesgo, listas restrictivas, etc.).`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "dataProcessingAuth3",
+            name: "authorizations.dataProcessing.rightsKnown",
+            type: "checkbox",
+            label: `Conozco mis derechos como titular: conocer, actualizar, rectificar, suprimir y revocar el consentimiento sobre mis datos personales.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "dataProcessingAuth4",
+            name: "authorizations.dataProcessing.voluntaryConsent",
+            type: "checkbox",
+            label: `Autorizo de manera voluntaria, previa, explícita, informada e inequívoca a ${COMPANY_NAME} para tratar mis datos personales de acuerdo con su Política de Tratamiento de Datos Personales.`,
+            value: false,
+            required: true,
+        },
+        {
+            id: "dataProcessingAuth5",
+            name: "authorizations.dataProcessing.veracityConfirmation",
+            type: "checkbox",
+            label: `La información obtenida para el tratamiento de datos personales la he suministrado de forma voluntaria y es verídica.`,
+            value: false,
+            required: true,
+        },
+    ],
+};
 
 export const signaturesSarlaftSection = [
     // ============================================================
@@ -604,6 +629,7 @@ export const signaturesSarlaftSection = [
     // ============================================================
 
     {
+        isVisible: () => false,
         label: "Verificación Interna — Cumplimiento",
         fields: [
             {

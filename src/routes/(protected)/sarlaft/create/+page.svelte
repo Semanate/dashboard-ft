@@ -12,6 +12,7 @@
     cryptoTypesArray,
     signaturesSarlaftSection,
     typesForeignCurrencyArray,
+    declarationsSection,
   } from "$lib/constants";
   import type { FormDataType, StepActive } from "$lib/types";
   import { getValuesRobust, toFormData } from "$lib/utils/forms";
@@ -23,6 +24,8 @@
     createCryptoWallet,
   } from "$lib/utils/object";
 
+  // Variable configurable para el nombre de la empresa
+
   let showSuccessModal = $state(false);
   let showLoadingModal = $state(false);
   let successMessage = $state("");
@@ -30,6 +33,8 @@
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
 
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
+
+  // ... (funciones existentes: saveFormData, autoSave, hasChanges, descargar, generateExcel)
 
   async function saveFormData(formData: FormDataType): Promise<boolean> {
     try {
@@ -123,6 +128,8 @@
   let accountsFinancials = $state([createAccountFinancials()]);
   let productsForeignCurrency = $state([createProductForeignCurrency()]);
   let cryptoWallets = $state([createCryptoWallet()]);
+
+  // ... (secciones existentes: relationsAndAccountsSection, foreignCurrencySection)
 
   let relationsAndAccountsSection = $derived.by(() => ({
     label: "Accionistas y Cuentas Financieras",
@@ -321,8 +328,6 @@
               },
             ]
           : []),
-        // Subsección de billeteras cripto (solo si hasCrypto es true)
-        // NO incluir el checkbox aquí porque ya viene en foreignCurrencyBaseSection
         ...(shouldShowCrypto
           ? [
               {
@@ -375,11 +380,14 @@
       ],
     };
   });
-  
+
+
+
   const fieldsSarlaft = $derived.by(() => [
     ...sarlaftCategories,
     relationsAndAccountsSection,
     foreignCurrencySection,
+    declarationsSection,
     filesSarlaftSection,
     ...signaturesSarlaftSection,
   ]);
