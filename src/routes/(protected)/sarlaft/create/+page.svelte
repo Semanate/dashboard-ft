@@ -10,7 +10,7 @@
     typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType, StepActive } from "$lib/types";
-  import { getValuesRobust, toFormData } from "$lib/utils/forms";
+  import { getValues, getValuesRobust, toFormData } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
   import {
     createAccountFinancials,
@@ -87,7 +87,6 @@
   async function descargar() {
     const rest = await fetch("/excel");
     const { data } = await rest.json();
-    console.log("DATA", data);
     const blob = await rest.blob();
     const url = URL.createObjectURL(blob);
 
@@ -321,12 +320,17 @@
   let totalPercentage = $derived.by(() => {
     const data: FormDataType = getValuesRobust(formDataState) as FormDataType;
 
-    return data.relations
+    console.log("📥 Calculando porcentaje total con data:", data);
+    const total = data.relations
       ? data.relations.reduce(
           (sum, rel) => sum + Number(rel.percentageParticipation || 0),
           0,
         )
       : 0;
+
+    console.log("🔢 Calculando porcentaje total:", total);
+    console.log("📊 Relations data:", data.relations);
+    return total;
   });
 
   const handleSubmit = async (data: FormDataType) => {
@@ -360,23 +364,6 @@
           Sistema de Administración del Riesgo de Lavado de Activos y de la
           Financiación del Terrorismo
         </p>
-        <!-- {@const currentFormData = getValuesRobust(formDataState)}
-        {#if currentFormData.status}
-          <span
-            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-            {currentFormData.status === 'completed'
-              ? 'bg-green-100 text-green-800'
-              : currentFormData.status === 'validated'
-                ? 'bg-blue-100 text-blue-800'
-                : 'bg-yellow-100 text-yellow-800'}"
-          >
-            {currentFormData.status === "completed"
-              ? "Completado"
-              : currentFormData.status === "validated"
-                ? "Validado"
-                : "Borrador"}
-          </span>
-        {/if} -->
       </div>
 
       <div class="flex gap-2">

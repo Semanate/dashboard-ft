@@ -15,7 +15,8 @@
       | "textarea"
       | "checkbox"
       | "password"
-      | "email";
+      | "email"
+      | "number";
     label: string;
     id: string;
     placeholder?: string;
@@ -45,6 +46,7 @@
   let fieldErrors = $state<Record<number, Record<string, string>>>({});
   let hasAttemptedNext = $state(false);
   let didInit = $state(false);
+  let attemptedSteps = $state<Record<number, boolean>>({});
 
   let {
     categories: items,
@@ -59,11 +61,11 @@
       label: "",
     }),
   }: Props = $props();
-  
+
   let values = $derived.by(() => getValuesRobust(formData));
 
   let categories = $derived.by(() => items);
-  
+
   /**
    * Índices reales de categories que están visibles
    */
@@ -83,7 +85,7 @@
     activeStep.step = activeVisible;
     activeStep.label = categories[active]?.label || "";
   });
-  
+
   /**
    * Si cambia la visibilidad y el activeVisible queda fuera de rango, lo ajustamos
    */
@@ -104,13 +106,14 @@
   $effect(() => {
     if (didInit) return;
     didInit = true;
-    
+
     const initial: Record<number, Record<string, any>> = {};
     const initialErrors: Record<number, Record<string, string>> = {};
 
     categories.forEach((cat, i) => {
       initial[i] = {};
       initialErrors[i] = {};
+      attemptedSteps[i] = false;
 
       cat.fields.forEach((field) => {
         initial[i][field.name] = field.value ?? "";
@@ -121,7 +124,7 @@
     Object.assign(formData, initial);
     Object.assign(fieldErrors, initialErrors);
   });
-  
+
   function resolveVisibility(category: Category): boolean {
     if (typeof category.isVisible === "function") {
       return category.isVisible(values);
@@ -156,13 +159,12 @@
     if (!formData[categoryIndex]) {
       formData[categoryIndex] = {};
     }
-    
+
     formData[categoryIndex][fieldName] = value;
-    
-    // CRUCIAL: Forzar la actualización del objeto para que Svelte detecte el cambio
+
     formData = { ...formData };
-    
-    if (hasAttemptedNext && categoryIndex === active) {
+
+    if (attemptedSteps[categoryIndex]) {
       validateStep(
         categoryIndex,
         categories,
@@ -170,6 +172,7 @@
         resolveVisibility,
         fieldErrors,
       );
+      fieldErrors = { ...fieldErrors };
     }
   }
 
@@ -192,7 +195,7 @@
   };
 
   function next() {
-    hasAttemptedNext = true;
+    attemptedSteps[active] = true;
     if (updateNext) {
       updateNext();
     }
@@ -214,9 +217,12 @@
    * Submit Of the form
    */
   function handleSubmit(event: Event) {
-    event.preventDefault(); 
-    
-    hasAttemptedNext = true;
+    event.preventDefault();
+
+    visibleIndexes.forEach((i) => {
+      attemptedSteps[i] = true;
+    });
+
     if (
       validateCurrentStep() &&
       isValid(
@@ -266,7 +272,9 @@
                 label: field.label,
                 placeholder: field.placeholder,
                 options: field.options,
-                error: fieldErrors[realI]?.[field.name] || "",
+                error: attemptedSteps[realI]
+                  ? fieldErrors[realI]?.[field.name] || ""
+                  : "",
                 value: formData[realI]?.[field.name] ?? "",
                 onchange: (value: any) => {
                   updateField(realI, field.name, value);
@@ -290,20 +298,16 @@
       />
 
       {#if activeVisible < visibleIndexes.length - 1}
-        <Button 
-          onclick={next} 
-          label="Siguiente" 
+        <Button
+          onclick={next}
+          label="Siguiente"
           variant="ghost"
           type="button"
         />
       {/if}
 
       {#if activeVisible === visibleIndexes.length - 1 && visibleIndexes.length > 0}
-        <Button
-          label="Enviar"
-          variant="primary"
-          type="submit"
-        />
+        <Button label="Enviar" variant="primary" type="submit" />
       {/if}
     </div>
   </form>

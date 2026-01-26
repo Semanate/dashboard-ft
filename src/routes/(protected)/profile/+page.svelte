@@ -91,7 +91,6 @@
   class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8"
 >
   <div class="max-w-6xl mx-auto">
-    <!-- Encabezado -->
     <header class="mb-8">
       <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
         Panel de Configuración
@@ -100,7 +99,6 @@
         Gestiona tu cuenta y configura las preferencias del sistema
       </p>
 
-      <!-- Indicador de rol -->
       {#if isAdmin}
         <div
           class="inline-flex items-center mt-4 px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium"

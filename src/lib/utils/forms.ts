@@ -36,11 +36,9 @@ export function getValues<T>(formData: Record<string, any>): T | any {
 export function getValuesRobust<T>(formData: Record<string, any>): T | any {
     const arr = Object.values(formData);
 
-    // Función auxiliar para clonar profundamente preservando Files
     function deepClone(obj: any): any {
         if (obj === null || obj === undefined) return obj;
 
-        // Preservar objetos especiales del DOM/navegador
         if (obj instanceof File ||
             obj instanceof FileList ||
             obj instanceof Blob ||
@@ -70,9 +68,43 @@ export function getValuesRobust<T>(formData: Record<string, any>): T | any {
 
     const clean = arr.map(obj => deepClone(obj));
     const merged = Object.assign({}, ...clean);
-    const fullObject = expand(merged);
+    const fullObject = expandWithArrays(merged);
     return fullObject;
 }
+
+function expandWithArrays(obj: Record<string, any>) {
+    const result: any = {};
+
+    for (const key in obj) {
+        const value = obj[key];
+
+        const parts = key
+            .replace(/\]/g, "")
+            .split(/\.|\[/); // soporta dots y [index]
+
+        let current = result;
+
+        parts.forEach((part, index) => {
+            const isLast = index === parts.length - 1;
+            const nextPart = parts[index + 1];
+            const isArrayIndex = /^\d+$/.test(nextPart);
+
+            if (isLast) {
+                current[part] = value;
+                return;
+            }
+
+            if (!(part in current)) {
+                current[part] = isArrayIndex ? [] : {};
+            }
+
+            current = current[part];
+        });
+    }
+
+    return result;
+}
+
 /**
  * 
  * @param obj 
