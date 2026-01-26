@@ -10,7 +10,6 @@ serve(async (req) => {
         const body = await req.json()
         const { userId, role } = body
 
-        console.log("Received request to update user:", userId, "to role:", role);
         if (!userId || !role) {
             return jsonResponse({ success: false, error: 'Missing params' }, 400)
         }

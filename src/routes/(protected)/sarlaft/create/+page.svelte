@@ -27,6 +27,8 @@
   let showSuccessModal = $state(false);
   let showLoadingModal = $state(false);
   let successMessage = $state("");
+  let errorMessage = $state("");
+  let showErrorModal = $state(false);
 
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
 
@@ -44,12 +46,12 @@
       const res = await response.json();
 
       if (res.success) {
-        formData.id = res.data.id;
-        formData.updatedAt = res.data.updatedAt;
         return true;
+      } else {
+        errorMessage = "Error al guardar el formulario.";
+        showErrorModal = true;
+        return false;
       }
-
-      return true;
     } catch (error) {
       console.error("❌ Error saving form data:", error);
     }
@@ -60,13 +62,11 @@
     const formData: FormDataType = getValuesRobust(
       formDataState,
     ) as FormDataType;
-    console.log("🔄 Auto-saving form data...", formData);
 
     if (formData.id || hasChanges()) {
       formData.status = "draft";
       const save = await saveFormData(formData);
       if (save) {
-
         successMessage = "Formulario guardado correctamente.";
         showSuccessModal = true;
 
@@ -123,7 +123,6 @@
   let accountsFinancials = $state([createAccountFinancials()]);
   let productsForeignCurrency = $state([createProductForeignCurrency()]);
   let cryptoWallets = $state([createCryptoWallet()]);
-
 
   let relationsAndAccountsSection = $derived.by(() => ({
     label: "Accionistas y Cuentas Financieras",
@@ -375,15 +374,13 @@
     };
   });
 
-
-
   const fieldsSarlaft = $derived.by(() => [
     ...sarlaftCategories,
-    // relationsAndAccountsSection,
-    // foreignCurrencySection,
-    // declarationsSection,
-    // filesSarlaftSection,
-    // ...signaturesSarlaftSection,
+    relationsAndAccountsSection,
+    foreignCurrencySection,
+    declarationsSection,
+    filesSarlaftSection,
+    ...signaturesSarlaftSection,
   ]);
 
   let totalPercentage = $derived.by(() => {
@@ -412,7 +409,8 @@
         goto("/sarlaft/");
       }, 1800);
     } else {
-      alert("Error al guardar el formulario");
+      showLoadingModal = false;
+      showErrorModal = true;
     }
   };
 </script>
@@ -526,6 +524,28 @@
           </p>
 
           <p class="text-sm text-gray-400">Redirigiendo…</p>
+        </div>
+      </div>
+    {/if}
+
+    {#if showErrorModal}
+      <div
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      >
+        <div
+          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">❌ Error</h2>
+
+          <p class="text-gray-600 mb-4">
+            {errorMessage}
+          </p>
+          <button
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+            onclick={() => (showErrorModal = false)}
+          >
+            Cerrar
+          </button>
         </div>
       </div>
     {/if}

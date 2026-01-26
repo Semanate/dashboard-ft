@@ -4,30 +4,36 @@ import { createUserClient } from "../_shared/supabase.ts";
 import { validateAndNormalizeSarlaft } from "../_shared/sarlaft-validate.ts";
 import { buildSarlaftPayload } from "../_shared/build-sarlaft-object.ts";
 import { uploadDocuments } from "../_shared/upload-documents.ts";
+import { AuthMiddleware } from "../_shared/jwt/default.ts";
 
-serve(async (req) => {
-  const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
-  const supabase = createUserClient(jwt);
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) {
-    return jsonResponse({ success: false, data: null, error: "Unauthorized" }, 401);
-  }
+serve((r) =>
+  AuthMiddleware(r, async (req) => {
+    const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
+    if (!jwt) {
+      return jsonResponse({ success: false, data: null, error: "Unauthorized" }, 401);
+    }
+    const supabase = createUserClient(jwt);
 
-  const formData = await req.formData();
-  const uploadedDocs = await uploadDocuments(formData, supabase);
-  const payload = await buildSarlaftPayload(formData, uploadedDocs);
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return jsonResponse({ success: false, data: null, error: "Unauthorized" }, 401);
+    }
 
-  const validation = validateAndNormalizeSarlaft(payload);
+    const formData = await req.formData();
+    const uploadedDocs = await uploadDocuments(formData, supabase);
+    const payload = await buildSarlaftPayload(formData, uploadedDocs);
 
-  if (!validation.ok) {
-    return jsonResponse({ success: false, data: null, error: validation.errors }, 400);
-  }
+    const validation = validateAndNormalizeSarlaft(payload);
 
-  const { data, error } = await supabase.rpc("save_sarlaft_v2", { p_payload: payload });
-  if (error) {
-    return jsonResponse({ success: false, data: null, error: error.message }, 400);
-  }
+    if (!validation.ok) {
+      return jsonResponse({ success: false, data: null, error: validation.errors }, 400);
+    }
 
-  return jsonResponse({ success: true, data: { id: data }, error: null });
-});
+    const { data, error } = await supabase.rpc("save_sarlaft_v2", { p_payload: payload });
+    if (error) {
+      return jsonResponse({ success: false, data: null, error: error.message }, 400);
+    }
+
+    return jsonResponse({ success: true, data: { id: data }, error: null });
+  }));

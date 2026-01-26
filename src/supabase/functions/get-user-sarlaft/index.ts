@@ -6,9 +6,6 @@ import { isAllNull } from "../_shared/map-payload.ts";
 
 import { AuthMiddleware } from "../_shared/jwt/default.ts";
 
-
-
-
 serve((r) =>
     AuthMiddleware(r, async (req) => {
         if (req.method !== "POST") {

@@ -10,22 +10,21 @@ export const POST = async ({ request, cookies }) => {
 
     const formData = await request.formData();
 
-    const response = await supabase.functions.invoke(
-        'create-sarlaft',
-        {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: formData
-        }
-    );
-    // const response = await invokeCreateSarlaft(accessToken, formData);
+    // const response = await supabase.functions.invoke(
+    //     'create-sarlaft',
+    //     {
+    //         headers: {
+    //             Authorization: `Bearer ${accessToken}`
+    //         },
+    //         body: formData
+    //     }
+    // );
+    const { success, error } = await invokeCreateSarlaft(accessToken, formData);
 
-    console.log('Response from create-user-sarlaft:', response);
-    if (!response.success) {
-        return json({ error: 'Error al crear el formulario' }, { status: 500 });
+    if (!success) {
+        return json({ error, }, { status: 500 });
     }
-    return json(response);
+    return json({ success });
 };
 
 export const GET = async ({ cookies }) => {
