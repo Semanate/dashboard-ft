@@ -144,48 +144,64 @@ function expand(obj: Record<string, any>): any {
  * * @returns
  * @description This function validates a specific step in a multi-step form by checking if required fields are filled out. It takes into account the visibility of the step and updates the fieldErrors object with any validation errors found.
  */
-export function validateStep(index: number, categories: any, formData: any, resolveVisibility: any, fieldErrors: Record<number, Record<string, string>>) {
+export function validateStep(
+    index: number,
+    categories: any,
+    formData: any,
+    resolveVisibility: any,
+    fieldErrors: Record<number, Record<string, string>>
+) {
     const currentCategory = categories[index];
     if (!currentCategory) {
         return { isValid: true, errors: {} as Record<string, string> };
     }
-
     if (!resolveVisibility(currentCategory)) {
         fieldErrors[index] = {};
         return { isValid: true, errors: {} as Record<string, string> };
     }
 
-    // if ((currentCategory.isVisible(values) ?? true) === false) {
-    //   fieldErrors[index] = {};
-    //   return { isValid: true, errors: {} as Record<string, string> };
-    // }
-
     let isValid = true;
     const newErrors: Record<string, string> = {};
 
-    currentCategory.fields.forEach((field: any) => {
+    // Función auxiliar para validar un campo individual
+    const validateField = (field: any) => {
         if (field.required === false || field.type === "file") {
             newErrors[field.name] = "";
             return;
         }
-
         const value = formData[index]?.[field.name];
         const isEmpty =
             value === null ||
             value === undefined ||
             (typeof value === "string" && value.trim() === "") ||
             (Array.isArray(value) && value.length === 0);
-
         if (isEmpty) {
             newErrors[field.name] = "Este campo es requerido";
             isValid = false;
         } else {
             newErrors[field.name] = "";
         }
-    });
+    };
+
+    // Si la categoría tiene campos directos (estructura antigua)
+    if (currentCategory.fields && Array.isArray(currentCategory.fields)) {
+        currentCategory.fields.forEach(validateField);
+    }
+
+    // Si la categoría tiene subsecciones (estructura nueva)
+    if (currentCategory.subsections && Array.isArray(currentCategory.subsections)) {
+        currentCategory.subsections.forEach((subsection: any) => {
+            if (subsection.items && Array.isArray(subsection.items)) {
+                subsection.items.forEach((item: any) => {
+                    if (item.fields && Array.isArray(item.fields)) {
+                        item.fields.forEach(validateField);
+                    }
+                });
+            }
+        });
+    }
 
     fieldErrors[index] = newErrors;
-
     return { isValid, errors: newErrors };
 }
 /**

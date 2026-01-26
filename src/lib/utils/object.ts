@@ -32,3 +32,11 @@ export function createProductForeignCurrency() {
         currency: "",
     }
 }
+
+export function createCryptoWallet() {
+    return {
+        platform: "",
+        walletAddress: "",
+        cryptoType: "",
+    };
+}

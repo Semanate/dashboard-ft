@@ -4,6 +4,7 @@
   import Button from "$lib/components/atoms/button/Button.svelte";
   import type { OptionsSelects, StepActive } from "$lib/types";
   import { getValuesRobust, isValid, validateStep } from "$lib/utils/forms";
+  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
 
   interface CategoryFormField {
     name: string;
@@ -26,10 +27,26 @@
     error?: string;
   }
 
+  interface SubsectionItem {
+    subtitle?: string;
+    fields: CategoryFormField[];
+  }
+
+  interface Subsection {
+    title: string;
+    items: SubsectionItem[];
+    addButton?: {
+      label: string;
+      show: () => boolean;
+      action: () => void;
+    };
+  }
+
   interface Category {
     label: string;
     isVisible: (values: Record<string, any>) => boolean;
-    fields: CategoryFormField[];
+    fields?: CategoryFormField[];
+    subsections?: Subsection[];
   }
 
   interface Props {
@@ -65,6 +82,29 @@
   let values = $derived.by(() => getValuesRobust(formData));
 
   let categories = $derived.by(() => items);
+
+  /**
+   * Obtener todos los campos de una categoría (incluyendo subsecciones)
+   */
+  function getAllFields(category: Category): CategoryFormField[] {
+    const fields: CategoryFormField[] = [];
+
+    // Campos directos
+    if (category.fields) {
+      fields.push(...category.fields);
+    }
+
+    // Campos de subsecciones
+    if (category.subsections) {
+      category.subsections.forEach((subsection) => {
+        subsection.items.forEach((item) => {
+          fields.push(...item.fields);
+        });
+      });
+    }
+
+    return fields;
+  }
 
   /**
    * Índices reales de categories que están visibles
@@ -115,7 +155,8 @@
       initialErrors[i] = {};
       attemptedSteps[i] = false;
 
-      cat.fields.forEach((field) => {
+      const allFields = getAllFields(cat);
+      allFields.forEach((field) => {
         initial[i][field.name] = field.value ?? "";
         initialErrors[i][field.name] = "";
       });
@@ -176,9 +217,6 @@
     }
   }
 
-  /**
-   * Cambiar step desde el stepper (recibe índice VISIBLE)
-   */
   export const onchange = (visibleI: number) => {
     if (visibleI < activeVisible) {
       activeVisible = visibleI;
@@ -214,10 +252,21 @@
   }
 
   /**
-   * Submit Of the form
+   * Submit Of the form - SOLO debe dispararse en el último paso
    */
   function handleSubmit(event: Event) {
     event.preventDefault();
+    event.stopPropagation();
+    
+    console.log("Submit attempt - Current step:", activeVisible, "of", visibleIndexes.length - 1);
+
+    // CRÍTICO: Solo procesar el submit si estamos en el último paso
+    if (activeVisible !== visibleIndexes.length - 1) {
+      console.log("❌ Not on last step, ignoring submit");
+      return;
+    }
+
+    console.log("✅ On last step, processing submit...");
 
     visibleIndexes.forEach((i) => {
       attemptedSteps[i] = true;
@@ -234,13 +283,34 @@
       ) &&
       callbackOnSubmit
     ) {
+      console.log("✅ Form is valid, calling callback");
       callbackOnSubmit(getValuesRobust(formData));
+    } else {
+      console.log("❌ Form validation failed");
+    }
+  }
+
+  /**
+   * Prevenir submit con Enter en inputs/selects
+   */
+  function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter" && activeVisible !== visibleIndexes.length - 1) {
+      const target = event.target as HTMLElement;
+      // Permitir Enter solo en textareas
+      if (target.tagName !== "TEXTAREA") {
+        event.preventDefault();
+        console.log("🚫 Enter key blocked - not on last step");
+      }
     }
   }
 </script>
 
 {#if isVisible}
-  <form onsubmit={handleSubmit} class="w-full space-y-6">
+  <form 
+    onsubmit={handleSubmit} 
+    onkeydown={handleKeyDown}
+    class="w-full space-y-6"
+  >
     <div class="h-14">
       <Stepper
         steps={visibleIndexes.map((i) => ({
@@ -264,25 +334,84 @@
       {:else}
         {#each visibleIndexes as realI (realI)}
           {#if active === realI}
-            <FormSection
-              title={categories[realI].label}
-              fields={categories[realI].fields.map((field) => ({
-                id: field.id,
-                type: field.type,
-                label: field.label,
-                placeholder: field.placeholder,
-                options: field.options,
-                error: attemptedSteps[realI]
-                  ? fieldErrors[realI]?.[field.name] || ""
-                  : "",
-                value: formData[realI]?.[field.name] ?? "",
-                onchange: (value: any) => {
-                  updateField(realI, field.name, value);
-                },
-                accept:
-                  field.type === "file" ? (field as any).accept : undefined,
-              }))}
-            />
+            {@const category = categories[realI]}
+
+            {#if category.subsections}
+              <div class="space-y-8">
+                {#each category.subsections as subsection}
+                  <div class="border-l-4 border-primary-500 pl-6 space-y-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                      {subsection.title}
+                    </h3>
+
+                    {#each subsection.items as item, itemIndex}
+                      <div class="bg-gray-50 p-6 rounded-lg space-y-4">
+                        {#if item.subtitle}
+                          <h4
+                            class="text-lg font-medium text-gray-700 mb-3 border-b pb-2"
+                          >
+                            {item.subtitle}
+                          </h4>
+                        {/if}
+
+                        <FormSection
+                          title=""
+                          fields={item.fields.map((field) => ({
+                            id: field.id,
+                            type: field.type,
+                            label: field.label,
+                            placeholder: field.placeholder,
+                            options: field.options,
+                            error: attemptedSteps[realI]
+                              ? fieldErrors[realI]?.[field.name] || ""
+                              : "",
+                            value: formData[realI]?.[field.name] ?? "",
+                            onchange: (value: any) => {
+                              updateField(realI, field.name, value);
+                            },
+                            accept:
+                              field.type === "file"
+                                ? (field as any).accept
+                                : undefined,
+                          }))}
+                        />
+                      </div>
+                    {/each}
+
+                    {#if subsection.addButton && subsection.addButton.show()}
+                      <div class="flex justify-end mt-4">
+                        <ButtonWithIcon
+                          type="button"
+                          iconButton="BadgePlus"
+                          onclick={subsection.addButton.action}
+                          label={subsection.addButton.label}
+                        />
+                      </div>
+                    {/if}
+                  </div>
+                {/each}
+              </div>
+            {:else}
+              <FormSection
+                title={category.label}
+                fields={category.fields?.map((field) => ({
+                  id: field.id,
+                  type: field.type,
+                  label: field.label,
+                  placeholder: field.placeholder,
+                  options: field.options,
+                  error: attemptedSteps[realI]
+                    ? fieldErrors[realI]?.[field.name] || ""
+                    : "",
+                  value: formData[realI]?.[field.name] ?? "",
+                  onchange: (value: any) => {
+                    updateField(realI, field.name, value);
+                  },
+                  accept:
+                    field.type === "file" ? (field as any).accept : undefined,
+                })) || []}
+              />
+            {/if}
           {/if}
         {/each}
       {/if}

@@ -150,30 +150,52 @@ const typesPersonArray = Object.entries(typesPerson).map(([key, value]) => ({
     value: key,
 }));
 
+export const cryptoPlatformsArray = [
+    { label: "Binance", value: "binance" },
+    { label: "Coinbase", value: "coinbase" },
+    { label: "Kraken", value: "kraken" },
+    { label: "Bitso", value: "bitso" },
+    { label: "Buda", value: "buda" },
+    { label: "Trust Wallet", value: "trust_wallet" },
+    { label: "MetaMask", value: "metamask" },
+    { label: "Ledger", value: "ledger" },
+    { label: "Trezor", value: "trezor" },
+    { label: "Otra", value: "other" },
+];
+
+export const cryptoTypesArray = [
+    { label: "Bitcoin (BTC)", value: "btc" },
+    { label: "Ethereum (ETH)", value: "eth" },
+    { label: "Tether (USDT)", value: "usdt" },
+    { label: "Binance Coin (BNB)", value: "bnb" },
+    { label: "USD Coin (USDC)", value: "usdc" },
+    { label: "Cardano (ADA)", value: "ada" },
+    { label: "Solana (SOL)", value: "sol" },
+    { label: "Polkadot (DOT)", value: "dot" },
+    { label: "Ripple (XRP)", value: "xrp" },
+    { label: "Otra", value: "other" },
+];
 
 export const foreignCurrencyBaseSection = {
-    label: "Moneda Extranjera y Activos Virtuales",
+    label: "Información General de Divisas",
     isVisible: () => true,
     fields: [
         {
-            id: "fxManage",
+            id: "foreignCurrencyManagement",
             name: "foreignCurrency.management",
             type: "checkbox",
             label: "¿Maneja productos financieros en moneda extranjera?",
-            required: false,
             value: false,
         },
         {
-            id: "fxInfo",
-            name: "foreignCurrency.infoVirtualAssets",
+            id: "hasCrypto",
+            name: "virtualAssets.hasCrypto",
             type: "checkbox",
             label: "¿Maneja activos virtuales o criptomonedas?",
-            required: false,
             value: false,
         },
     ],
 };
-
 
 export const sarlaftCategories = [
     // ============================================================
@@ -429,7 +451,7 @@ export const sarlaftCategories = [
     },
 
     // ============================================================
-    // 7. PEP - AMPLIADO PARA SARLAFT
+    // 5. PEP - AMPLIADO PARA SARLAFT
     // ============================================================
     {
         label: "Preguntas PEP",
@@ -477,6 +499,73 @@ export const sarlaftCategories = [
         ],
     },
 
+    // ============================================================
+    // AUTORIZACIONES SARLAFT
+    // ============================================================
+    // {
+    //   label: "Autorizaciones y Declaraciones",
+    //   fields: [
+    //     {
+    //       id: "authDataProcessing",
+    //       name: "authorizations.dataProcessing",
+    //       type: "checkbox",
+    //       label: "Autorizo el tratamiento de datos personales",
+    //       required: true,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authDataDate",
+    //       name: "authorizations.dataProcessingDate",
+    //       type: "date",
+    //       label: "Fecha de autorización de datos",
+    //       required: false,
+    //       value: "",
+    //     },
+    //     {
+    //       id: "authCentral",
+    //       name: "authorizations.centralConsultation",
+    //       type: "checkbox",
+    //       label: "Autorizo consulta en centrales de riesgo",
+    //       required: false,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authCentralDate",
+    //       name: "authorizations.centralConsultationDate",
+    //       type: "date",
+    //       label: "Fecha de autorización centrales",
+    //       required: false,
+    //       value: "",
+    //     },
+    //     {
+    //       id: "authEmail",
+    //       name: "authorizations.emailCommunication",
+    //       type: "checkbox",
+    //       label: "Acepto comunicaciones por email",
+    //       required: false,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authTruth",
+    //       name: "authorizations.truthDeclaration",
+    //       type: "checkbox",
+    //       label: "Declaro que la información es verdadera",
+    //       required: true,
+    //       value: false,
+    //     },
+    //     {
+    //       id: "authTruthDate",
+    //       name: "authorizations.truthDeclarationDate",
+    //       type: "date",
+    //       label: "Fecha de declaración",
+    //       required: false,
+    //       value: "",
+    //     },
+    //   ],
+    // },
+];
+
+export const signaturesSarlaftSection = [
     // ============================================================
     // 9. FIRMA SOLICITANTE
     // ============================================================
@@ -607,72 +696,55 @@ export const sarlaftCategories = [
             },
         ],
     },
-
-    // ============================================================
-    // AUTORIZACIONES SARLAFT
-    // ============================================================
-    // {
-    //   label: "Autorizaciones y Declaraciones",
-    //   fields: [
-    //     {
-    //       id: "authDataProcessing",
-    //       name: "authorizations.dataProcessing",
-    //       type: "checkbox",
-    //       label: "Autorizo el tratamiento de datos personales",
-    //       required: true,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authDataDate",
-    //       name: "authorizations.dataProcessingDate",
-    //       type: "date",
-    //       label: "Fecha de autorización de datos",
-    //       required: false,
-    //       value: "",
-    //     },
-    //     {
-    //       id: "authCentral",
-    //       name: "authorizations.centralConsultation",
-    //       type: "checkbox",
-    //       label: "Autorizo consulta en centrales de riesgo",
-    //       required: false,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authCentralDate",
-    //       name: "authorizations.centralConsultationDate",
-    //       type: "date",
-    //       label: "Fecha de autorización centrales",
-    //       required: false,
-    //       value: "",
-    //     },
-    //     {
-    //       id: "authEmail",
-    //       name: "authorizations.emailCommunication",
-    //       type: "checkbox",
-    //       label: "Acepto comunicaciones por email",
-    //       required: false,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authTruth",
-    //       name: "authorizations.truthDeclaration",
-    //       type: "checkbox",
-    //       label: "Declaro que la información es verdadera",
-    //       required: true,
-    //       value: false,
-    //     },
-    //     {
-    //       id: "authTruthDate",
-    //       name: "authorizations.truthDeclarationDate",
-    //       type: "date",
-    //       label: "Fecha de declaración",
-    //       required: false,
-    //       value: "",
-    //     },
-    //   ],
-    // },
 ];
+
+export const filesSarlaftSection = {
+    label: "Cargar Documentos Soporte",
+    isVisible: () => true,
+    fields: [
+        {
+            id: "legalRepresentativeId",
+            name: "supportingDocuments.legalRepresentativeId",
+            type: "file",
+            label: "Cédula del Representante Legal",
+            required: true,
+            accept: ".pdf,.jpg,.png",
+            placeholder: "Seleccione la cédula del representante legal",
+            value: null,
+        },
+        {
+            id: "chamberOfCommerceCertificate",
+            name: "supportingDocuments.chamberOfCommerceCertificate",
+            type: "file",
+            label:
+                "Certificado de Existencia y Representación Legal (Cámara de Comercio)",
+            required: true,
+            accept: ".pdf,.jpg,.png",
+            placeholder: "Seleccione el certificado de Cámara de Comercio",
+            value: null,
+        },
+        {
+            id: "shareholdingCompositionCertificate",
+            name: "supportingDocuments.shareholdingCompositionCertificate",
+            type: "file",
+            label: "Certificado de Composición Accionaria",
+            required: true,
+            placeholder: "Seleccione el certificado de composición accionaria",
+            value: null,
+            accept: ".pdf,.jpg,.png",
+        },
+        {
+            id: "companyRut",
+            name: "supportingDocuments.companyRut",
+            type: "file",
+            label: "RUT de la Empresa",
+            required: true,
+            placeholder: "Seleccione el RUT de la empresa",
+            value: null,
+            accept: ".pdf,.jpg,.png",
+        },
+    ],
+};
 export { typesPersonArray, deepGet, typesForeignCurrencyArray, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
 
 

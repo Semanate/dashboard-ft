@@ -11,7 +11,9 @@ export interface FormDataType {
     date: string;
     city: string;
     typeDocument: string;
-
+    virtualAssets: {
+        hasCrypto: boolean;
+    }
     representative: {
         firstName: string;
         lastName1: string;
@@ -127,8 +129,9 @@ export interface FormDataType {
         riskDetails?: string;
     };
 
-    foreignCurrency: {
-        management: string;
+    foreignCurrency:
+    {
+        management: boolean;
         products: Array<{
             type: string;
             entity: string;
@@ -230,4 +233,4 @@ export interface StepActive {
     step: number;
     isActive: boolean;
     label: string;
-  }
+}

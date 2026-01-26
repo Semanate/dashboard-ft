@@ -3,19 +3,24 @@
   import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
   import {
     accountTypesArray,
+    cryptoPlatformsArray,
     documentTypesArray,
     entityAccountFinancialsArray,
+    filesSarlaftSection,
     foreignCurrencyBaseSection,
     sarlaftCategories,
+    cryptoTypesArray,
+    signaturesSarlaftSection,
     typesForeignCurrencyArray,
   } from "$lib/constants";
   import type { FormDataType, StepActive } from "$lib/types";
-  import { getValues, getValuesRobust, toFormData } from "$lib/utils/forms";
+  import { getValuesRobust, toFormData } from "$lib/utils/forms";
   import { goto } from "$app/navigation";
   import {
     createAccountFinancials,
     createProductForeignCurrency,
     createRelation,
+    createCryptoWallet,
   } from "$lib/utils/object";
 
   let showSuccessModal = $state(false);
@@ -117,219 +122,276 @@
   let relations = $state([createRelation()]);
   let accountsFinancials = $state([createAccountFinancials()]);
   let productsForeignCurrency = $state([createProductForeignCurrency()]);
+  let cryptoWallets = $state([createCryptoWallet()]);
 
-  const relationsSections = $derived.by(() =>
-    relations.map((_, i) => ({
-      label: `Accionista / Relación ${i + 1}`,
-      isVisible: () => true,
-      fields: [
-        {
-          id: `relTypeDoc_${i}`,
-          name: `relations[${i}].typeDoc`,
-          type: "select",
-          label: "Tipo documento",
-          options: documentTypesArray,
-          placeholder: "Seleccione el tipo de documento",
-          value: "",
-        },
-        {
-          id: `relDoc_${i}`,
-          name: `relations[${i}].docNumber`,
-          type: "number",
-          label: "Número documento",
-          value: "",
-        },
-        {
-          id: `relName_${i}`,
-          name: `relations[${i}].socialName`,
-          type: "text",
-          label: "Nombre / Razón social",
-          placeholder: "Ingrese el nombre o razón social",
-          value: "",
-        },
-        {
-          id: `relPercent_${i}`,
-          name: `relations[${i}].percentageParticipation`,
-          type: "number",
-          label: "% Participación",
-          placeholder: "Ingrese el porcentaje de participación",
-          value: "",
-        },
-        {
-          id: `relActAdmin_${i}`,
-          name: `relations[${i}].activityAdminResource`,
-          type: "text",
-          label: "Origen de fondos / actividad económica",
-          placeholder:
-            "Describa la actividad económica o el origen de los fondos",
-          value: "",
-        },
-        {
-          id: `relRepGrade_${i}`,
-          name: `relations[${i}].activityReputationGradePublic`,
-          type: "select",
-          label: "Grado reputación pública",
-          placeholder: "Seleccione el grado de reputación pública",
-          options: [
-            { label: "Bajo", value: "low" },
-            { label: "Medio", value: "medium" },
-            { label: "Alto", value: "high" },
-          ],
-          value: "",
-        },
-      ],
-    })),
-  );
-
-  const accountsFinancialsSections = $derived.by(() =>
-    accountsFinancials.map((_, i) => ({
-      label: `Cuenta Financiera ${i + 1}`,
-      isVisible: () => true,
-      fields: [
-        {
-          id: `accType_${i}`,
-          name: `accountsFinancials[${i}].accountType`,
-          type: "select",
-          label: "Tipo de cuenta",
-          placeholder: "Seleccione el tipo de cuenta",
-          options: accountTypesArray,
-          value: "",
-        },
-        {
-          id: `accNumber_${i}`,
-          name: `accountsFinancials[${i}].accountNumber`,
-          type: "text",
-          label: "Número de cuenta",
-          value: "",
-        },
-        {
-          id: `accNameEntity_${i}`,
-          name: `accountsFinancials[${i}].accountNameEntity`,
-          type: "select",
-          label: "Nombre de la entidad",
-          placeholder: "Seleccione la entidad financiera",
-          options: entityAccountFinancialsArray,
-          value: "",
-        },
-      ],
-    })),
-  );
-
-  const productsForeignCurrencySections = $derived.by(() =>
-    productsForeignCurrency.map((_, i) => ({
-      isVisible: (v) => v.foreignCurrency?.management === true,
-      label: `Producto de Divisas ${i + 1}`,
-      fields: [
-        {
-          id: `fxType_${i}`,
-          name: `foreignCurrency.products[${i}].type`,
-          type: "select",
-          placeholder: "Seleccione un tipo de producto",
-          options: typesForeignCurrencyArray,
-          label: "Tipo de producto",
-          required: false,
-          value: "",
-        },
-        {
-          id: `fxEntity_${i}`,
-          name: `foreignCurrency.products[${i}].entity`,
-          type: "select",
-          placeholder: "Seleccione una entidad",
-          label: "Entidad",
-          required: false,
-          options: entityAccountFinancialsArray,
-          value: "",
-        },
-        {
-          id: `fxCountry_${i}`,
-          name: `foreignCurrency.products[${i}].country`,
-          type: "text",
-          label: "País",
-          required: false,
-          value: "",
-        },
-        {
-          id: `fxCurrency_${i}`,
-          name: `foreignCurrency.products[${i}].currency`,
-          type: "text",
-          label: "Moneda",
-          required: false,
-          value: "",
-        },
-      ],
-    })),
-  );
-
-  const filesSarlaftSection = {
-    label: "Cargar Documentos Soporte",
+  let relationsAndAccountsSection = $derived.by(() => ({
+    label: "Accionistas y Cuentas Financieras",
     isVisible: () => true,
-    fields: [
+    subsections: [
       {
-        id: "legalRepresentativeId",
-        name: "supportingDocuments.legalRepresentativeId",
-        type: "file",
-        label: "Cédula del Representante Legal",
-        required: true,
-        accept: ".pdf,.jpg,.png",
-        placeholder: "Seleccione la cédula del representante legal",
-        value: null,
+        title: "Accionistas / Relaciones",
+        items: relations.map((_, i) => ({
+          subtitle: `Accionista ${i + 1}`,
+          fields: [
+            {
+              id: `relTypeDoc_${i}`,
+              name: `relations[${i}].typeDoc`,
+              type: "select",
+              label: "Tipo documento",
+              options: documentTypesArray,
+              placeholder: "Seleccione el tipo de documento",
+              value: "",
+            },
+            {
+              id: `relDoc_${i}`,
+              name: `relations[${i}].docNumber`,
+              type: "number",
+              label: "Número documento",
+              value: "",
+            },
+            {
+              id: `relName_${i}`,
+              name: `relations[${i}].socialName`,
+              type: "text",
+              label: "Nombre / Razón social",
+              placeholder: "Ingrese el nombre o razón social",
+              value: "",
+            },
+            {
+              id: `relPercent_${i}`,
+              name: `relations[${i}].percentageParticipation`,
+              type: "number",
+              label: "% Participación",
+              placeholder: "Ingrese el porcentaje de participación",
+              value: "",
+            },
+            {
+              id: `relActAdmin_${i}`,
+              name: `relations[${i}].activityAdminResource`,
+              type: "text",
+              label: "Origen de fondos / actividad económica",
+              placeholder:
+                "Describa la actividad económica o el origen de los fondos",
+              value: "",
+            },
+            {
+              id: `relRepGrade_${i}`,
+              name: `relations[${i}].activityReputationGradePublic`,
+              type: "select",
+              label: "Grado reputación pública",
+              placeholder: "Seleccione el grado de reputación pública",
+              options: [
+                { label: "Bajo", value: "low" },
+                { label: "Medio", value: "medium" },
+                { label: "Alto", value: "high" },
+              ],
+              value: "",
+            },
+          ],
+        })),
+        addButton: {
+          label: "Agregar Accionista",
+          show: () => totalPercentage < 100,
+          action: () => {
+            relations = [...relations, createRelation()];
+          },
+        },
       },
       {
-        id: "chamberOfCommerceCertificate",
-        name: "supportingDocuments.chamberOfCommerceCertificate",
-        type: "file",
-        label:
-          "Certificado de Existencia y Representación Legal (Cámara de Comercio)",
-        required: true,
-        accept: ".pdf,.jpg,.png",
-        placeholder: "Seleccione el certificado de Cámara de Comercio",
-        value: null,
-      },
-      {
-        id: "shareholdingCompositionCertificate",
-        name: "supportingDocuments.shareholdingCompositionCertificate",
-        type: "file",
-        label: "Certificado de Composición Accionaria",
-        required: true,
-        placeholder: "Seleccione el certificado de composición accionaria",
-        value: null,
-        accept: ".pdf,.jpg,.png",
-      },
-      {
-        id: "companyRut",
-        name: "supportingDocuments.companyRut",
-        type: "file",
-        label: "RUT de la Empresa",
-        required: true,
-        placeholder: "Seleccione el RUT de la empresa",
-        value: null,
-        accept: ".pdf,.jpg,.png",
+        title: "Cuentas Financieras",
+        items: accountsFinancials.map((_, i) => ({
+          subtitle: `Cuenta Financiera ${i + 1}`,
+          fields: [
+            {
+              id: `accType_${i}`,
+              name: `accountsFinancials[${i}].accountType`,
+              type: "select",
+              label: "Tipo de cuenta",
+              placeholder: "Seleccione el tipo de cuenta",
+              options: accountTypesArray,
+              value: "",
+            },
+            {
+              id: `accNumber_${i}`,
+              name: `accountsFinancials[${i}].accountNumber`,
+              type: "text",
+              label: "Número de cuenta",
+              value: "",
+            },
+            {
+              id: `accNameEntity_${i}`,
+              name: `accountsFinancials[${i}].accountNameEntity`,
+              type: "select",
+              label: "Nombre de la entidad",
+              placeholder: "Seleccione la entidad financiera",
+              options: entityAccountFinancialsArray,
+              value: "",
+            },
+          ],
+        })),
+        addButton: {
+          label: "Agregar Cuenta Financiera",
+          show: () => true,
+          action: () => {
+            accountsFinancials = [
+              ...accountsFinancials,
+              createAccountFinancials(),
+            ];
+          },
+        },
       },
     ],
-  };
+  }));
 
+  let foreignCurrencySection = $derived.by(() => {
+    const formData: FormDataType = getValuesRobust(
+      formDataState,
+    ) as FormDataType;
+    const shouldShowProducts = formData.foreignCurrency?.management === true;
+    const shouldShowCrypto = formData.virtualAssets?.hasCrypto === true;
+
+    return {
+      label: "Gestión de Divisas y Activos Virtuales",
+      isVisible: () => true,
+      subsections: [
+        {
+          title: "Información General de Divisas",
+          items: [
+            {
+              subtitle: "",
+              fields: foreignCurrencyBaseSection.fields || [],
+            },
+          ],
+        },
+        ...(shouldShowProducts
+          ? [
+              {
+                title: "Productos de Divisas",
+                items: productsForeignCurrency.map((_, i) => ({
+                  subtitle: `Producto ${i + 1}`,
+                  fields: [
+                    {
+                      id: `fxType_${i}`,
+                      name: `foreignCurrency.products[${i}].type`,
+                      type: "select",
+                      placeholder: "Seleccione un tipo de producto",
+                      options: typesForeignCurrencyArray,
+                      label: "Tipo de producto",
+                      required: false,
+                      value: "",
+                    },
+                    {
+                      id: `fxEntity_${i}`,
+                      name: `foreignCurrency.products[${i}].entity`,
+                      type: "select",
+                      placeholder: "Seleccione una entidad",
+                      label: "Entidad",
+                      required: false,
+                      options: entityAccountFinancialsArray,
+                      value: "",
+                    },
+                    {
+                      id: `fxCountry_${i}`,
+                      name: `foreignCurrency.products[${i}].country`,
+                      type: "text",
+                      label: "País",
+                      required: false,
+                      value: "",
+                    },
+                    {
+                      id: `fxCurrency_${i}`,
+                      name: `foreignCurrency.products[${i}].currency`,
+                      type: "text",
+                      label: "Moneda",
+                      required: false,
+                      value: "",
+                    },
+                  ],
+                })),
+                addButton: {
+                  label: "Agregar Producto de Divisas",
+                  show: () => shouldShowProducts,
+                  action: () => {
+                    productsForeignCurrency = [
+                      ...productsForeignCurrency,
+                      createProductForeignCurrency(),
+                    ];
+                  },
+                },
+              },
+            ]
+          : []),
+        // Subsección de billeteras cripto (solo si hasCrypto es true)
+        // NO incluir el checkbox aquí porque ya viene en foreignCurrencyBaseSection
+        ...(shouldShowCrypto
+          ? [
+              {
+                title: "Billeteras de Criptomonedas",
+                items: cryptoWallets.map((_, i) => ({
+                  subtitle: `Billetera ${i + 1}`,
+                  fields: [
+                    {
+                      id: `cryptoPlatform_${i}`,
+                      name: `virtualAssets.wallets[${i}].platform`,
+                      type: "select",
+                      label: "Plataforma / Exchange",
+                      placeholder: "Seleccione la plataforma",
+                      options: cryptoPlatformsArray,
+                      value: "",
+                      required: false,
+                    },
+                    {
+                      id: `cryptoType_${i}`,
+                      name: `virtualAssets.wallets[${i}].cryptoType`,
+                      type: "select",
+                      label: "Tipo de Criptomoneda",
+                      placeholder: "Seleccione el tipo de criptomoneda",
+                      options: cryptoTypesArray,
+                      value: "",
+                      required: false,
+                    },
+                    {
+                      id: `walletAddress_${i}`,
+                      name: `virtualAssets.wallets[${i}].walletAddress`,
+                      type: "text",
+                      label: "Dirección de Billetera / ID de Cuenta",
+                      placeholder:
+                        "Ingrese la dirección de la billetera o ID de cuenta",
+                      value: "",
+                      required: false,
+                    },
+                  ],
+                })),
+                addButton: {
+                  label: "Agregar Billetera",
+                  show: () => shouldShowCrypto,
+                  action: () => {
+                    cryptoWallets = [...cryptoWallets, createCryptoWallet()];
+                  },
+                },
+              },
+            ]
+          : []),
+      ],
+    };
+  });
+  
   const fieldsSarlaft = $derived.by(() => [
     ...sarlaftCategories,
-    ...relationsSections,
-    ...accountsFinancialsSections,
-    foreignCurrencyBaseSection,
-    ...productsForeignCurrencySections,
+    relationsAndAccountsSection,
+    foreignCurrencySection,
     filesSarlaftSection,
+    ...signaturesSarlaftSection,
   ]);
 
   let totalPercentage = $derived.by(() => {
     const data: FormDataType = getValuesRobust(formDataState) as FormDataType;
-
-    console.log("📥 Calculando porcentaje total con data:", data);
     const total = data.relations
       ? data.relations.reduce(
           (sum, rel) => sum + Number(rel.percentageParticipation || 0),
           0,
         )
       : 0;
-
-    console.log("🔢 Calculando porcentaje total:", total);
-    console.log("📊 Relations data:", data.relations);
     return total;
   });
 
@@ -378,11 +440,6 @@
             });
             const res = await response.json();
             console.log(res, "CARGAR DATOS");
-            // if (res.success && res.data.payload) {
-            //   formDataState = res.data.payload;
-            // } else {
-            //   alert("No se encontraron datos guardados.");
-            // }
           }}
         />
         <button
@@ -433,15 +490,6 @@
       </div>
     </div>
 
-    <!-- {@const currentFormData = getValuesRobust(formDataState)}
-    {#if currentFormData.updatedAt}
-      <div class="mb-4 text-sm text-gray-500">
-        Última actualización: {new Date(
-          currentFormData.updatedAt,
-        ).toLocaleString("es-CO")}
-      </div>
-    {/if} -->
-
     {#if showLoadingModal}
       <div
         class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
@@ -486,51 +534,27 @@
       categories={fieldsSarlaft}
       callbackOnSubmit={handleSubmit}
     >
-      <div class="flex">
-        <ButtonWithIcon
-          hidden={totalPercentage < 100 &&
-          activeStep.label.includes("Accionista")
-            ? false
-            : true}
-          label="Agregar Accionistas"
-          iconButton="PlusCircle"
-          variant="ghost"
-          size="medium"
-          onclick={async () => {
-            relations = [...relations, createRelation()];
-          }}
-        />
-        <ButtonWithIcon
-          hidden={activeStep.label.includes("Cuenta Financiera") ? false : true}
-          label="Agregar Cuenta Financiera"
-          iconButton="PlusCircle"
-          variant="ghost"
-          size="medium"
-          onclick={() => {
-            accountsFinancials = [
-              ...accountsFinancials,
-              createAccountFinancials(),
-            ];
-          }}
-        />
-      </div>
+      {#if activeStep.label === "Accionistas y Cuentas Financieras"}
+        <div class="mb-4 space-y-2">
+          {#if totalPercentage < 100}
+            <p class="text-yellow-600 text-sm font-medium">
+              ⚠️ El porcentaje total es {totalPercentage}%. Falta completar el
+              100%.
+            </p>
+          {/if}
 
-      {#if totalPercentage < 100 && activeStep.label.includes("Accionista")}
-        <p class="text-yellow-600 text-sm">
-          El porcentaje total es {totalPercentage}%. Falta completar el 100%.
-        </p>
-      {/if}
+          {#if totalPercentage > 100}
+            <p class="text-red-600 text-sm font-medium">
+              ❌ El porcentaje supera el 100%. Verifique los valores.
+            </p>
+          {/if}
 
-      {#if totalPercentage > 100 && activeStep.label.includes("Accionista")}
-        <p class="text-red-600 text-sm">
-          El porcentaje supera el 100%. Verifique los valores.
-        </p>
-      {/if}
-
-      {#if totalPercentage === 100 && activeStep.label.includes("Accionista")}
-        <p class="text-green-600 text-sm">
-          El porcentaje accionarial está completo.
-        </p>
+          {#if totalPercentage === 100}
+            <p class="text-green-600 text-sm font-medium">
+              ✓ El porcentaje accionarial está completo.
+            </p>
+          {/if}
+        </div>
       {/if}
     </StepperForm>
   </div>
