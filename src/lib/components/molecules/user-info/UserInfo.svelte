@@ -4,45 +4,73 @@
   interface UserInfoProps {
     name: string;
     email: string;
+    avatarUrl?: string;
     transition?: any;
-    role: "admin" | "user" | "guest";
+    role: string;
   }
   const {
     name = "John Doe",
     email = "john.doe@example.com",
+    avatarUrl,
     role = "user",
   }: UserInfoProps = $props();
 
-  const roleStyles = {
+  // Generar URL de avatar por defecto si no hay uno
+  let displayAvatarUrl = $derived(
+    avatarUrl || 
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff&size=80`
+  );
+
+  const roleStyles: Record<string, { icon: string; color: string; bg: string }> = {
     admin: {
       icon: "ShieldCheck",
-      color: "text-primary", // 🔴 admin
+      color: "text-primary",
+      bg: "bg-red-100",
+    },
+    Administrador: {
+      icon: "ShieldCheck",
+      color: "text-primary",
       bg: "bg-red-100",
     },
     user: {
       icon: "UserCheck",
-      color: "text-green", // 🟢 user
+      color: "text-green",
       bg: "bg-green-100",
+    },
+    Usuario: {
+      icon: "UserCheck",
+      color: "text-green",
+      bg: "bg-green-100",
+    },
+    "Oficial de Cumplimiento": {
+      icon: "Shield",
+      color: "text-blue-500",
+      bg: "bg-blue-100",
+    },
+    compliance_officer: {
+      icon: "Shield",
+      color: "text-blue-500",
+      bg: "bg-blue-100",
     },
     guest: {
       icon: "User",
-      color: "text-gray-500", // ⚪ guest
+      color: "text-gray-500",
       bg: "bg-gray-100",
     },
   };
-  const current = roleStyles[role] ?? roleStyles["user"];
+  const current = $derived(roleStyles[role] ?? roleStyles["user"]);
 </script>
 
 <div class="flex items-center gap-3 p-4">
   <div class="relative">
     <img
-      src="https://i.pravatar.cc/40"
+      src={displayAvatarUrl}
       alt="avatar"
       transition:fade={{ duration: 200 }}
-      class="w-10 h-10 rounded-full"
+      class="w-10 h-10 rounded-full object-cover"
     />
     <div
-      class={`w-3 h-3 ${current.bg} absolute rounded-full right-0 top-[-1px] animate-pulse
+      class={`w-3 h-3 ${current.bg} absolute rounded-full right-0 -top-px animate-pulse
             flex items-center justify-center shadow`}
     ></div>
   </div>

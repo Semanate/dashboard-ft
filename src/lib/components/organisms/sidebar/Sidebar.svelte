@@ -87,6 +87,7 @@
       role={roleLabel}
       name={(user?.user_metadata?.display_name as string) || "Usuario"}
       email={(user?.email as string) || "usuario@example.com"}
+      avatarUrl={user?.user_metadata?.avatar_url as string | undefined}
     />
   {/if}
 
