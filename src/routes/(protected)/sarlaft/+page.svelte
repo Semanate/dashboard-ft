@@ -11,8 +11,8 @@
   let permissions = $derived(
     createDynamicPermissionChecker(
       (page.data.user?.role as Role) ?? ROLES.USER,
-      (page.data.userPermissions as string[]) ?? []
-    )
+      (page.data.userPermissions as string[]) ?? [],
+    ),
   );
 
   let FormList: FormDataType[] = $state([]);
@@ -102,12 +102,11 @@
 
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
   <div class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
-    <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
-      <PageHeader
-        title="Lista de Formularios SARLAFT"
-        subtitle="Sistema de Administración del Riesgo de Lavado de Activos y de la Financiación del Terrorismo"
-        icon="FileText"
-      >
+    <PageHeader
+      title="Lista de Formularios SARLAFT"
+      subtitle="Sistema de Administración del Riesgo de Lavado de Activos y de la Financiación del Terrorismo"
+      icon="FileText"
+    >
         {#if permissions.canCreateSarlaft}
           <ButtonWithIcon
             label="Crear"
@@ -127,7 +126,8 @@
             loadForms();
           }}
         />
-      </PageHeader>
+    </PageHeader>
+    <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
       <article class="w-full">
         <DataTable
           {table}
@@ -139,20 +139,28 @@
                 window.location.href = `/sarlaft/${row.id}`;
               },
             },
-            ...(permissions.can('export_reports') ? [{
-              iconName: "Download",
-              iconClass: "text-blue-300/80",
-              onclick: (row: any) => {
-                generateExcel(row);
-              },
-            }] : []),
-            ...(permissions.can('delete_sarlaft') ? [{
-              iconName: "Delete",
-              iconClass: "text-red-300/80",
-              onclick: (row: any) => {
-                deleteForm(row);
-              },
-            }] : []),
+            ...(permissions.can("export_reports")
+              ? [
+                  {
+                    iconName: "Download",
+                    iconClass: "text-blue-300/80",
+                    onclick: (row: any) => {
+                      generateExcel(row);
+                    },
+                  },
+                ]
+              : []),
+            ...(permissions.can("delete_sarlaft")
+              ? [
+                  {
+                    iconName: "Delete",
+                    iconClass: "text-red-300/80",
+                    onclick: (row: any) => {
+                      deleteForm(row);
+                    },
+                  },
+                ]
+              : []),
           ]}
         />
       </article>
