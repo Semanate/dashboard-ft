@@ -9,12 +9,12 @@ export const load: PageServerLoad = async ({ locals }) => {
     const { supabase } = locals;
     const userRole = (locals.user as { role?: string }).role;
 
-    // Solo compliance_officer y admin pueden ver esta página
+    // If the user is not a compliance officer or admin, redirect to dashboard
     if (userRole !== 'compliance_officer' && userRole !== 'admin') {
         throw redirect(303, '/dashboard');
     }
 
-    // Obtener formularios pendientes de revisión (status = submitted)
+    // Get pending and reviewed SARLAFT forms
     const { data: pendingForms, error: pendingError } = await supabase
         .from('sarlaft_forms')
         .select(`
@@ -22,16 +22,11 @@ export const load: PageServerLoad = async ({ locals }) => {
             status,
             created_at,
             updated_at,
-            "typePersonAggrement",
-            "naturalPerson",
-            "juridicalPerson",
+            type_person_agreement,
+            payload,
             user_id,
-            profiles!sarlaft_forms_user_id_fkey (
-                id,
-                first_name,
-                last_name,
-                email
-            )
+            reviewed_by,
+            review_notes
         `)
         .eq('status', 'submitted')
         .order('created_at', { ascending: false });
@@ -40,7 +35,6 @@ export const load: PageServerLoad = async ({ locals }) => {
         console.error('Error loading pending forms:', pendingError);
     }
 
-    // Obtener historial de formularios ya revisados (approved/rejected)
     const { data: reviewedForms, error: reviewedError } = await supabase
         .from('sarlaft_forms')
         .select(`
@@ -48,19 +42,11 @@ export const load: PageServerLoad = async ({ locals }) => {
             status,
             created_at,
             updated_at,
-            "typePersonAggrement",
-            "naturalPerson",
-            "juridicalPerson",
+            type_person_agreement,
             user_id,
             reviewed_at,
             reviewed_by,
-            review_notes,
-            profiles!sarlaft_forms_user_id_fkey (
-                id,
-                first_name,
-                last_name,
-                email
-            )
+            review_notes
         `)
         .in('status', ['approved', 'rejected'])
         .order('reviewed_at', { ascending: false })
@@ -70,7 +56,7 @@ export const load: PageServerLoad = async ({ locals }) => {
         console.error('Error loading reviewed forms:', reviewedError);
     }
 
-    // Estadísticas
+    // Statistics
     const { count: totalPending } = await supabase
         .from('sarlaft_forms')
         .select('*', { count: 'exact', head: true })
@@ -127,7 +113,7 @@ export const actions: Actions = {
                 review_notes: notes || null
             })
             .eq('id', formId)
-            .eq('status', 'submitted'); // Solo aprobar si está en submitted
+            .eq('status', 'submitted'); // Only approve if status is submitted
 
         if (error) {
             console.error('Error approving form:', error);

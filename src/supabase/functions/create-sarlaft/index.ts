@@ -19,7 +19,6 @@ serve(async (req) => {
 
   const formData = await req.formData();
   const uploadedDocs = await uploadDocuments(formData, supabase);
-  console.log("Uploaded documents:", uploadedDocs);
   const payload = await buildSarlaftPayload(formData, uploadedDocs);
   const validation = validateAndNormalizeSarlaft(payload);
 

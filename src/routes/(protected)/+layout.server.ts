@@ -27,7 +27,6 @@ export const load = async ({ locals }) => {
         })
         .filter((code): code is string => typeof code === 'string');
 
-    console.log('User Permissions:', userPermissions);
     return {
         user: locals.user as typeof locals.user & { role: Role },
         userPermissions
