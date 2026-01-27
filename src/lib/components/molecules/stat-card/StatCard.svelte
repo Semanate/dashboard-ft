@@ -22,7 +22,7 @@
 
     const variantClasses = {
         default: 'bg-white border-gray-200',
-        primary: 'bg-indigo-50 border-indigo-200',
+        primary: 'bg-primary-50 border-gray-200',
         success: 'bg-green-50 border-green-200',
         warning: 'bg-yellow-50 border-yellow-200',
         danger: 'bg-red-50 border-red-200',
@@ -31,7 +31,7 @@
 
     const textClasses = {
         default: 'text-gray-600',
-        primary: 'text-indigo-600',
+        primary: 'text-primary-600',
         success: 'text-green-600',
         warning: 'text-yellow-600',
         danger: 'text-red-600',
@@ -40,7 +40,7 @@
 
     const valueClasses = {
         default: 'text-gray-900',
-        primary: 'text-indigo-700',
+        primary: 'text-primary-700',
         success: 'text-green-700',
         warning: 'text-yellow-700',
         danger: 'text-red-700',

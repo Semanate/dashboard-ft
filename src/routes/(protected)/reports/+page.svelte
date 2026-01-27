@@ -165,7 +165,7 @@
                 onclick={() => (activeTab = "pending")}
                 class="pb-3 px-1 border-b-2 font-medium transition-colors
                        {activeTab === 'pending'
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
                 <Icon name="ClipboardList" size={18} className="inline-block mr-1" /> Pendientes de Revisión ({data.stats.pending})
@@ -175,7 +175,7 @@
                 onclick={() => (activeTab = "history")}
                 class="pb-3 px-1 border-b-2 font-medium transition-colors
                        {activeTab === 'history'
-                    ? 'border-indigo-500 text-indigo-600'
+                    ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
                 <Icon name="History" size={18} className="inline-block mr-1" /> Historial de Revisiones
@@ -348,7 +348,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a
                                         href="/sarlaft/{form.id}"
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium"
+                                        class="text-primary-600 hover:text-primary-900 font-medium"
                                     >
                                         Ver
                                     </a>

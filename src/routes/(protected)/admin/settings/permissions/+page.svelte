@@ -208,7 +208,7 @@
                     onclick={() => (selectedRole = role)}
                     class="px-6 py-3 rounded-lg font-medium transition-all {selectedRole ===
                     role
-                        ? 'bg-indigo-600 text-white shadow-md'
+                        ? 'bg-primary-600 text-white shadow-md'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
                 >
                     {ROLE_LABELS[role]}
@@ -241,7 +241,7 @@
             >
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">
-                        Permisos para: <span class="text-indigo-600"
+                        Permisos para: <span class="text-primary-600"
                             >{ROLE_LABELS[selectedRole]}</span
                         >
                     </h2>
@@ -299,7 +299,7 @@
                                            {selectedPermissions.has(
                                         permission.id,
                                     )
-                                        ? 'border-indigo-300 bg-indigo-50'
+                                        ? 'border-primary-300 bg-primary-50'
                                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}"
                                 >
                                     <label
@@ -312,7 +312,7 @@
                                             )}
                                             onchange={() =>
                                                 togglePermission(permission.id)}
-                                            class="mt-1 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                                            class="mt-1 h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                                         />
                                         <div class="flex-1">
                                             <div
@@ -432,7 +432,7 @@
                 oninput={autoGenerateCode}
                 required
                 placeholder="Ej: Ver Reportes Financieros"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
         </div>
 
@@ -448,7 +448,7 @@
                 required
                 placeholder="Ej: view_financial_reports"
                 pattern="^[a-z][a-z0-9_]*$"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
             />
             <p class="text-xs text-gray-500 mt-1">Solo letras minúsculas, números y guiones bajos</p>
         </div>
@@ -463,7 +463,7 @@
                 bind:value={permissionForm.description}
                 rows="2"
                 placeholder="Describe qué permite hacer este permiso..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             ></textarea>
         </div>
 
@@ -473,11 +473,11 @@
 
             <div class="flex gap-4 mb-2">
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" bind:group={useNewModule} value={false} class="text-indigo-600" />
+                    <input type="radio" bind:group={useNewModule} value={false} class="text-primary-600" />
                     <span class="text-sm">Existente</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" bind:group={useNewModule} value={true} class="text-indigo-600" />
+                    <input type="radio" bind:group={useNewModule} value={true} class="text-primary-600" />
                     <span class="text-sm">Nuevo módulo</span>
                 </label>
             </div>
@@ -487,12 +487,12 @@
                     type="text"
                     bind:value={newModule}
                     placeholder="Ej: analytics"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 />
             {:else}
                 <select
                     bind:value={permissionForm.module}
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                     <option value="">Seleccionar módulo...</option>
                     {#each data.modules || [] as mod}
