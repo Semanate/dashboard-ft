@@ -3,7 +3,7 @@
 
   interface CardProps {
     title: string;
-    content: string;
+    content?: string;
     children?: any;
     class?: string;
   }
