@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ locals }) => {
             updated_at,
             type_person_agreement,
             user_id,
+            payload,
             reviewed_at,
             reviewed_by,
             review_notes

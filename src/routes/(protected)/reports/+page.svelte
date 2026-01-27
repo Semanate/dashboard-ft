@@ -42,21 +42,21 @@
     function getFormName(form: SarlaftForm): string {
         console.log(form);
         if (form.type_person_agreement === "NAT") {
-            const np = form.payload.naturalPerson;
+            const np = form?.payload?.naturalPerson;
             return np
                 ? `${np.firstName || ""} ${np.lastName || ""}`.trim() ||
                       "Sin nombre"
                 : "Sin nombre";
         } else {
-            return form.payload.juridicalPerson?.businessName || "Sin nombre";
+            return form.payload?.juridicalPerson?.businessName || "Sin nombre";
         }
     }
 
     function getFormDocNumber(form: SarlaftForm): string {
         if (form.type_person_agreement === "NAT") {
-            return form.payload.naturalPerson?.docNumber || "N/A";
+            return form.payload?.naturalPerson?.docNumber || "N/A";
         } else {
-            return form.payload.juridicalPerson?.docNumber || "N/A";
+            return form.payload?.juridicalPerson?.docNumber || "N/A";
         }
     }
 
