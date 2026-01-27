@@ -1,5 +1,13 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
+    import {
+        Alert,
+        Badge,
+        Button,
+        Modal,
+        PageHeader,
+        StatCard
+    } from "$lib/components";
 
     interface SarlaftForm {
         id: string;
@@ -98,85 +106,53 @@
         });
     }
 
-    const statusLabels: Record<string, { label: string; class: string }> = {
-        draft: { label: "Borrador", class: "bg-gray-100 text-gray-700" },
-        submitted: {
-            label: "Pendiente",
-            class: "bg-yellow-100 text-yellow-700",
-        },
-        approved: { label: "Aprobado", class: "bg-green-100 text-green-700" },
-        rejected: { label: "Rechazado", class: "bg-red-100 text-red-700" },
+    const statusLabels: Record<string, { label: string; variant: 'default' | 'warning' | 'success' | 'danger' }> = {
+        draft: { label: "Borrador", variant: "default" },
+        submitted: { label: "Pendiente", variant: "warning" },
+        approved: { label: "Aprobado", variant: "success" },
+        rejected: { label: "Rechazado", variant: "danger" },
     };
 </script>
 
 <section class="p-6 max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">
-            📋 Revisión de Formularios SARLAFT
-        </h1>
-        <p class="text-gray-600 mt-2">
-            Revise, apruebe o rechace los formularios SARLAFT enviados por los
-            usuarios.
-        </p>
-    </div>
+    <PageHeader
+        title="📋 Revisión de Formularios SARLAFT"
+        subtitle="Revise, apruebe o rechace los formularios SARLAFT enviados por los usuarios."
+    />
 
     <!-- Mensaje de resultado -->
     {#if actionResult?.success}
-        <div
-            class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3"
-        >
-            <span class="text-green-600 text-xl">✅</span>
-            <span class="text-green-800">{actionResult.message}</span>
+        <div class="mb-6">
+            <Alert type="success" message={actionResult.message ?? ''} />
         </div>
     {/if}
 
     {#if actionResult?.error}
-        <div
-            class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3"
-        >
-            <span class="text-red-600 text-xl">❌</span>
-            <span class="text-red-800">{actionResult.error}</span>
+        <div class="mb-6">
+            <Alert type="error" message={actionResult.error} />
         </div>
     {/if}
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-yellow-600 font-medium">Pendientes</p>
-                    <p class="text-4xl font-bold text-yellow-700 mt-1">
-                        {data.stats.pending}
-                    </p>
-                </div>
-                <span class="text-4xl">⏳</span>
-            </div>
-        </div>
-
-        <div class="bg-green-50 border border-green-200 rounded-xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-green-600 font-medium">Aprobados</p>
-                    <p class="text-4xl font-bold text-green-700 mt-1">
-                        {data.stats.approved}
-                    </p>
-                </div>
-                <span class="text-4xl">✅</span>
-            </div>
-        </div>
-
-        <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-red-600 font-medium">Rechazados</p>
-                    <p class="text-4xl font-bold text-red-700 mt-1">
-                        {data.stats.rejected}
-                    </p>
-                </div>
-                <span class="text-4xl">❌</span>
-            </div>
-        </div>
+        <StatCard
+            title="Pendientes"
+            value={data.stats.pending}
+            icon="⏳"
+            variant="warning"
+        />
+        <StatCard
+            title="Aprobados"
+            value={data.stats.approved}
+            icon="✅"
+            variant="success"
+        />
+        <StatCard
+            title="Rechazados"
+            value={data.stats.rejected}
+            icon="❌"
+            variant="danger"
+        />
     </div>
 
     <!-- Tabs -->
@@ -231,46 +207,25 @@
                             >
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-3 mb-2">
-                                        <span
-                                            class="px-3 py-1 rounded-full text-sm font-medium {statusLabels[
-                                                form.status
-                                            ]?.class || 'bg-gray-100'}"
-                                        >
-                                            {statusLabels[form.status]?.label ||
-                                                form.status}
-                                        </span>
+                                        <Badge
+                                            label={statusLabels[form.status]?.label || form.status}
+                                            variant={statusLabels[form.status]?.variant || 'default'}
+                                        />
                                         <span class="text-sm text-gray-500">
-                                            {form.type_person_agreement ===
-                                            "NAT"
+                                            {form.type_person_agreement === "NAT"
                                                 ? "👤 Persona Natural"
                                                 : "🏢 Persona Jurídica"}
                                         </span>
                                     </div>
 
-                                    <h3
-                                        class="text-lg font-semibold text-gray-900 mb-1"
-                                    >
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">
                                         {getFormName(form)}
                                     </h3>
 
-                                    <div
-                                        class="flex flex-wrap gap-4 text-sm text-gray-600"
-                                    >
-                                        <span
-                                            >📄 Doc: {getFormDocNumber(
-                                                form,
-                                            )}</span
-                                        >
-                                        <span
-                                            >👤 Creado por: {getCreatorName(
-                                                form,
-                                            )}</span
-                                        >
-                                        <span
-                                            >📅 Enviado: {formatDate(
-                                                form.updated_at,
-                                            )}</span
-                                        >
+                                    <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                                        <span>📄 Doc: {getFormDocNumber(form)}</span>
+                                        <span>👤 Creado por: {getCreatorName(form)}</span>
+                                        <span>📅 Enviado: {formatDate(form.updated_at)}</span>
                                     </div>
                                 </div>
 
@@ -281,13 +236,11 @@
                                     >
                                         👁️ Ver Detalle
                                     </a>
-                                    <button
-                                        type="button"
+                                    <Button
+                                        label="✅ Aprobar"
+                                        variant="primary"
                                         onclick={() => openApproveModal(form)}
-                                        class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
-                                    >
-                                        ✅ Aprobar
-                                    </button>
+                                    />
                                     <button
                                         type="button"
                                         onclick={() => openRejectModal(form)}
@@ -374,13 +327,10 @@
                                         : "🏢 Jurídica"}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                        class="px-3 py-1 rounded-full text-sm font-medium {statusLabels[
-                                            form.status
-                                        ]?.class}"
-                                    >
-                                        {statusLabels[form.status]?.label}
-                                    </span>
+                                    <Badge
+                                        label={statusLabels[form.status]?.label || form.status}
+                                        variant={statusLabels[form.status]?.variant || 'default'}
+                                    />
                                 </td>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"
@@ -412,164 +362,128 @@
 </section>
 
 <!-- Modal Aprobar -->
-{#if showApproveModal && selectedForm}
-    <div class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4">
-            <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-            <div class="fixed inset-0 bg-black/50" onclick={closeModals}></div>
+<Modal 
+    isOpen={showApproveModal && !!selectedForm} 
+    title="✅ Aprobar Formulario" 
+    onClose={closeModals}
+>
+    {#if selectedForm}
+        <p class="text-gray-600 mb-4">
+            ¿Está seguro de aprobar el formulario de <strong>{getFormName(selectedForm)}</strong>?
+        </p>
 
-            <div
-                class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6"
-            >
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">
-                    ✅ Aprobar Formulario
-                </h3>
+        <form
+            method="POST"
+            action="?/approve"
+            use:enhance={() => {
+                isSubmitting = true;
+                return async ({ update }) => {
+                    await update();
+                    isSubmitting = false;
+                    closeModals();
+                };
+            }}
+        >
+            <input type="hidden" name="formId" value={selectedForm.id} />
 
-                <p class="text-gray-600 mb-4">
-                    ¿Está seguro de aprobar el formulario de <strong
-                        >{getFormName(selectedForm)}</strong
-                    >?
-                </p>
-
-                <form
-                    method="POST"
-                    action="?/approve"
-                    use:enhance={() => {
-                        isSubmitting = true;
-                        return async ({ update }) => {
-                            await update();
-                            isSubmitting = false;
-                            closeModals();
-                        };
-                    }}
+            <div class="mb-4">
+                <label
+                    for="approve-notes"
+                    class="block text-sm font-medium text-gray-700 mb-1"
                 >
-                    <input
-                        type="hidden"
-                        name="formId"
-                        value={selectedForm.id}
-                    />
-
-                    <div class="mb-4">
-                        <label
-                            for="approve-notes"
-                            class="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            Notas (opcional)
-                        </label>
-                        <textarea
-                            id="approve-notes"
-                            name="notes"
-                            bind:value={reviewNotes}
-                            rows="3"
-                            placeholder="Agregue observaciones o comentarios..."
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                        ></textarea>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button
-                            type="button"
-                            onclick={closeModals}
-                            class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-                        >
-                            {isSubmitting
-                                ? "Aprobando..."
-                                : "✅ Confirmar Aprobación"}
-                        </button>
-                    </div>
-                </form>
+                    Notas (opcional)
+                </label>
+                <textarea
+                    id="approve-notes"
+                    name="notes"
+                    bind:value={reviewNotes}
+                    rows="3"
+                    placeholder="Agregue observaciones o comentarios..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                ></textarea>
             </div>
-        </div>
-    </div>
-{/if}
+
+            <div class="flex gap-3">
+                <Button
+                    label="Cancelar"
+                    variant="secondary"
+                    onclick={closeModals}
+                    class="flex-1"
+                />
+                <Button
+                    type="submit"
+                    label={isSubmitting ? "Aprobando..." : "✅ Confirmar Aprobación"}
+                    variant="primary"
+                    disabled={isSubmitting}
+                    class="flex-1"
+                />
+            </div>
+        </form>
+    {/if}
+</Modal>
 
 <!-- Modal Rechazar -->
-{#if showRejectModal && selectedForm}
-    <div class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4">
-            <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-            <div class="fixed inset-0 bg-black/50" onclick={closeModals}></div>
+<Modal 
+    isOpen={showRejectModal && !!selectedForm} 
+    title="❌ Rechazar Formulario" 
+    onClose={closeModals}
+>
+    {#if selectedForm}
+        <p class="text-gray-600 mb-4">
+            ¿Está seguro de rechazar el formulario de <strong>{getFormName(selectedForm)}</strong>?
+        </p>
 
-            <div
-                class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6"
-            >
-                <h3 class="text-xl font-semibold text-gray-900 mb-4">
-                    ❌ Rechazar Formulario
-                </h3>
+        <form
+            method="POST"
+            action="?/reject"
+            use:enhance={() => {
+                isSubmitting = true;
+                return async ({ update }) => {
+                    await update();
+                    isSubmitting = false;
+                    closeModals();
+                };
+            }}
+        >
+            <input type="hidden" name="formId" value={selectedForm.id} />
 
-                <p class="text-gray-600 mb-4">
-                    ¿Está seguro de rechazar el formulario de <strong
-                        >{getFormName(selectedForm)}</strong
-                    >?
-                </p>
-
-                <form
-                    method="POST"
-                    action="?/reject"
-                    use:enhance={() => {
-                        isSubmitting = true;
-                        return async ({ update }) => {
-                            await update();
-                            isSubmitting = false;
-                            closeModals();
-                        };
-                    }}
+            <div class="mb-4">
+                <label
+                    for="reject-notes"
+                    class="block text-sm font-medium text-gray-700 mb-1"
                 >
-                    <input
-                        type="hidden"
-                        name="formId"
-                        value={selectedForm.id}
-                    />
-
-                    <div class="mb-4">
-                        <label
-                            for="reject-notes"
-                            class="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                            Razón del rechazo *
-                        </label>
-                        <textarea
-                            id="reject-notes"
-                            name="notes"
-                            bind:value={reviewNotes}
-                            rows="3"
-                            required
-                            minlength="10"
-                            placeholder="Explique la razón del rechazo (mínimo 10 caracteres)..."
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                        ></textarea>
-                        <p class="text-xs text-gray-500 mt-1">
-                            Mínimo 10 caracteres
-                        </p>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button
-                            type="button"
-                            onclick={closeModals}
-                            class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isSubmitting || reviewNotes.length < 10}
-                            class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
-                        >
-                            {isSubmitting
-                                ? "Rechazando..."
-                                : "❌ Confirmar Rechazo"}
-                        </button>
-                    </div>
-                </form>
+                    Razón del rechazo *
+                </label>
+                <textarea
+                    id="reject-notes"
+                    name="notes"
+                    bind:value={reviewNotes}
+                    rows="3"
+                    required
+                    minlength="10"
+                    placeholder="Explique la razón del rechazo (mínimo 10 caracteres)..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                ></textarea>
+                <p class="text-xs text-gray-500 mt-1">
+                    Mínimo 10 caracteres
+                </p>
             </div>
-        </div>
-    </div>
-{/if}
+
+            <div class="flex gap-3">
+                <Button
+                    label="Cancelar"
+                    variant="secondary"
+                    onclick={closeModals}
+                    class="flex-1"
+                />
+                <Button
+                    type="submit"
+                    label={isSubmitting ? "Rechazando..." : "❌ Confirmar Rechazo"}
+                    variant="danger"
+                    disabled={isSubmitting || reviewNotes.length < 10}
+                    class="flex-1"
+                />
+            </div>
+        </form>
+    {/if}
+</Modal>

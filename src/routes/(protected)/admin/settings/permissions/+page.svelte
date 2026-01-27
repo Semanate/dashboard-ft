@@ -1,6 +1,17 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { ROLES, ROLE_LABELS, type Role } from "$lib/types/roles";
+    import { 
+        Alert, 
+        Button, 
+        ButtonWithIcon, 
+        Modal, 
+        ConfirmModal,
+        Card,
+        PageHeader,
+        StatCard,
+        Badge
+    } from "$lib/components";
 
     interface Permission {
         id: string;
@@ -156,40 +167,27 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-6xl">
-    <div class="mb-8 flex justify-between items-start">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">
-                Gestión de Permisos
-            </h1>
-            <p class="mt-2 text-gray-600">
-                Configura los permisos para cada rol del sistema. Los cambios
-                afectarán a todos los usuarios con ese rol.
-            </p>
-        </div>
-        <button
-            type="button"
+    <PageHeader
+        title="Gestión de Permisos"
+        subtitle="Configura los permisos para cada rol del sistema. Los cambios afectarán a todos los usuarios con ese rol."
+    >
+        <ButtonWithIcon
+            label="Nuevo Permiso"
+            iconButton="Plus"
+            variant="primary"
             onclick={openCreateModal}
-            class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
-        >
-            ➕ Nuevo Permiso
-        </button>
-    </div>
+        />
+    </PageHeader>
 
     {#if form?.error}
-        <div
-            class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6"
-        >
-            <strong>Error:</strong>
-            {form.error}
+        <div class="mb-6">
+            <Alert type="error" message={form.error} />
         </div>
     {/if}
 
     {#if form?.success}
-        <div
-            class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6"
-        >
-            <strong>✓</strong>
-            {form.message}
+        <div class="mb-6">
+            <Alert type="success" message={form.message} />
         </div>
     {/if}
 
@@ -393,285 +391,196 @@
     </form>
 
     <!-- Resumen de permisos actuales -->
-    <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="mt-8">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">
             📊 Resumen de Permisos por Rol
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {#each Object.entries(ROLE_LABELS) as [role, label]}
-                <div class="p-4 rounded-lg border border-gray-200">
-                    <div class="font-medium text-gray-900 mb-2">{label}</div>
-                    <div class="text-3xl font-bold text-indigo-600">
-                        {data.rolePermissionsMap[role]?.length || 0}
-                    </div>
-                    <div class="text-sm text-gray-500">permisos asignados</div>
-                </div>
+                <StatCard
+                    title={label}
+                    value={data.rolePermissionsMap[role]?.length || 0}
+                    subtitle="permisos asignados"
+                    variant="primary"
+                />
             {/each}
         </div>
     </div>
 </div>
 
 <!-- Modal de Crear/Editar Permiso -->
-{#if showPermissionModal}
-    <div
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+<Modal
+    isOpen={showPermissionModal}
+    title={editingPermission ? "✏️ Editar Permiso" : "➕ Nuevo Permiso"}
+    size="lg"
+    onClose={closePermissionModal}
+>
+    <form
+        method="POST"
+        action={editingPermission ? "?/updatePermission" : "?/createPermission"}
+        use:enhance={() => {
+            isSubmitting = true;
+            return async ({ result, update }) => {
+                await update();
+                isSubmitting = false;
+                if (result.type === "success") {
+                    closePermissionModal();
+                }
+            };
+        }}
+        class="space-y-4"
     >
-        <div
-            class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
-        >
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-900">
-                    {editingPermission
-                        ? "✏️ Editar Permiso"
-                        : "➕ Nuevo Permiso"}
-                </h3>
+        {#if editingPermission}
+            <input type="hidden" name="id" value={editingPermission.id} />
+        {/if}
+
+        <div>
+            <label for="perm-name" class="block text-sm font-medium text-gray-700 mb-1">
+                Nombre del Permiso *
+            </label>
+            <input
+                type="text"
+                id="perm-name"
+                name="name"
+                bind:value={permissionForm.name}
+                oninput={autoGenerateCode}
+                required
+                placeholder="Ej: Ver Reportes Financieros"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+        </div>
+
+        <div>
+            <label for="perm-code" class="block text-sm font-medium text-gray-700 mb-1">
+                Código (snake_case) *
+            </label>
+            <input
+                type="text"
+                id="perm-code"
+                name="code"
+                bind:value={permissionForm.code}
+                required
+                placeholder="Ej: view_financial_reports"
+                pattern="^[a-z][a-z0-9_]*$"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
+            />
+            <p class="text-xs text-gray-500 mt-1">Solo letras minúsculas, números y guiones bajos</p>
+        </div>
+
+        <div>
+            <label for="perm-description" class="block text-sm font-medium text-gray-700 mb-1">
+                Descripción
+            </label>
+            <textarea
+                id="perm-description"
+                name="description"
+                bind:value={permissionForm.description}
+                rows="2"
+                placeholder="Describe qué permite hacer este permiso..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            ></textarea>
+        </div>
+
+        <div>
+            <!-- svelte-ignore a11y_label_has_associated_control -->
+            <label class="block text-sm font-medium text-gray-700 mb-1">Módulo *</label>
+
+            <div class="flex gap-4 mb-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" bind:group={useNewModule} value={false} class="text-indigo-600" />
+                    <span class="text-sm">Existente</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="radio" bind:group={useNewModule} value={true} class="text-indigo-600" />
+                    <span class="text-sm">Nuevo módulo</span>
+                </label>
             </div>
 
-            <form
-                method="POST"
-                action={editingPermission
-                    ? "?/updatePermission"
-                    : "?/createPermission"}
-                use:enhance={() => {
-                    isSubmitting = true;
-                    return async ({ result, update }) => {
-                        await update();
-                        isSubmitting = false;
-                        if (result.type === "success") {
-                            closePermissionModal();
-                        }
-                    };
-                }}
-                class="p-6 space-y-4"
-            >
-                {#if editingPermission}
-                    <input
-                        type="hidden"
-                        name="id"
-                        value={editingPermission.id}
-                    />
-                {/if}
-
-                <div>
-                    <label
-                        for="perm-name"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Nombre del Permiso *
-                    </label>
-                    <input
-                        type="text"
-                        id="perm-name"
-                        name="name"
-                        bind:value={permissionForm.name}
-                        oninput={autoGenerateCode}
-                        required
-                        placeholder="Ej: Ver Reportes Financieros"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                </div>
-
-                <div>
-                    <label
-                        for="perm-code"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Código (snake_case) *
-                    </label>
-                    <input
-                        type="text"
-                        id="perm-code"
-                        name="code"
-                        bind:value={permissionForm.code}
-                        required
-                        placeholder="Ej: view_financial_reports"
-                        pattern="^[a-z][a-z0-9_]*$"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
-                    />
-                    <p class="text-xs text-gray-500 mt-1">
-                        Solo letras minúsculas, números y guiones bajos
-                    </p>
-                </div>
-
-                <div>
-                    <label
-                        for="perm-description"
-                        class="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                        Descripción
-                    </label>
-                    <textarea
-                        id="perm-description"
-                        name="description"
-                        bind:value={permissionForm.description}
-                        rows="2"
-                        placeholder="Describe qué permite hacer este permiso..."
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    ></textarea>
-                </div>
-
-                <div>
-                    <!-- svelte-ignore a11y_label_has_associated_control -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Módulo *
-                    </label>
-
-                    <div class="flex gap-2 mb-2">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                bind:group={useNewModule}
-                                value={false}
-                                class="text-indigo-600"
-                            />
-                            <span class="text-sm">Existente</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input
-                                type="radio"
-                                bind:group={useNewModule}
-                                value={true}
-                                class="text-indigo-600"
-                            />
-                            <span class="text-sm">Nuevo módulo</span>
-                        </label>
-                    </div>
-
-                    {#if useNewModule}
-                        <input
-                            type="text"
-                            bind:value={newModule}
-                            placeholder="Ej: analytics"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                    {:else}
-                        <select
-                            bind:value={permissionForm.module}
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                            <option value="">Seleccionar módulo...</option>
-                            {#each data.modules || [] as mod}
-                                <option value={mod}
-                                    >{moduleLabels[mod] || mod}</option
-                                >
-                            {/each}
-                        </select>
-                    {/if}
-                    <input
-                        type="hidden"
-                        name="module"
-                        value={getSelectedModule()}
-                    />
-                </div>
-
-                <div class="flex gap-3 pt-4">
-                    <button
-                        type="button"
-                        onclick={closePermissionModal}
-                        class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting ||
-                            !permissionForm.name ||
-                            !permissionForm.code ||
-                            (!permissionForm.module && !newModule)}
-                        class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                        {#if isSubmitting}
-                            Guardando...
-                        {:else}
-                            {editingPermission ? "Actualizar" : "Crear"} Permiso
-                        {/if}
-                    </button>
-                </div>
-            </form>
+            {#if useNewModule}
+                <input
+                    type="text"
+                    bind:value={newModule}
+                    placeholder="Ej: analytics"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+            {:else}
+                <select
+                    bind:value={permissionForm.module}
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                >
+                    <option value="">Seleccionar módulo...</option>
+                    {#each data.modules || [] as mod}
+                        <option value={mod}>{moduleLabels[mod] || mod}</option>
+                    {/each}
+                </select>
+            {/if}
+            <input type="hidden" name="module" value={getSelectedModule()} />
         </div>
-    </div>
-{/if}
+
+        <div class="flex gap-3 pt-4">
+            <Button
+                label="Cancelar"
+                variant="secondary"
+                onclick={closePermissionModal}
+            />
+            <Button
+                label={isSubmitting ? "Guardando..." : (editingPermission ? "Actualizar Permiso" : "Crear Permiso")}
+                variant="primary"
+                type="submit"
+                disabled={isSubmitting || !permissionForm.name || !permissionForm.code || (!permissionForm.module && !newModule)}
+            />
+        </div>
+    </form>
+</Modal>
 
 <!-- Modal de Confirmación de Eliminación -->
-{#if showDeleteModal && permissionToDelete}
-    <div
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    >
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-            <div class="p-6">
-                <div class="flex items-center gap-4 mb-4">
-                    <div
-                        class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-2xl"
-                    >
-                        ⚠️
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">
-                            Eliminar Permiso
-                        </h3>
-                        <p class="text-sm text-gray-500">
-                            Esta acción no se puede deshacer
-                        </p>
-                    </div>
-                </div>
-
-                <p class="text-gray-700 mb-2">
-                    ¿Estás seguro de que deseas eliminar el permiso:
-                </p>
-                <div class="bg-gray-50 rounded-lg p-3 mb-4">
-                    <div class="font-medium text-gray-900">
-                        {permissionToDelete.name}
-                    </div>
-                    <div class="text-sm text-gray-500 font-mono">
-                        {permissionToDelete.code}
-                    </div>
-                </div>
-                <p class="text-sm text-red-600">
-                    ⚠️ Esto eliminará el permiso de todos los roles que lo
-                    tengan asignado.
-                </p>
+<Modal
+    isOpen={showDeleteModal && !!permissionToDelete}
+    title="⚠️ Eliminar Permiso"
+    size="md"
+    onClose={closeDeleteModal}
+>
+    {#if permissionToDelete}
+        <div class="space-y-4">
+            <p class="text-gray-700">
+                ¿Estás seguro de que deseas eliminar el permiso:
+            </p>
+            <div class="bg-gray-50 rounded-lg p-3">
+                <div class="font-medium text-gray-900">{permissionToDelete.name}</div>
+                <div class="text-sm text-gray-500 font-mono">{permissionToDelete.code}</div>
             </div>
-
-            <div class="flex gap-3 p-6 pt-0">
-                <button
-                    type="button"
-                    onclick={closeDeleteModal}
-                    class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                >
-                    Cancelar
-                </button>
-                <form
-                    method="POST"
-                    action="?/deletePermission"
-                    use:enhance={() => {
-                        isSubmitting = true;
-                        return async ({ update }) => {
-                            await update();
-                            isSubmitting = false;
-                            closeDeleteModal();
-                        };
-                    }}
-                    class="flex-1"
-                >
-                    <input
-                        type="hidden"
-                        name="id"
-                        value={permissionToDelete.id}
-                    />
-                    <input
-                        type="hidden"
-                        name="name"
-                        value={permissionToDelete.name}
-                    />
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
-                    >
-                        {isSubmitting ? "Eliminando..." : "Eliminar Permiso"}
-                    </button>
-                </form>
-            </div>
+            <Alert type="warning" message="Esto eliminará el permiso de todos los roles que lo tengan asignado. Esta acción no se puede deshacer." />
         </div>
-    </div>
-{/if}
+
+        <div class="flex gap-3 mt-6">
+            <Button
+                label="Cancelar"
+                variant="secondary"
+                onclick={closeDeleteModal}
+            />
+            <form
+                method="POST"
+                action="?/deletePermission"
+                use:enhance={() => {
+                    isSubmitting = true;
+                    return async ({ update }) => {
+                        await update();
+                        isSubmitting = false;
+                        closeDeleteModal();
+                    };
+                }}
+                class="flex-1"
+            >
+                <input type="hidden" name="id" value={permissionToDelete.id} />
+                <input type="hidden" name="name" value={permissionToDelete.name} />
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    class="w-full px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                    {isSubmitting ? "Eliminando..." : "Eliminar Permiso"}
+                </button>
+            </form>
+        </div>
+    {/if}
+</Modal>

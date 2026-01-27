@@ -15,7 +15,6 @@
   }
   const { data, children }: Props = $props();
 
-  // Crear el checker de permisos dinámico basado en los permisos de la DB
   let permissions = $derived<DynamicPermissionChecker>(
     createDynamicPermissionChecker(
       data.user?.role ?? ROLES.USER,
