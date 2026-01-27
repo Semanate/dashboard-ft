@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Button, ButtonWithIcon, ButtonWithLoading, Card, Alert, Icon, PageHeader } from "$lib/components";
     import { ROLE_LABELS, type Role } from "$lib/types/roles";
-    import { themeStore, getResolvedThemeValue } from "$lib/stores/theme.store";
+    import { themeStore } from "$lib/stores/theme.store";
     import { onMount } from "svelte";
 
     let { data } = $props();
@@ -32,7 +32,7 @@
     onMount(() => {
         themeStore.init();
         const unsubscribe = themeStore.subscribe(theme => {
-            isDarkMode = getResolvedThemeValue(theme) === 'dark';
+            isDarkMode = theme === 'dark';
         });
         return unsubscribe;
     });

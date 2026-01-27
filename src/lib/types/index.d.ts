@@ -6,7 +6,7 @@ export interface FormDataType {
     userId?: string;
     createdAt?: string;
     updatedAt?: string;
-    status?: 'draft' | 'completed' | 'validated';
+    status?: 'draft' | 'completed' | 'validated' | 'submitted' | 'rejected' | 'approved';
     typePersonAggrement: 'Natural' | 'Juridica' | 'Representante Legal';
     date: string;
     city: string;

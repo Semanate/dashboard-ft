@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { themeStore, getResolvedThemeValue, type Theme } from '$lib/stores/theme.store';
+    import { themeStore, type Theme } from '$lib/stores/theme.store';
     import Icon from '$lib/components/atoms/icon/Icon.svelte';
     import { onMount } from 'svelte';
 
@@ -19,8 +19,7 @@
         return unsubscribe;
     });
 
-    let resolvedTheme = $derived(getResolvedThemeValue(currentTheme));
-    let isDark = $derived(resolvedTheme === 'dark');
+    let isDark = $derived(currentTheme === 'dark');
 
     function toggleTheme() {
         themeStore.toggle();

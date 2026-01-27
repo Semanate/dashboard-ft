@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { ButtonWithIcon, Modal, StepperForm, Button, Icon } from "$lib/components";
+  import {
+    ButtonWithIcon,
+    Modal,
+    StepperForm,
+    Button,
+    Icon,
+  } from "$lib/components";
   import {
     accountTypesArray,
     cryptoPlatformsArray,
@@ -396,7 +402,10 @@
   const handleSubmit = async (data: FormDataType) => {
     showLoadingModal = true;
 
-    const success = await saveFormData(data);
+    const success = await saveFormData({
+      ...data,
+      status: "submitted",
+    });
     showLoadingModal = false;
 
     if (success) {
@@ -501,7 +510,11 @@
     </Modal>
 
     <!-- Modal de Éxito -->
-    <Modal isOpen={showSuccessModal} title="Operación exitosa" onClose={() => {}}>
+    <Modal
+      isOpen={showSuccessModal}
+      title="Operación exitosa"
+      onClose={() => {}}
+    >
       <p class="text-gray-600 mb-4">
         {successMessage}
       </p>
@@ -509,7 +522,11 @@
     </Modal>
 
     <!-- Modal de Error -->
-    <Modal isOpen={showErrorModal} title="Error" onClose={() => showErrorModal = false}>
+    <Modal
+      isOpen={showErrorModal}
+      title="Error"
+      onClose={() => (showErrorModal = false)}
+    >
       <p class="text-gray-600 mb-4">
         {errorMessage}
       </p>
@@ -531,20 +548,25 @@
       {#if activeStep.label === "Accionistas y Cuentas Financieras"}
         <div class="mb-4 space-y-2">
           {#if totalPercentage < 100}
-            <p class="text-yellow-600 text-sm font-medium flex items-center gap-1">
-              <Icon name="AlertTriangle" size={14} /> El porcentaje total es {totalPercentage}%. Falta completar el
-              100%.
+            <p
+              class="text-yellow-600 text-sm font-medium flex items-center gap-1"
+            >
+              <Icon name="AlertTriangle" size={14} /> El porcentaje total es {totalPercentage}%.
+              Falta completar el 100%.
             </p>
           {/if}
 
           {#if totalPercentage > 100}
             <p class="text-red-600 text-sm font-medium flex items-center gap-1">
-              <Icon name="X" size={14} /> El porcentaje supera el 100%. Verifique los valores.
+              <Icon name="X" size={14} /> El porcentaje supera el 100%. Verifique
+              los valores.
             </p>
           {/if}
 
           {#if totalPercentage === 100}
-            <p class="text-green-600 text-sm font-medium flex items-center gap-1">
+            <p
+              class="text-green-600 text-sm font-medium flex items-center gap-1"
+            >
               <Icon name="Check" size={14} /> El porcentaje accionarial está completo.
             </p>
           {/if}

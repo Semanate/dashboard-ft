@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ButtonWithIcon, PageHeader, Button } from "$lib/components";
+  import { ButtonWithIcon, PageHeader, Button, Modal, Icon } from "$lib/components";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
@@ -16,6 +16,11 @@
   );
 
   let FormList: FormDataType[] = $state([]);
+  
+  // Delete confirmation modal state
+  let showDeleteModal = $state(false);
+  let formToDelete = $state<FormDataType | null>(null);
+  let isDeleting = $state(false);
 
   async function loadForms() {
     try {
@@ -55,14 +60,38 @@
     a.click();
   }
 
-  async function deleteForm(data: FormDataType) {
-    const res = await fetch("/sarlaft", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: data.id }),
-    });
+  function openDeleteModal(data: FormDataType) {
+    formToDelete = data;
+    showDeleteModal = true;
+  }
 
-    await loadForms();
+  function closeDeleteModal() {
+    showDeleteModal = false;
+    formToDelete = null;
+  }
+
+  async function confirmDelete() {
+
+    if (!formToDelete) return;
+    
+    isDeleting = true;
+    try {
+      const res = await fetch("/sarlaft", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: formToDelete.id }),
+      });
+
+      console.log("Delete response:", res);
+      if (res.ok) {
+        await loadForms();
+      }
+    } catch (error) {
+      console.error("Error deleting form:", error);
+    } finally {
+      isDeleting = false;
+      closeDeleteModal();
+    }
   }
 
   const columns = [
@@ -153,10 +182,10 @@
             ...(permissions.can("delete_sarlaft")
               ? [
                   {
-                    iconName: "Delete",
+                    iconName: "Trash2",
                     iconClass: "text-red-300/80",
                     onclick: (row: any) => {
-                      deleteForm(row);
+                      openDeleteModal(row);
                     },
                   },
                 ]
@@ -167,3 +196,64 @@
     </div>
   </div>
 </section>
+
+<!-- Delete Confirmation Modal -->
+<Modal
+  isOpen={showDeleteModal}
+  onClose={closeDeleteModal}
+  title="Eliminar Formulario"
+  size="md"
+>
+  <div class="p-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+        <Icon name="AlertTriangle" class="w-6 h-6 text-red-600" />
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">¿Estás seguro?</h3>
+        <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
+      </div>
+    </div>
+    
+    <p class="text-gray-700 mb-4">
+      Estás a punto de eliminar el formulario 
+      <span class="font-semibold">#{formToDelete?.id?.slice(0, 8)}...</span>
+      junto con todos sus documentos asociados.
+    </p>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+      <div class="flex gap-2">
+        <Icon name="AlertCircle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div class="text-sm text-amber-800">
+          <p class="font-medium">Se eliminarán permanentemente:</p>
+          <ul class="list-disc list-inside mt-1 space-y-0.5">
+            <li>El formulario SARLAFT</li>
+            <li>Todas las relaciones asociadas</li>
+            <li>Los documentos adjuntos en el storage</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3">
+      <Button
+        variant="secondary"
+        onclick={closeDeleteModal}
+        disabled={isDeleting}
+      >
+        Cancelar
+      </Button>
+      <Button
+        variant="danger"
+        onclick={confirmDelete}
+        disabled={isDeleting}
+      >
+        {#if isDeleting}
+          Eliminando...
+        {:else}
+          Eliminar Formulario
+        {/if}
+      </Button>
+    </div>
+  </div>
+</Modal>

@@ -1,26 +1,17 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark';
 
-// Get initial theme from localStorage or default to 'system'
+// Get initial theme from localStorage or default to 'light'
 function getInitialTheme(): Theme {
     if (!browser) return 'light';
     
     const stored = localStorage.getItem('theme') as Theme | null;
-    if (stored && ['light', 'dark', 'system'].includes(stored)) {
+    if (stored && ['light', 'dark'].includes(stored)) {
         return stored;
     }
-    return 'system';
-}
-
-// Get the actual theme (resolves 'system' to 'light' or 'dark')
-function getResolvedTheme(theme: Theme): 'light' | 'dark' {
-    if (theme === 'system') {
-        if (!browser) return 'light';
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return theme;
+    return 'light';
 }
 
 function createThemeStore() {
@@ -37,8 +28,7 @@ function createThemeStore() {
         },
         toggle: () => {
             update(current => {
-                const resolved = getResolvedTheme(current);
-                const newTheme: Theme = resolved === 'dark' ? 'light' : 'dark';
+                const newTheme: Theme = current === 'dark' ? 'light' : 'dark';
                 if (browser) {
                     localStorage.setItem('theme', newTheme);
                     applyTheme(newTheme);
@@ -50,14 +40,6 @@ function createThemeStore() {
             if (browser) {
                 const theme = getInitialTheme();
                 applyTheme(theme);
-                
-                // Listen for system theme changes
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-                    const currentTheme = localStorage.getItem('theme') as Theme;
-                    if (currentTheme === 'system') {
-                        applyTheme('system');
-                    }
-                });
             }
         }
     };
@@ -66,10 +48,9 @@ function createThemeStore() {
 function applyTheme(theme: Theme) {
     if (!browser) return;
     
-    const resolved = getResolvedTheme(theme);
     const root = document.documentElement;
     
-    if (resolved === 'dark') {
+    if (theme === 'dark') {
         root.classList.add('dark');
     } else {
         root.classList.remove('dark');
@@ -77,8 +58,3 @@ function applyTheme(theme: Theme) {
 }
 
 export const themeStore = createThemeStore();
-
-// Derived store for the resolved theme (light or dark)
-export function getResolvedThemeValue(theme: Theme): 'light' | 'dark' {
-    return getResolvedTheme(theme);
-}

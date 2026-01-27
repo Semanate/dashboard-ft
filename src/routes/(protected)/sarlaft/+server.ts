@@ -1,6 +1,5 @@
 import { deleteSarlaftById, getUserSarlaftPayload, invokeCreateSarlaft } from '$lib/api/admin/sarlaft';
 import { json } from '@sveltejs/kit';
-import { supabase } from '$lib/db/client.js';
 
 export const POST = async ({ request, cookies }) => {
     const accessToken = cookies.get('sb-access-token');
