@@ -1,6 +1,5 @@
 <script lang="ts">
-  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
-  import StepperForm from "$lib/components/organisms/stepper-form/StepperForm.svelte";
+  import { ButtonWithIcon, Modal, StepperForm, Button, Icon } from "$lib/components";
   import {
     accountTypesArray,
     cryptoPlatformsArray,
@@ -53,7 +52,7 @@
         return false;
       }
     } catch (error) {
-      console.error("❌ Error saving form data:", error);
+      console.error("Error saving form data:", error);
     }
     return false;
   }
@@ -442,8 +441,11 @@
             console.log(res, "CARGAR DATOS");
           }}
         />
-        <button
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        <ButtonWithIcon
+          variant="info"
+          size="small"
+          label="Guardar Borrador"
+          iconButton="Save"
           onclick={async () => {
             const formData = getValuesRobust(formDataState) as FormDataType;
             formData.status = "draft";
@@ -454,12 +456,13 @@
               alert("Error al guardar el formulario");
             }
           }}
-        >
-          💾 Guardar Borrador
-        </button>
+        />
 
-        <button
-          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+        <ButtonWithIcon
+          variant="success"
+          size="small"
+          label="Completar"
+          iconButton="Check"
           onclick={async () => {
             const formData = getValuesRobust(formDataState) as FormDataType;
             formData.status = "completed";
@@ -470,85 +473,54 @@
               alert("Error al completar el formulario");
             }
           }}
-        >
-          ✅ Completar
-        </button>
+        />
 
-        <button
-          class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+        <ButtonWithIcon
+          variant="primary"
+          size="small"
+          label="Exportar Excel"
+          iconButton="FileSpreadsheet"
           onclick={generateExcel}
-        >
-          📄 Exportar Excel
-        </button>
+        />
 
-        <button
-          class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+        <ButtonWithIcon
+          variant="secondary"
+          size="small"
+          label="Descargar Plantilla"
+          iconButton="Download"
           onclick={descargar}
-        >
-          📥 Descargar Plantilla
-        </button>
+        />
       </div>
     </div>
 
-    {#if showLoadingModal}
-      <div
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-      >
-        <div
-          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
-        >
-          <h2 class="text-lg font-semibold text-gray-900 mb-2">
-            ⏳ Guardando...
-          </h2>
+    <!-- Modal de Cargando -->
+    <Modal isOpen={showLoadingModal} title="Guardando..." onClose={() => {}}>
+      <p class="text-gray-600">
+        Por favor, espere mientras se guarda el formulario.
+      </p>
+    </Modal>
 
-          <p class="text-gray-600 mb-4">
-            Por favor, espere mientras se guarda el formulario.
-          </p>
-        </div>
+    <!-- Modal de Éxito -->
+    <Modal isOpen={showSuccessModal} title="Operación exitosa" onClose={() => {}}>
+      <p class="text-gray-600 mb-4">
+        {successMessage}
+      </p>
+      <p class="text-sm text-gray-400">Redirigiendo…</p>
+    </Modal>
+
+    <!-- Modal de Error -->
+    <Modal isOpen={showErrorModal} title="Error" onClose={() => showErrorModal = false}>
+      <p class="text-gray-600 mb-4">
+        {errorMessage}
+      </p>
+      <div class="flex justify-end">
+        <Button
+          label="Cerrar"
+          variant="danger"
+          onclick={() => (showErrorModal = false)}
+        />
       </div>
-    {/if}
-
-    {#if showSuccessModal}
-      <div
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-      >
-        <div
-          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
-        >
-          <h2 class="text-lg font-semibold text-gray-900 mb-2">
-            ✔ Operación exitosa
-          </h2>
-
-          <p class="text-gray-600 mb-4">
-            {successMessage}
-          </p>
-
-          <p class="text-sm text-gray-400">Redirigiendo…</p>
-        </div>
-      </div>
-    {/if}
-
-    {#if showErrorModal}
-      <div
-        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-      >
-        <div
-          class="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center"
-        >
-          <h2 class="text-lg font-semibold text-gray-900 mb-2">❌ Error</h2>
-
-          <p class="text-gray-600 mb-4">
-            {errorMessage}
-          </p>
-          <button
-            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-            onclick={() => (showErrorModal = false)}
-          >
-            Cerrar
-          </button>
-        </div>
-      </div>
-    {/if}
+    </Modal>
 
     <StepperForm
       bind:formData={formDataState}
@@ -559,21 +531,21 @@
       {#if activeStep.label === "Accionistas y Cuentas Financieras"}
         <div class="mb-4 space-y-2">
           {#if totalPercentage < 100}
-            <p class="text-yellow-600 text-sm font-medium">
-              ⚠️ El porcentaje total es {totalPercentage}%. Falta completar el
+            <p class="text-yellow-600 text-sm font-medium flex items-center gap-1">
+              <Icon name="AlertTriangle" size={14} /> El porcentaje total es {totalPercentage}%. Falta completar el
               100%.
             </p>
           {/if}
 
           {#if totalPercentage > 100}
-            <p class="text-red-600 text-sm font-medium">
-              ❌ El porcentaje supera el 100%. Verifique los valores.
+            <p class="text-red-600 text-sm font-medium flex items-center gap-1">
+              <Icon name="X" size={14} /> El porcentaje supera el 100%. Verifique los valores.
             </p>
           {/if}
 
           {#if totalPercentage === 100}
-            <p class="text-green-600 text-sm font-medium">
-              ✓ El porcentaje accionarial está completo.
+            <p class="text-green-600 text-sm font-medium flex items-center gap-1">
+              <Icon name="Check" size={14} /> El porcentaje accionarial está completo.
             </p>
           {/if}
         </div>

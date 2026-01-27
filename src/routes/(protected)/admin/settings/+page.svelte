@@ -1,23 +1,25 @@
 <script lang="ts">
+    import { Icon } from "$lib/components";
+
     const settingsCards = [
         {
             title: 'Gestión de Permisos',
             description: 'Configura los permisos de cada rol del sistema',
-            icon: '🔐',
+            icon: 'KeyRound',
             href: '/admin/settings/permissions',
             color: 'indigo'
         },
         {
             title: 'Usuarios',
             description: 'Administra los usuarios y sus roles',
-            icon: '👥',
+            icon: 'Users',
             href: '/admin/users',
             color: 'blue'
         },
         {
             title: 'Noticias',
             description: 'Gestiona las noticias y comunicados',
-            icon: '📰',
+            icon: 'Newspaper',
             href: '/admin/news',
             color: 'green'
         }
@@ -36,7 +38,7 @@
                 href={card.href}
                 class="block p-6 bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-{card.color}-300 transition-all group"
             >
-                <div class="text-4xl mb-4">{card.icon}</div>
+                <div class="text-4xl mb-4 text-{card.color}-600"><Icon name={card.icon} size={40} /></div>
                 <h2 class="text-xl font-semibold text-gray-900 group-hover:text-{card.color}-600 transition-colors">
                     {card.title}
                 </h2>

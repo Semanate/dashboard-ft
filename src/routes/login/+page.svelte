@@ -1,13 +1,9 @@
 <script lang="ts">
-  import ButtonWithLoading from "$lib/components/atoms/button/ButtonWithLoading.svelte";
-  import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
-  import Card from "$lib/components/molecules/card/Card.svelte";
-  import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
-    import type { NewsItem } from "$lib/types/news.js";
+  import { Alert, ButtonWithLoading, FormSection, Card, InputCheck } from "$lib/components";
+  import type { NewsItem } from "$lib/types/news.js";
 
-  export let form;
-  export let loading = false;
-  export let data;
+  let { form, data } = $props();
+  let loading = $state(false);
   const { news }: { news: NewsItem[] } = data;
 </script>
 
@@ -50,9 +46,7 @@
         </div>
 
         {#if form?.code}
-          <div class="rounded-lg bg-red-50 px-4 py-3 text-red-600 text-sm">
-            {form.message}
-          </div>
+          <Alert variant="danger" message={form.message} />
         {/if}
 
         <ButtonWithLoading

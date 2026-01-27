@@ -1,10 +1,25 @@
 <script lang="ts">
-    import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+    import { ButtonWithIcon, PageHeader, Badge, Icon } from "$lib/components";
     import type { SarlaftForm } from "$lib/types/sarlaft.js";
 
-    export let data;
+    let { data } = $props();
 
     const sarlaft: SarlaftForm = data.sarlaft;
+
+    // Mapeo de estados a variantes de Badge
+    const statusVariants: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'> = {
+        draft: 'default',
+        submitted: 'warning',
+        approved: 'success',
+        rejected: 'danger'
+    };
+
+    const statusLabels: Record<string, string> = {
+        draft: 'Borrador',
+        submitted: 'Pendiente',
+        approved: 'Aprobado',
+        rejected: 'Rechazado'
+    };
 
     async function downloadPDF() {
         const res = await fetch("/pdf", {
@@ -32,30 +47,25 @@
 
 <section class="w-full mx-auto p-6 space-y-6">
     <!-- Header -->
-    <header class="flex justify-between items-start">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Formulario SARLAFT</h1>
-            <p class="text-gray-600">
-                ID: {sarlaft.id}
-            </p>
-        </div>
+    <PageHeader
+        title="Formulario SARLAFT"
+        subtitle="ID: {sarlaft.id}"
+        icon="FileText"
+    >
+        <ButtonWithIcon
+            label="Volver"
+            iconButton="ArrowLeft"
+            variant="secondary"
+            onclick={() => history.back()}
+        />
 
-        <div class="flex gap-2">
-            <ButtonWithIcon
-                label="Volver"
-                iconButton="ArrowLeft"
-                variant="secondary"
-                onclick={() => history.back()}
-            />
-
-            <ButtonWithIcon
-                label="Descargar PDF"
-                iconButton="FileText"
-                variant="primary"
-                onclick={downloadPDF}
-            />
-        </div>
-    </header>
+        <ButtonWithIcon
+            label="Descargar PDF"
+            iconButton="FileText"
+            variant="primary"
+            onclick={downloadPDF}
+        />
+    </PageHeader>
 
     <!-- Información general -->
     <article class="bg-white rounded-xl border p-6 space-y-4">
@@ -64,12 +74,20 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
                 <span class="text-gray-500">Estado</span>
-                <p class="font-medium">{sarlaft.status}</p>
+                <div class="mt-1">
+                    <Badge 
+                        label={statusLabels[sarlaft.status] || sarlaft.status}
+                        variant={statusVariants[sarlaft.status] || 'default'}
+                    />
+                </div>
             </div>
 
             <div>
                 <span class="text-gray-500">Tipo de Persona</span>
-                <p class="font-medium">{sarlaft.typePersonAggrement}</p>
+                <p class="font-medium flex items-center gap-1">
+                    <Icon name={sarlaft.typePersonAggrement === 'NAT' ? 'User' : 'Building2'} size={16} />
+                    {sarlaft.typePersonAggrement === 'NAT' ? 'Persona Natural' : 'Persona Jurídica'}
+                </p>
             </div>
 
             <div>

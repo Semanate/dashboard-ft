@@ -4,7 +4,9 @@
     import { 
         Alert, 
         Button, 
-        ButtonWithIcon, 
+        ButtonWithIcon,
+        ButtonWithLoading,
+        Icon,
         Modal, 
         ConfirmModal,
         Card,
@@ -59,14 +61,14 @@
         hasChanges = false;
     });
 
-    const moduleLabels: Record<string, string> = {
-        dashboard: "📊 Dashboard",
-        users: "👥 Usuarios",
-        sarlaft: "📋 SARLAFT",
-        news: "📰 Noticias",
-        reports: "📈 Reportes",
-        settings: "⚙️ Configuración",
-        profile: "👤 Perfil",
+    const moduleLabels: Record<string, { label: string; icon: string }> = {
+        dashboard: { label: "Dashboard", icon: "LayoutDashboard" },
+        users: { label: "Usuarios", icon: "Users" },
+        sarlaft: { label: "SARLAFT", icon: "ClipboardList" },
+        news: { label: "Noticias", icon: "Newspaper" },
+        reports: { label: "Reportes", icon: "BarChart" },
+        settings: { label: "Configuración", icon: "Settings" },
+        profile: { label: "Perfil", icon: "User" },
     };
 
     function togglePermission(permissionId: string) {
@@ -249,42 +251,26 @@
                     </p>
                 </div>
 
-                <button
+                <ButtonWithLoading
                     type="submit"
-                    disabled={isSubmitting || !hasChanges}
-                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700
-                           disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
-                >
-                    {#if isSubmitting}
-                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                            <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                stroke-width="4"
-                                fill="none"
-                            />
-                            <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                            />
-                        </svg>
-                        Guardando...
-                    {:else}
-                        💾 Guardar Cambios
-                    {/if}
-                </button>
+                    loading={isSubmitting}
+                    disabled={!hasChanges}
+                    variant="primary"
+                    label={isSubmitting ? "Guardando..." : "Guardar Cambios"}
+                />
             </div>
 
             <div class="divide-y divide-gray-200">
                 {#each Object.entries(data.permissionsByModule || {}) as [module, permissions]}
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900">
-                                {moduleLabels[module] || module}
+                            <h3 class="text-lg font-medium text-gray-900 flex items-center gap-2">
+                                {#if moduleLabels[module]}
+                                    <Icon name={moduleLabels[module].icon} size={20} />
+                                    {moduleLabels[module].label}
+                                {:else}
+                                    {module}
+                                {/if}
                             </h3>
                             <div class="flex gap-2">
                                 <button
@@ -353,17 +339,17 @@
                                             type="button"
                                             onclick={() =>
                                                 openEditModal(permission)}
-                                            class="flex-1 text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                                            class="flex-1 text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center gap-1 justify-center"
                                         >
-                                            ✏️ Editar
+                                            <Icon name="Pencil" size={12} /> Editar
                                         </button>
                                         <button
                                             type="button"
                                             onclick={() =>
                                                 openDeleteModal(permission)}
-                                            class="flex-1 text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                                            class="flex-1 text-xs px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors flex items-center gap-1 justify-center"
                                         >
-                                            🗑️ Eliminar
+                                            <Icon name="Trash2" size={12} /> Eliminar
                                         </button>
                                     </div>
                                 </div>
@@ -378,22 +364,22 @@
             <div
                 class="fixed bottom-6 right-6 bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-lg shadow-lg flex items-center gap-3"
             >
-                <span>⚠️ Tienes cambios sin guardar</span>
-                <button
+                <span class="flex items-center gap-1"><Icon name="AlertTriangle" size={16} /> Tienes cambios sin guardar</span>
+                <Button
                     type="submit"
                     disabled={isSubmitting}
-                    class="px-4 py-1 bg-yellow-600 text-white rounded-md font-medium hover:bg-yellow-700 disabled:opacity-50"
-                >
-                    Guardar
-                </button>
+                    variant="warning"
+                    size="small"
+                    label="Guardar"
+                />
             </div>
         {/if}
     </form>
 
     <!-- Resumen de permisos actuales -->
     <div class="mt-8">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">
-            📊 Resumen de Permisos por Rol
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Icon name="BarChart" size={20} /> Resumen de Permisos por Rol
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {#each Object.entries(ROLE_LABELS) as [role, label]}
@@ -411,7 +397,7 @@
 <!-- Modal de Crear/Editar Permiso -->
 <Modal
     isOpen={showPermissionModal}
-    title={editingPermission ? "✏️ Editar Permiso" : "➕ Nuevo Permiso"}
+    title={editingPermission ? "Editar Permiso" : "Nuevo Permiso"}
     size="lg"
     onClose={closePermissionModal}
 >
@@ -510,7 +496,7 @@
                 >
                     <option value="">Seleccionar módulo...</option>
                     {#each data.modules || [] as mod}
-                        <option value={mod}>{moduleLabels[mod] || mod}</option>
+                        <option value={mod}>{moduleLabels[mod]?.label || mod}</option>
                     {/each}
                 </select>
             {/if}
@@ -536,7 +522,7 @@
 <!-- Modal de Confirmación de Eliminación -->
 <Modal
     isOpen={showDeleteModal && !!permissionToDelete}
-    title="⚠️ Eliminar Permiso"
+    title="Eliminar Permiso"
     size="md"
     onClose={closeDeleteModal}
 >
@@ -573,13 +559,13 @@
             >
                 <input type="hidden" name="id" value={permissionToDelete.id} />
                 <input type="hidden" name="name" value={permissionToDelete.name} />
-                <button
+                <ButtonWithLoading
                     type="submit"
-                    disabled={isSubmitting}
-                    class="w-full px-4 py-2 bg-red-600 text-white rounded font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-                >
-                    {isSubmitting ? "Eliminando..." : "Eliminar Permiso"}
-                </button>
+                    loading={isSubmitting}
+                    variant="danger"
+                    label={isSubmitting ? "Eliminando..." : "Eliminar Permiso"}
+                    class="w-full"
+                />
             </form>
         </div>
     {/if}

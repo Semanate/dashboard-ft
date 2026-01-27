@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+  import { ButtonWithIcon, PageHeader, Button } from "$lib/components";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
@@ -77,7 +77,6 @@
 
   const rows = $derived(
     FormList.map((f: any) => ({
-      // ...f,
       id: f.id,
       status: f.status === "draft" ? "Borrador" : "Enviado",
       firstName:
@@ -104,17 +103,11 @@
 <section class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
   <div class="prose max-w-full h-full overflow-y-auto overflow-x-hidden p-4">
     <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">
-          Lista de Formularios SARLAFT
-        </h1>
-        <p class="text-gray-600">
-          Sistema de Administración del Riesgo de Lavado de Activos y de la
-          Financiación del Terrorismo
-        </p>
-      </div>
-
-      <div class="flex gap-2">
+      <PageHeader
+        title="Lista de Formularios SARLAFT"
+        subtitle="Sistema de Administración del Riesgo de Lavado de Activos y de la Financiación del Terrorismo"
+        icon="FileText"
+      >
         {#if permissions.canCreateSarlaft}
           <ButtonWithIcon
             label="Crear"
@@ -134,7 +127,7 @@
             loadForms();
           }}
         />
-      </div>
+      </PageHeader>
       <article class="w-full">
         <DataTable
           {table}

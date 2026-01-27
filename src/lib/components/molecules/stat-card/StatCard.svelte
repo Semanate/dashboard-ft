@@ -1,5 +1,6 @@
 <script lang="ts">
     import { cn } from "$lib/utils";
+    import Icon from "$lib/components/atoms/icon/Icon.svelte";
 
     interface Props {
         title: string;
@@ -61,7 +62,9 @@
             {/if}
         </div>
         {#if icon}
-            <span class="text-4xl">{icon}</span>
+            <span class={cn('opacity-60', textClasses[variant])}>
+                <Icon name={icon} size={40} />
+            </span>
         {/if}
     </div>
 </div>

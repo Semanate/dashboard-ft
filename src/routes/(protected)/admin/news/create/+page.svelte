@@ -1,8 +1,7 @@
 <script lang="ts">
-  import Button from "$lib/components/atoms/button/Button.svelte";
   import { goto } from "$app/navigation";
   import { enhance } from "$app/forms";
-  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+  import { Alert, Button, ButtonWithIcon, PageHeader } from "$lib/components";
 
   let { form }: { form?: any } = $props();
 
@@ -17,23 +16,22 @@
 
 <div class="container mx-auto px-4 py-8">
   <div class="w-full mx-auto">
-    <div class="flex items-center mb-6">
+    <PageHeader
+      title="Crear Nueva Noticia"
+      subtitle="Agrega una nueva noticia o publicación al sistema"
+      icon="FilePlus"
+    >
       <ButtonWithIcon
         type="button"
         iconButton="ArrowLeftIcon"
         onclick={handleCancel}
-        class="mr-4 text-gray-600 hover:text-gray-900"
+        variant="secondary"
         label="Volver"
       />
-      <h1 class="text-3xl font-bold text-gray-900">Crear Nueva Noticia</h1>
-    </div>
+    </PageHeader>
 
     {#if form?.error}
-      <div
-        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4"
-      >
-        {form.error}
-      </div>
+      <Alert variant="danger" message={form.error} class="mb-4" />
     {/if}
 
     <form method="POST" use:enhance class="bg-white rounded-lg shadow-lg p-6">

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
-  import Card from "$lib/components/molecules/card/Card.svelte";
+  import { Button, ButtonWithIcon, Card } from "$lib/components";
   import { timeAgo } from "$lib/utils/index.js";
 
   export let data;
@@ -433,7 +432,7 @@
                         <div
                           role="button"
                           class={`border rounded-lg p-4 cursor-pointer transition ${selectedRole === role.id ? "border-purple-500 bg-purple-50" : "border-gray-200 hover:border-gray-300"}`}
-                          on:click={() => (selectedRole = role.id)}
+                          onclick={() => (selectedRole = role.id)}
                         >
                           <div class="flex items-center">
                             <div
@@ -546,18 +545,16 @@
                   <div
                     class="flex justify-end space-x-3 pt-4 border-t border-gray-200"
                   >
-                    <button
-                      on:click={cancelRoleEdit}
-                      class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      on:click={saveRole}
-                      class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                    >
-                      Guardar rol
-                    </button>
+                    <Button
+                      onclick={cancelRoleEdit}
+                      variant="secondary"
+                      label="Cancelar"
+                    />
+                    <Button
+                      onclick={saveRole}
+                      variant="primary"
+                      label="Guardar rol"
+                    />
                   </div>
                 </div>
               {:else}

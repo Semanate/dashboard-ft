@@ -63,7 +63,7 @@
     />
   {:else}
     <div class="text-red-500 text-sm">
-      ❌ Field type "{field.type}" not supported
+      Field type "{field.type}" not supported
     </div>
   {/if}
 </div>

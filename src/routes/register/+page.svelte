@@ -1,12 +1,10 @@
 <script lang="ts">
-  import ButtonWithLoading from "$lib/components/atoms/button/ButtonWithLoading.svelte";
+  import { Alert, ButtonWithLoading, FormSection, Card, InputCheck } from "$lib/components";
   import IMAGE_URL from "$lib/assets/Login-cuate.svg";
-  import FormSection from "$lib/components/molecules/form-section/FormSection.svelte";
-  import Card from "$lib/components/molecules/card/Card.svelte";
-  import InputCheck from "$lib/components/atoms/input/InputCheck.svelte";
-  export let form;
+  
+  let { form } = $props();
 
-  let formValues: Record<string, any> = {};
+  let formValues: Record<string, any> = $state({});
 
   function updateField(id: string, value: any) {
     formValues = {
@@ -15,49 +13,49 @@
     };
   }
 
-  const fields = [
+  const fields = $derived([
     {
       id: "full-name",
-      type: "text",
+      type: "text" as const,
       label: "Nombre Completo",
       value: formValues["full-name"] ?? "",
-      onchange: (v) => updateField("full-name", v),
+      onchange: (v: any) => updateField("full-name", v),
       placeholder: "Ingresa tu nombre completo",
     },
     {
       id: "email",
-      type: "email",
+      type: "email" as const,
       label: "Correo",
       placeholder: "Ingresa tu correo electrónico",
       value: formValues.email ?? "",
-      onchange: (v) => updateField("email", v),
+      onchange: (v: any) => updateField("email", v),
     },
     {
       id: "password",
-      type: "password",
+      type: "password" as const,
       label: "Contraseña",
       value: formValues.password ?? "",
-      onchange: (v) => updateField("password", v),
+      onchange: (v: any) => updateField("password", v),
       placeholder: "Ingresa tu contraseña",
     },
 
     {
       id: "confirm-password",
-      type: "password",
+      type: "password" as const,
       label: "Confirmar Contraseña",
       value: formValues["confirm-password"] ?? "",
-      onchange: (v) => updateField("confirm-password", v),
+      onchange: (v: any) => updateField("confirm-password", v),
       placeholder: "Confirma tu contraseña",
     },
     {
       id: "phone",
-      type: "text",
+      type: "text" as const,
       label: "Teléfono",
       value: formValues.phone ?? "",
-      onchange: (v) => updateField("phone", v),
+      onchange: (v: any) => updateField("phone", v),
       placeholder: "Ingresa tu número de teléfono",
     },
-  ];
+  ]);
 </script>
 
 <main class="min-h-screen grid place-items-center bg-primary/30 p-6">
@@ -87,19 +85,10 @@
                 (formValues = { ...formValues, "accept-terms": v })}
             />
           </div>
-          <!-- <a href="#" class="hover:underline">Ya tengo cuenta?</a> -->
         </div>
 
-        {#if form?.error}
-          <div class="p-2 bg-red-50 text-red-600 rounded">
-            {form.error}
-          </div>
-        {/if}
-
         {#if form?.code}
-          <div class="p-2 bg-red-50 text-red-600 rounded">
-            {form.message}
-          </div>
+          <Alert variant="danger" message={form.message} />
         {/if}
         <ButtonWithLoading
           type="submit"

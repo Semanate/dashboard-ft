@@ -4,6 +4,7 @@
         Alert,
         Badge,
         Button,
+        Icon,
         Modal,
         PageHeader,
         StatCard
@@ -116,8 +117,9 @@
 
 <section class="p-6 max-w-7xl mx-auto">
     <PageHeader
-        title="📋 Revisión de Formularios SARLAFT"
+        title="Revisión de Formularios SARLAFT"
         subtitle="Revise, apruebe o rechace los formularios SARLAFT enviados por los usuarios."
+        icon="ClipboardCheck"
     />
 
     <!-- Mensaje de resultado -->
@@ -138,19 +140,19 @@
         <StatCard
             title="Pendientes"
             value={data.stats.pending}
-            icon="⏳"
+            icon="Clock"
             variant="warning"
         />
         <StatCard
             title="Aprobados"
             value={data.stats.approved}
-            icon="✅"
+            icon="CircleCheck"
             variant="success"
         />
         <StatCard
             title="Rechazados"
             value={data.stats.rejected}
-            icon="❌"
+            icon="CircleX"
             variant="danger"
         />
     </div>
@@ -166,7 +168,7 @@
                     ? 'border-indigo-500 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
-                📝 Pendientes de Revisión ({data.stats.pending})
+                <Icon name="ClipboardList" size={18} className="inline-block mr-1" /> Pendientes de Revisión ({data.stats.pending})
             </button>
             <button
                 type="button"
@@ -176,7 +178,7 @@
                     ? 'border-indigo-500 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
-                📚 Historial de Revisiones
+                <Icon name="History" size={18} className="inline-block mr-1" /> Historial de Revisiones
             </button>
         </nav>
     </div>
@@ -187,7 +189,7 @@
             <div
                 class="bg-white rounded-xl border border-gray-200 p-12 text-center"
             >
-                <span class="text-6xl mb-4 block">🎉</span>
+                <span class="text-6xl mb-4 block text-green-500"><Icon name="PartyPopper" size={64} /></span>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">
                     ¡No hay formularios pendientes!
                 </h3>
@@ -211,10 +213,11 @@
                                             label={statusLabels[form.status]?.label || form.status}
                                             variant={statusLabels[form.status]?.variant || 'default'}
                                         />
-                                        <span class="text-sm text-gray-500">
+                                        <span class="text-sm text-gray-500 flex items-center gap-1">
+                                            <Icon name={form.type_person_agreement === "NAT" ? "User" : "Building2"} size={14} />
                                             {form.type_person_agreement === "NAT"
-                                                ? "👤 Persona Natural"
-                                                : "🏢 Persona Jurídica"}
+                                                ? "Persona Natural"
+                                                : "Persona Jurídica"}
                                         </span>
                                     </div>
 
@@ -223,31 +226,29 @@
                                     </h3>
 
                                     <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                                        <span>📄 Doc: {getFormDocNumber(form)}</span>
-                                        <span>👤 Creado por: {getCreatorName(form)}</span>
-                                        <span>📅 Enviado: {formatDate(form.updated_at)}</span>
+                                        <span class="flex items-center gap-1"><Icon name="FileText" size={14} /> Doc: {getFormDocNumber(form)}</span>
+                                        <span class="flex items-center gap-1"><Icon name="User" size={14} /> Creado por: {getCreatorName(form)}</span>
+                                        <span class="flex items-center gap-1"><Icon name="Calendar" size={14} /> Enviado: {formatDate(form.updated_at)}</span>
                                     </div>
                                 </div>
 
                                 <div class="flex gap-2">
                                     <a
                                         href="/sarlaft/{form.id}"
-                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center gap-1"
                                     >
-                                        👁️ Ver Detalle
+                                        <Icon name="Eye" size={16} /> Ver Detalle
                                     </a>
                                     <Button
-                                        label="✅ Aprobar"
+                                        label="Aprobar"
                                         variant="primary"
                                         onclick={() => openApproveModal(form)}
                                     />
-                                    <button
-                                        type="button"
+                                    <Button
+                                        label="Rechazar"
+                                        variant="danger"
                                         onclick={() => openRejectModal(form)}
-                                        class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
-                                    >
-                                        ❌ Rechazar
-                                    </button>
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -263,7 +264,7 @@
             <div
                 class="bg-white rounded-xl border border-gray-200 p-12 text-center"
             >
-                <span class="text-6xl mb-4 block">📭</span>
+                <span class="text-6xl mb-4 block text-gray-400"><Icon name="MailX" size={64} /></span>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">
                     Sin historial
                 </h3>
@@ -323,8 +324,8 @@
                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-600"
                                 >
                                     {form.type_person_agreement === "NAT"
-                                        ? "👤 Natural"
-                                        : "🏢 Jurídica"}
+                                        ? "Natural"
+                                        : "Jurídica"}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <Badge
@@ -364,7 +365,7 @@
 <!-- Modal Aprobar -->
 <Modal 
     isOpen={showApproveModal && !!selectedForm} 
-    title="✅ Aprobar Formulario" 
+    title="Aprobar Formulario" 
     onClose={closeModals}
 >
     {#if selectedForm}
@@ -412,7 +413,7 @@
                 />
                 <Button
                     type="submit"
-                    label={isSubmitting ? "Aprobando..." : "✅ Confirmar Aprobación"}
+                    label={isSubmitting ? "Aprobando..." : "Confirmar Aprobación"}
                     variant="primary"
                     disabled={isSubmitting}
                     class="flex-1"
@@ -425,7 +426,7 @@
 <!-- Modal Rechazar -->
 <Modal 
     isOpen={showRejectModal && !!selectedForm} 
-    title="❌ Rechazar Formulario" 
+    title="Rechazar Formulario" 
     onClose={closeModals}
 >
     {#if selectedForm}
@@ -478,7 +479,7 @@
                 />
                 <Button
                     type="submit"
-                    label={isSubmitting ? "Rechazando..." : "❌ Confirmar Rechazo"}
+                    label={isSubmitting ? "Rechazando..." : "Confirmar Rechazo"}
                     variant="danger"
                     disabled={isSubmitting || reviewNotes.length < 10}
                     class="flex-1"

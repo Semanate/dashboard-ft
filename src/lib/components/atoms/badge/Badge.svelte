@@ -1,5 +1,6 @@
 <script lang="ts">
     import { cn } from "$lib/utils";
+    import Icon from "../icon/Icon.svelte";
 
     interface Props {
         variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
@@ -16,6 +17,12 @@
         icon,
         class: className
     }: Props = $props();
+
+    const iconSizes = {
+        sm: 12,
+        md: 14,
+        lg: 16
+    };
 
     const variantClasses = {
         default: 'bg-gray-100 text-gray-700',
@@ -41,7 +48,7 @@
     className
 )}>
     {#if icon}
-        <span>{icon}</span>
+        <Icon name={icon} size={iconSizes[size]} />
     {/if}
     {label}
 </span>

@@ -1,17 +1,17 @@
 <script lang="ts">
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte.js";
-  import Button from "$lib/components/atoms/button/Button.svelte";
+  import { Button, PageHeader } from "$lib/components";
   import { goto } from "$app/navigation";
 
-  export let data;
+  let { data } = $props();
 
   const columns = [
-    { key: "id", label: "ID" },
-    { key: "title", label: "Título", sortable: true },
-    { key: "author", label: "Autor", sortable: true },
-    { key: "status", label: "Estado", sortable: true },
-    { key: "created_at", label: "Creado el", sortable: true },
+    { key: "id" as const, label: "ID" },
+    { key: "title" as const, label: "Título", sortable: true },
+    { key: "author" as const, label: "Autor", sortable: true },
+    { key: "status" as const, label: "Estado", sortable: true },
+    { key: "created_at" as const, label: "Creado el", sortable: true },
   ];
 
   const items = data.news.map((newsItem: any) => ({
@@ -49,10 +49,13 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Gestión de Noticias</h1>
+  <PageHeader
+    title="Gestión de Noticias"
+    subtitle="Administra las noticias y publicaciones del sistema"
+    icon="Newspaper"
+  >
     <Button onclick={createNews} variant="primary" label="Crear Nueva Noticia"/>
-  </div>
+  </PageHeader>
 
   <div class="bg-white rounded-lg shadow">
     <DataTable {table} onEdit={editNews} onDelete={deleteNews} />

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Icon from "$lib/components/atoms/icon/Icon.svelte";
+
     interface Props {
         title: string;
         subtitle?: string;
@@ -18,7 +20,7 @@
     <div>
         <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
             {#if icon}
-                <span>{icon}</span>
+                <Icon name={icon} size={28} className="text-gray-700" />
             {/if}
             {title}
         </h1>
