@@ -108,6 +108,7 @@
     FormList.map((f: any) => ({
       id: f.id,
       status: f.status === "draft" ? "Borrador" : "Enviado",
+      rawStatus: f.status,
       firstName:
         f.typePersonAggrement === "NAT"
           ? (f.naturalPerson?.firstName ?? "N/A")
@@ -187,6 +188,7 @@
                     onclick: (row: any) => {
                       openDeleteModal(row);
                     },
+                    visible: (row: any) => row.rawStatus === "draft",
                   },
                 ]
               : []),

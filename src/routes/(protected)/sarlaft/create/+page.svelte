@@ -35,6 +35,15 @@
   let errorMessage = $state("");
   let showErrorModal = $state(false);
 
+  // Load data modal state
+  let showLoadDataModal = $state(false);
+  let draftForms = $state<any[]>([]);
+  let isLoadingDrafts = $state(false);
+  let currentFormId = $state<string | null>(null);
+
+  // Saving state
+  let isSaving = $state(false);
+
   let activeStep = $state<StepActive>({ step: 0, isActive: false, label: "" });
 
   let formDataState = $state<Record<number, Record<string, FormDataType>>>({});
@@ -63,26 +72,6 @@
     return false;
   }
 
-  async function autoSave() {
-    const formData: FormDataType = getValuesRobust(
-      formDataState,
-    ) as FormDataType;
-
-    if (formData.id || hasChanges()) {
-      formData.status = "draft";
-      const save = await saveFormData(formData);
-      if (save) {
-        successMessage = "Formulario guardado correctamente.";
-        showSuccessModal = true;
-
-        setTimeout(() => {
-          showSuccessModal = false;
-          goto("/sarlaft/");
-        }, 1800);
-      }
-    }
-  }
-
   function hasChanges(): boolean {
     const formData: FormDataType = getValuesRobust(
       formDataState,
@@ -94,16 +83,140 @@
     );
   }
 
-  async function descargar() {
-    const rest = await fetch("/excel");
-    const { data } = await rest.json();
-    const blob = await rest.blob();
-    const url = URL.createObjectURL(blob);
+  // Load draft forms for selection
+  async function loadDraftForms() {
+    isLoadingDrafts = true;
+    try {
+      const response = await fetch("/sarlaft?status=draft", {
+        method: "GET",
+      });
+      const res = await response.json();
+      if (res.success) {
+        draftForms = res.data.items || [];
+      }
+    } catch (error) {
+      console.error("Error loading draft forms:", error);
+    } finally {
+      isLoadingDrafts = false;
+    }
+  }
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "SARLAFT.xlsx";
-    a.click();
+  // Open load data modal
+  async function openLoadDataModal() {
+    showLoadDataModal = true;
+    await loadDraftForms();
+  }
+
+  // Load selected form data into the current form
+  function loadFormData(form: any) {
+    currentFormId = form.id;
+
+    // Populate formDataState with the loaded data
+    // The form structure is stored in the payload
+    const payload = form;
+
+    // Build the formDataState structure
+    formDataState = {
+      0: {
+        dateAggrement: payload.dateAggrement || "",
+        cityAggrement: payload.cityAggrement || "",
+        typePersonAggrement: payload.typePersonAggrement || "",
+      },
+      1: payload.naturalPerson || {},
+      2: payload.juridicalPerson || {},
+      3: payload.representative || {},
+      4: payload.financialInformation || {},
+      5: {}, // Relations and accounts will be handled separately
+      6: payload.foreignCurrency || {},
+      7: payload.cryptoCurrency || {},
+      8: payload.declarations || {},
+      9: payload.supportingDocuments || {},
+      10: payload.signatures || {},
+    };
+
+    // Load relations if present
+    if (payload.relations && Array.isArray(payload.relations)) {
+      relations =
+        payload.relations.length > 0 ? payload.relations : [createRelation()];
+    }
+
+    // Load account financials if present
+    if (
+      payload.accountEntityFinancials &&
+      Array.isArray(payload.accountEntityFinancials)
+    ) {
+      accountsFinancials =
+        payload.accountEntityFinancials.length > 0
+          ? payload.accountEntityFinancials
+          : [createAccountFinancials()];
+    }
+
+    // Load foreign currency products if present
+    if (
+      payload.foreignCurrency?.products &&
+      Array.isArray(payload.foreignCurrency.products)
+    ) {
+      productsForeignCurrency =
+        payload.foreignCurrency.products.length > 0
+          ? payload.foreignCurrency.products
+          : [createProductForeignCurrency()];
+    }
+
+    // Load crypto wallets if present
+    if (
+      payload.cryptoCurrency?.wallets &&
+      Array.isArray(payload.cryptoCurrency.wallets)
+    ) {
+      cryptoWallets =
+        payload.cryptoCurrency.wallets.length > 0
+          ? payload.cryptoCurrency.wallets
+          : [createCryptoWallet()];
+    }
+
+    showLoadDataModal = false;
+    successMessage = "Datos del borrador cargados correctamente.";
+    showSuccessModal = true;
+    setTimeout(() => {
+      showSuccessModal = false;
+    }, 2000);
+  }
+
+  // Save as draft with improved feedback
+  async function saveDraft() {
+    isSaving = true;
+    showLoadingModal = true;
+
+    try {
+      const formData = getValuesRobust(formDataState) as FormDataType;
+      formData.status = "draft";
+
+      // Include current form ID if editing existing draft
+      if (currentFormId) {
+        formData.id = currentFormId;
+      }
+
+      const success = await saveFormData(formData);
+
+      if (success) {
+        successMessage = "Formulario guardado como borrador exitosamente.";
+        showLoadingModal = false;
+        showSuccessModal = true;
+
+        setTimeout(() => {
+          showSuccessModal = false;
+          goto("/sarlaft");
+        }, 1800);
+      } else {
+        showLoadingModal = false;
+      }
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      showLoadingModal = false;
+      errorMessage = "Error al guardar el borrador.";
+      showErrorModal = true;
+    } finally {
+      isSaving = false;
+    }
   }
 
   async function generateExcel() {
@@ -438,66 +551,27 @@
 
       <div class="flex gap-2">
         <ButtonWithIcon
-          label="Cargar Datos"
-          iconButton="Upload"
+          label="Cargar Borrador"
+          iconButton="FolderOpen"
           variant="secondary"
           size="medium"
-          onclick={async () => {
-            const response = await fetch("/sarlaft", {
-              method: "GET",
-            });
-            const res = await response.json();
-            console.log(res, "CARGAR DATOS");
-          }}
+          onclick={openLoadDataModal}
         />
         <ButtonWithIcon
           variant="info"
-          size="small"
+          size="medium"
           label="Guardar Borrador"
           iconButton="Save"
-          onclick={async () => {
-            const formData = getValuesRobust(formDataState) as FormDataType;
-            formData.status = "draft";
-            const success = await saveFormData(formData);
-            if (success) {
-              alert("Formulario guardado como borrador");
-            } else {
-              alert("Error al guardar el formulario");
-            }
-          }}
-        />
-
-        <ButtonWithIcon
-          variant="success"
-          size="small"
-          label="Completar"
-          iconButton="Check"
-          onclick={async () => {
-            const formData = getValuesRobust(formDataState) as FormDataType;
-            formData.status = "completed";
-            const success = await saveFormData(formData);
-            if (success) {
-              alert("Formulario marcado como completado");
-            } else {
-              alert("Error al completar el formulario");
-            }
-          }}
+          onclick={saveDraft}
+          disabled={isSaving}
         />
 
         <ButtonWithIcon
           variant="primary"
-          size="small"
+          size="medium"
           label="Exportar Excel"
           iconButton="FileSpreadsheet"
           onclick={generateExcel}
-        />
-
-        <ButtonWithIcon
-          variant="secondary"
-          size="small"
-          label="Descargar Plantilla"
-          iconButton="Download"
-          onclick={descargar}
         />
       </div>
     </div>
@@ -536,6 +610,82 @@
           variant="danger"
           onclick={() => (showErrorModal = false)}
         />
+      </div>
+    </Modal>
+
+    <!-- Modal de Cargar Borrador -->
+    <Modal
+      isOpen={showLoadDataModal}
+      title="Cargar Borrador"
+      onClose={() => (showLoadDataModal = false)}
+      size="lg"
+    >
+      <div class="p-4">
+        <p class="text-gray-600 mb-4">
+          Selecciona un formulario borrador para continuar editándolo.
+        </p>
+
+        {#if isLoadingDrafts}
+          <div class="flex items-center justify-center py-8">
+            <Icon
+              name="Loader2"
+              class="w-8 h-8 animate-spin text-primary-500"
+            />
+            <span class="ml-2 text-gray-600">Cargando borradores...</span>
+          </div>
+        {:else if draftForms.length === 0}
+          <div class="text-center py-8">
+            <Icon name="FileX" class="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p class="text-gray-500">No hay borradores guardados.</p>
+            <p class="text-sm text-gray-400 mt-1">
+              Los formularios que guardes como borrador aparecerán aquí.
+            </p>
+          </div>
+        {:else}
+          <div class="space-y-2 max-h-80 overflow-y-auto">
+            {#each draftForms as form}
+              <button
+                type="button"
+                class="w-full p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-primary-300 transition-colors text-left"
+                onclick={() => loadFormData(form)}
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="font-medium text-gray-900">
+                      {form.typePersonAggrement === "NAT"
+                        ? (form.naturalPerson?.firstName || "Sin nombre") +
+                          " " +
+                          (form.naturalPerson?.lastName || "")
+                        : form.juridicalPerson?.businessName ||
+                          "Sin razón social"}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                      {form.typePersonAggrement === "NAT"
+                        ? "Persona Natural"
+                        : "Persona Jurídica"}
+                      {#if form.naturalPerson?.docNumber || form.juridicalPerson?.docNumber}
+                        • Doc: {form.naturalPerson?.docNumber ||
+                          form.juridicalPerson?.docNumber}
+                      {/if}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-1">
+                      Actualizado: {new Date(form.updated_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <Icon name="ChevronRight" class="w-5 h-5 text-gray-400" />
+                </div>
+              </button>
+            {/each}
+          </div>
+        {/if}
+
+        <div class="flex justify-end mt-4 pt-4 border-t">
+          <Button
+            label="Cancelar"
+            variant="secondary"
+            onclick={() => (showLoadDataModal = false)}
+          />
+        </div>
       </div>
     </Modal>
 

@@ -81,24 +81,8 @@ serve(async (req) => {
         }
     }
 
-    // Delete the form using admin client (bypass RLS to allow deletion of any status)
-    // First verify the user owns the form
-    const { data: ownerCheck } = await supabase
-        .from("sarlaft_forms")
-        .select("id")
-        .eq("id", sarlaftId)
-        .eq("user_id", user.id)
-        .single();
-
-    if (!ownerCheck) {
-        return jsonResponse(
-            { success: false, error: "Form not found or you don't have permission to delete it" },
-            403
-        );
-    }
-
-    // Use admin client to delete (cascade will delete child tables)
-    const { error } = await admin
+    // Delete the form (RLS only allows deleting drafts owned by user)
+    const { error } = await supabase
         .from("sarlaft_forms")
         .delete()
         .eq("id", sarlaftId);

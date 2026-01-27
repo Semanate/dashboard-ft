@@ -18,6 +18,7 @@
             iconName: string;
             iconClass?: string;
             onclick: (row: any) => void;
+            visible?: (row: any) => boolean;
         }>;
     } = $props();
 </script>
@@ -75,17 +76,19 @@
                             </ButtonWithIcon>
                         {:else}
                             {#each actions as Action}
-                                <ButtonWithIcon
-                                    variant="ghost"
-                                    size="small"
-                                    label=""
-                                    onclick={() => Action.onclick(row)}
-                                >
-                                    <Icon
-                                        name={Action.iconName}
-                                        className={Action.iconClass}
-                                    />
-                                </ButtonWithIcon>
+                                {#if !Action.visible || Action.visible(row)}
+                                    <ButtonWithIcon
+                                        variant="ghost"
+                                        size="small"
+                                        label=""
+                                        onclick={() => Action.onclick(row)}
+                                    >
+                                        <Icon
+                                            name={Action.iconName}
+                                            className={Action.iconClass}
+                                        />
+                                    </ButtonWithIcon>
+                                {/if}
                             {/each}
                         {/if}
                     </TableCell>

@@ -16,13 +16,23 @@ export const POST = async ({ request, cookies }) => {
     return json({ success });
 };
 
-export const GET = async ({ cookies }) => {
+export const GET = async ({ cookies, url }) => {
     const accessToken = cookies.get('sb-access-token');
     if (!accessToken) {
         return json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const data = await getUserSarlaftPayload(accessToken, { includePayload: true, limit: 100, offset: 0 });
+    // Get query parameters
+    const status = url.searchParams.get('status') || undefined;
+    const limit = parseInt(url.searchParams.get('limit') || '100');
+    const offset = parseInt(url.searchParams.get('offset') || '0');
+
+    const data = await getUserSarlaftPayload(accessToken, { 
+        includePayload: true, 
+        limit, 
+        offset,
+        status 
+    });
 
     if (!data.success) {
         return json({ error: 'Error al obtener los formularios' }, { status: 500 });
