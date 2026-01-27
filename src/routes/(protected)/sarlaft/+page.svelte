@@ -4,6 +4,16 @@
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
   import { onMount } from "svelte";
+  import { page } from "$app/state";
+  import { createDynamicPermissionChecker } from "$lib/utils/permissions";
+  import { ROLES, type Role } from "$lib/types/roles";
+
+  let permissions = $derived(
+    createDynamicPermissionChecker(
+      (page.data.user?.role as Role) ?? ROLES.USER,
+      (page.data.userPermissions as string[]) ?? []
+    )
+  );
 
   let FormList: FormDataType[] = $state([]);
 
@@ -105,13 +115,15 @@
       </div>
 
       <div class="flex gap-2">
-        <ButtonWithIcon
-          label="Crear"
-          iconButton="Upload"
-          variant="secondary"
-          size="medium"
-          onclick={() => (window.location.href = "/sarlaft/create")}
-        />
+        {#if permissions.canCreateSarlaft}
+          <ButtonWithIcon
+            label="Crear"
+            iconButton="Upload"
+            variant="secondary"
+            size="medium"
+            onclick={() => (window.location.href = "/sarlaft/create")}
+          />
+        {/if}
 
         <ButtonWithIcon
           label="Recargar"
@@ -134,20 +146,20 @@
                 window.location.href = `/sarlaft/${row.id}`;
               },
             },
-            {
+            ...(permissions.can('export_reports') ? [{
               iconName: "Download",
               iconClass: "text-blue-300/80",
-              onclick: (row) => {
+              onclick: (row: any) => {
                 generateExcel(row);
               },
-            },
-            {
+            }] : []),
+            ...(permissions.can('delete_sarlaft') ? [{
               iconName: "Delete",
               iconClass: "text-red-300/80",
-              onclick: (row) => {
+              onclick: (row: any) => {
                 deleteForm(row);
               },
-            },
+            }] : []),
           ]}
         />
       </article>

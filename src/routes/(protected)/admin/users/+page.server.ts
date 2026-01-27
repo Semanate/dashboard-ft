@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { redirect } from '@sveltejs/kit';
+import { isValidRole } from '$lib/types/roles';
 
 export const load = async ({ locals }) => {
     const user = locals.user;
@@ -37,8 +38,9 @@ export const actions = {
             return { error: 'ID de usuario y rol son requeridos' };
         }
 
-        if (!['admin', 'user'].includes(role)) {
-            return { error: 'Rol inválido' };
+        // Validar que el rol sea válido usando la función del sistema de roles
+        if (!isValidRole(role)) {
+            return { error: 'Rol inválido. Los roles permitidos son: admin, user, compliance_officer' };
         }
 
         try {
@@ -47,8 +49,8 @@ export const actions = {
             });
 
             console.log('Response from update-user-role:', response);
-            if (!response.success) {
-                return { error: 'Error al actualizar el usuario' };
+            if (response.error) {
+                return { error: response.error.message || 'Error al actualizar el usuario' };
             }
 
             return { success: true };

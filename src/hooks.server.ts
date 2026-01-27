@@ -1,6 +1,7 @@
 // src/hooks.server.ts
 import { redirect, type Handle } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
+import { isValidRole, canAccessRoute, ROLES, type Role } from '$lib/types/roles';
 
 const PUBLIC_ROUTES = ['/login', '/register', '/'];
 
@@ -28,7 +29,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(303, '/login');
     }
 
-    event.locals.user = user;
+    // Obtener el perfil con el rol
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -38,9 +39,27 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (!profile) {
         throw redirect(303, '/login');
     }
-    event.locals.user.role = profile.role;
+
+    // Validar que el rol sea válido
+    const userRole: Role = isValidRole(profile.role) ? profile.role : ROLES.USER;
+    
+    // Agregar el rol al usuario
+    const userWithRole = { ...user, role: userRole };
+    event.locals.user = userWithRole;
     event.locals.accessToken = accessToken;
     event.locals.supabase = supabase;
+
+    // Verificar acceso a la ruta
+    if (!canAccessRoute(userRole, pathName)) {
+        // Redirigir según el rol
+        if (userRole === ROLES.ADMIN) {
+            throw redirect(303, '/admin');
+        } else if (userRole === ROLES.COMPLIANCE_OFFICER) {
+            throw redirect(303, '/sarlaft');
+        } else {
+            throw redirect(303, '/dashboard');
+        }
+    }
 
     return resolve(event);
 };

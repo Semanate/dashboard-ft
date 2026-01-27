@@ -6,6 +6,7 @@
   import Tooltip from "$lib/components/atoms/tooltip/Tooltip.svelte";
   import type { User } from "@supabase/supabase-js";
   import { cn } from "$lib/utils";
+  import { getRoleLabel, type Role } from "$lib/types/roles";
 
   interface props {
     menu: {
@@ -16,7 +17,7 @@
       disabled?: boolean;
     }[];
     collapsed: boolean;
-    user: User;
+    user: User & { role?: Role };
     variant: "light" | "dark";
   }
   const {
@@ -28,6 +29,12 @@
   let collapsed = $state(initialCollapsed);
 
   let menu = $derived(menuItems.filter((item) => !item.disabled));
+  
+  // Obtener la etiqueta del rol
+  let roleLabel = $derived(
+    user?.role ? getRoleLabel(user.role) : "Usuario"
+  );
+  
   const toggle = () => {
     collapsed = !collapsed;
   };
@@ -77,7 +84,7 @@
   <!-- User Info -->
   {#if !collapsed}
     <UserInfo
-      role={(user?.user_metadata?.role as any) || "Usuario"}
+      role={roleLabel}
       name={(user?.user_metadata?.display_name as string) || "Usuario"}
       email={(user?.email as string) || "usuario@example.com"}
     />

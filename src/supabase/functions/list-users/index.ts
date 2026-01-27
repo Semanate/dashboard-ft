@@ -5,6 +5,20 @@ import { jsonResponse } from '../_shared/response.ts'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
+// Roles válidos en el sistema
+const VALID_ROLES = ['admin', 'user', 'compliance_officer'] as const
+type Role = typeof VALID_ROLES[number]
+
+const ROLE_LABELS: Record<Role, string> = {
+  admin: 'Administrador',
+  user: 'Usuario',
+  compliance_officer: 'Oficial de Cumplimiento'
+}
+
+function getRoleLabel(role: string): string {
+  return ROLE_LABELS[role as Role] ?? role
+}
+
 serve(async () => {
   try {
 
@@ -51,12 +65,15 @@ serve(async () => {
 
     const users = authUsers.map(user => {
       const profile = profiles?.find(p => p.id === user.id)
+      const role = profile?.role ?? 'user'
 
       return {
         id: user.id,
         email: user.email,
-        role: profile?.role ?? 'user',
-        created_at: user.created_at
+        role: role,
+        roleLabel: getRoleLabel(role),
+        created_at: user.created_at,
+        user_metadata: user.user_metadata
       }
     })
 
@@ -65,7 +82,9 @@ serve(async () => {
       success: true,
       data: users,
       meta: {
-        total: users.length
+        total: users.length,
+        validRoles: VALID_ROLES,
+        roleLabels: ROLE_LABELS
       },
       message: 'Users fetched successfully'
     })

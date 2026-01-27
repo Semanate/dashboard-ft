@@ -38,3 +38,5 @@ export function timeAgo(date: string | Date) {
         duration /= amount;
     }
 }
+
+export * from './permissions';
