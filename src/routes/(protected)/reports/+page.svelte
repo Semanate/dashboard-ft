@@ -40,7 +40,6 @@
     let activeTab = $state<"pending" | "history">("pending");
 
     function getFormName(form: SarlaftForm): string {
-        console.log(form);
         if (form.type_person_agreement === "NAT") {
             const np = form?.payload?.naturalPerson;
             return np

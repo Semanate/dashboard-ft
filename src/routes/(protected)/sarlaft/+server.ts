@@ -1,4 +1,4 @@
-import { deleteSarlaftById, invokeCreateSarlaft } from '$lib/api/admin/sarlaft';
+import { deleteSarlaftById, getUserSarlaftPayload, invokeCreateSarlaft } from '$lib/api/admin/sarlaft';
 import { json } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client.js';
 
@@ -9,19 +9,8 @@ export const POST = async ({ request, cookies }) => {
     }
 
     const formData = await request.formData();
-
-    // const response = await supabase.functions.invoke(
-    //     'create-sarlaft',
-    //     {
-    //         headers: {
-    //             Authorization: `Bearer ${accessToken}`
-    //         },
-    //         body: formData
-    //     }
-    // );
     const { success, error } = await invokeCreateSarlaft(accessToken, formData);
 
-    console.log('Create Sarlaft Response:', { success, error });
     if (!success) {
         return json({ error, }, { status: 500 });
     }
@@ -34,21 +23,9 @@ export const GET = async ({ cookies }) => {
         return json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const { data, error } = await supabase.functions.invoke(
-        'get-user-sarlaft',
-        {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: {
-                includePayload: true,
-                limit: 100,
-                offset: 0
-            }
-        }
-    );
+    const data = await getUserSarlaftPayload(accessToken, { includePayload: true, limit: 100, offset: 0 });
 
-    if (error) {
+    if (!data.success) {
         return json({ error: 'Error al obtener los formularios' }, { status: 500 });
     }
 

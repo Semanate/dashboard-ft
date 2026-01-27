@@ -5,7 +5,7 @@ import { createUserClient } from "../_shared/supabase.ts";
 import { isAllNull } from "../_shared/map-payload.ts";
 
 serve(async (req) => {
-    if (req.method !== "POST") {
+    if (req.method !== "GET") {
         return jsonResponse({ success: false, data: null, error: "Method not allowed" }, 405);
     }
 
@@ -17,7 +17,21 @@ serve(async (req) => {
         return jsonResponse({ success: false, data: null, error: "Unauthorized" }, 401);
     }
 
-    const body = await req.json();
+    const url = new URL(req.url);
+    const body = {
+        limit: url.searchParams.get("limit"),
+        offset: url.searchParams.get("offset"),
+        status: url.searchParams.get("status"),
+        typePersonAggrement: url.searchParams.get("typePersonAggrement"),
+        includePayload: url.searchParams.get("includePayload") === "true",
+    } as {
+        limit?: string;
+        offset?: string;
+        status?: string;
+        typePersonAggrement?: string;
+        includePayload?: boolean;
+    };
+
     const limitRaw = Number(body.limit ?? 20);
     const offset = Math.max(0, Number(body.offset ?? 0));
     const limit = Math.min(Math.max(1, limitRaw), 50);
