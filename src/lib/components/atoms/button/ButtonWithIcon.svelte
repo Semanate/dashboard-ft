@@ -2,7 +2,17 @@
   import { cn } from "$lib/utils";
   import Icon from "../icon/Icon.svelte";
   interface Props {
-    variant?: "primary" | "secondary" | "tertiary" | "default" | "ghost" | "danger" | "success" | "warning" | "info";
+    variant?:
+      | "primary"
+      | "text"
+      | "secondary"
+      | "tertiary"
+      | "default"
+      | "ghost"
+      | "danger"
+      | "success"
+      | "warning"
+      | "info";
     size?: "small" | "medium" | "large";
     label: string;
     type?: "button" | "submit" | "reset";
@@ -42,9 +52,12 @@
       ghost:
         "bg-transparent hover:bg-gray-100 focus:ring-gray-200 outline-none",
       danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-      success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
-      warning: "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
+      success:
+        "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500",
+      warning:
+        "bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500",
       info: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
+      text: "bg-transparent text-primary hover:bg-primary/10 focus:ring-primary/20",
     };
     const sizes: Record<string, string> = {
       small: "text-sm h-6",
@@ -57,17 +70,19 @@
 </script>
 
 <button
-  hidden={hidden}
+  {hidden}
   type={props.type ?? "button"}
   class={buttonClass()}
   {...props}
-  disabled={  disabled || loading}
+  disabled={disabled || loading}
 >
   {#if iconButton}
     <Icon name={iconButton} />
   {/if}
-  <p class="text-center ml-2">{label}</p>
 
+  {#if label}
+    <p class="text-start ml-2">{label}</p>
+  {/if}
   {#if children}
     {@render children()}
   {/if}
