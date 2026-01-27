@@ -21,6 +21,7 @@ export const POST = async ({ request, cookies }) => {
     // );
     const { success, error } = await invokeCreateSarlaft(accessToken, formData);
 
+    console.log('Create Sarlaft Response:', { success, error });
     if (!success) {
         return json({ error, }, { status: 500 });
     }
