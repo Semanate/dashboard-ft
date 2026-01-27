@@ -1,6 +1,8 @@
 <script lang="ts">
     import { Button, ButtonWithIcon, ButtonWithLoading, Card, Alert, Icon, PageHeader } from "$lib/components";
     import { ROLE_LABELS, type Role } from "$lib/types/roles";
+    import { themeStore, getResolvedThemeValue } from "$lib/stores/theme.store";
+    import { onMount } from "svelte";
 
     let { data } = $props();
     
@@ -20,10 +22,24 @@
     // Preferencias
     let preferences = $state({
         notifications: true,
-        darkMode: false,
         language: "es",
         timezone: "America/Bogota",
     });
+
+    // Dark mode from store
+    let isDarkMode = $state(false);
+
+    onMount(() => {
+        themeStore.init();
+        const unsubscribe = themeStore.subscribe(theme => {
+            isDarkMode = getResolvedThemeValue(theme) === 'dark';
+        });
+        return unsubscribe;
+    });
+
+    function toggleDarkMode() {
+        themeStore.toggle();
+    }
 
     // Avatar URL
     let avatarUrl = $derived(
@@ -384,21 +400,6 @@
                                 <input
                                     type="checkbox"
                                     bind:checked={preferences.notifications}
-                                    class="sr-only peer"
-                                />
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                            </label>
-                        </div>
-
-                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-medium">Modo oscuro</p>
-                                <p class="text-sm text-gray-500">Tema oscuro para la interfaz</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    bind:checked={preferences.darkMode}
                                     class="sr-only peer"
                                 />
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>

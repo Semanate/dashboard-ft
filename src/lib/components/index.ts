@@ -15,6 +15,7 @@ export { default as InputTextarea } from './atoms/input/InputTextarea.svelte';
 export { default as ConfirmModal } from './atoms/modal/ConfirmModal.svelte';
 export { default as Modal } from './atoms/modal/Modal.svelte';
 export { default as TableCell } from './atoms/table-cell/TableCell.svelte';
+export { default as ThemeToggle } from './atoms/theme-toggle/ThemeToggle.svelte';
 export { default as Tooltip } from './atoms/tooltip/Tooltip.svelte';
 
 // Molecules

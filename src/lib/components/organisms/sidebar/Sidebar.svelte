@@ -2,6 +2,7 @@
   import MenuItem from "$lib/components/molecules/menu-item/MenuItem.svelte";
   import UserInfo from "$lib/components/molecules/user-info/UserInfo.svelte";
   import ButtonWithIcon from "$lib/components/atoms/button/ButtonWithIcon.svelte";
+  import ThemeToggle from "$lib/components/atoms/theme-toggle/ThemeToggle.svelte";
   import { fade, slide, scale } from "svelte/transition";
   import Tooltip from "$lib/components/atoms/tooltip/Tooltip.svelte";
   import type { User } from "@supabase/supabase-js";
@@ -115,10 +116,14 @@
 
   <!-- Footer -->
   {#if !collapsed}
-    <div class="mt-auto p-4 text-sm text-gray-500">© 2025 Mi App</div>
+    <div class="mt-auto p-4 flex items-center justify-between">
+      <span class="text-sm text-gray-500">© 2025 Mi App</span>
+      <ThemeToggle />
+    </div>
   {/if}
   {#if collapsed}
-    <div class="flex flex-col mt-auto mb-4 items-center">
+    <div class="flex flex-col mt-auto mb-4 items-center gap-2">
+      <ThemeToggle />
       <img
         src="https://img.icons8.com/ios-glyphs/30/000000/copyright.png"
         alt="copyright"

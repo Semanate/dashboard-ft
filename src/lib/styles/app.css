@@ -12,13 +12,153 @@
 }
 
 @theme {
+    /* Primary colors */
     --color-primary: #FFAC07;
+    --color-primary-50: #fffbeb;
+    --color-primary-100: #fef3c7;
+    --color-primary-200: #fde68a;
+    --color-primary-300: #fcd34d;
+    --color-primary-400: #fbbf24;
     --color-primary-500: #ffb733;
     --color-primary-600: #ff9f05;
     --color-primary-700: #e69506;
+    --color-primary-800: #b45309;
+    --color-primary-900: #78350f;
     --color-secondary: #000000;
 }
 
 html {
     @apply font-sans;
+}
+
+/* ===== DARK MODE STYLES ===== */
+/* Using direct CSS instead of Tailwind classes for dark mode overrides */
+
+html.dark {
+    color-scheme: dark;
+}
+
+/* Body background and text */
+html.dark body {
+    background-color: #111827; /* gray-900 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+/* Cards and surfaces - using CSS attribute selectors for higher specificity */
+html.dark [class*="bg-white"] {
+    background-color: #1f2937 !important; /* gray-800 */
+}
+
+html.dark [class*="bg-gray-50"] {
+    background-color: #111827 !important; /* gray-900 */
+}
+
+html.dark [class*="bg-gray-100"] {
+    background-color: #1f2937 !important; /* gray-800 */
+}
+
+/* Text colors */
+html.dark [class*="text-gray-900"] {
+    color: #f3f4f6 !important; /* gray-100 */
+}
+
+html.dark [class*="text-gray-800"] {
+    color: #e5e7eb !important; /* gray-200 */
+}
+
+html.dark [class*="text-gray-700"] {
+    color: #d1d5db !important; /* gray-300 */
+}
+
+html.dark [class*="text-gray-600"] {
+    color: #9ca3af !important; /* gray-400 */
+}
+
+html.dark [class*="text-gray-500"] {
+    color: #9ca3af !important; /* gray-400 */
+}
+
+/* Borders */
+html.dark [class*="border-gray-200"] {
+    border-color: #374151 !important; /* gray-700 */
+}
+
+html.dark [class*="border-gray-300"] {
+    border-color: #4b5563 !important; /* gray-600 */
+}
+
+/* Form inputs */
+html.dark input,
+html.dark textarea,
+html.dark select {
+    background-color: #1f2937; /* gray-800 */
+    border-color: #4b5563; /* gray-600 */
+    color: #f3f4f6; /* gray-100 */
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #9ca3af; /* gray-400 */
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus {
+    border-color: #ffb733;
+    --tw-ring-color: #ffb733;
+}
+
+/* Tables */
+html.dark table {
+    background-color: #1f2937; /* gray-800 */
+}
+
+html.dark th {
+    background-color: #374151; /* gray-700 */
+    color: #e5e7eb; /* gray-200 */
+}
+
+html.dark td {
+    border-color: #374151; /* gray-700 */
+}
+
+html.dark tbody tr:hover {
+    background-color: #374151; /* gray-700 */
+}
+
+/* Divide colors */
+html.dark [class*="divide-gray-200"] > * + * {
+    border-color: #374151 !important; /* gray-700 */
+}
+
+/* Shadow adjustments */
+html.dark [class*="shadow"] {
+    --tw-shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Ring colors */
+html.dark [class*="ring-gray-"] {
+    --tw-ring-color: #374151;
+}
+
+/* Hover states for gray backgrounds */
+html.dark [class*="hover:bg-gray-50"]:hover {
+    background-color: #374151 !important; /* gray-700 */
+}
+
+html.dark [class*="hover:bg-gray-100"]:hover {
+    background-color: #374151 !important; /* gray-700 */
+}
+
+/* Gradient backgrounds */
+html.dark [class*="from-gray-50"] {
+    --tw-gradient-from: #111827;
+}
+
+html.dark [class*="to-white"] {
+    --tw-gradient-to: #1f2937;
+}
+
+.dark .to-gray-100 {
+    --tw-gradient-to: #1f2937 !important;
 }
