@@ -7,7 +7,7 @@
         Icon,
         Modal,
         PageHeader,
-        StatCard
+        StatCard,
     } from "$lib/components";
 
     interface SarlaftForm {
@@ -107,7 +107,10 @@
         });
     }
 
-    const statusLabels: Record<string, { label: string; variant: 'default' | 'warning' | 'success' | 'danger' }> = {
+    const statusLabels: Record<
+        string,
+        { label: string; variant: "default" | "warning" | "success" | "danger" }
+    > = {
         draft: { label: "Borrador", variant: "default" },
         submitted: { label: "Pendiente", variant: "warning" },
         approved: { label: "Aprobado", variant: "success" },
@@ -125,7 +128,7 @@
     <!-- Mensaje de resultado -->
     {#if actionResult?.success}
         <div class="mb-6">
-            <Alert type="success" message={actionResult.message ?? ''} />
+            <Alert type="success" message={actionResult.message ?? ""} />
         </div>
     {/if}
 
@@ -168,7 +171,11 @@
                     ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
-                <Icon name="ClipboardList" size={18} className="inline-block mr-1" /> Pendientes de Revisión ({data.stats.pending})
+                <Icon
+                    name="ClipboardList"
+                    size={18}
+                    className="inline-block mr-1"
+                /> Pendientes de Revisión ({data.stats.pending})
             </button>
             <button
                 type="button"
@@ -178,7 +185,8 @@
                     ? 'border-primary-500 text-primary-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
             >
-                <Icon name="History" size={18} className="inline-block mr-1" /> Historial de Revisiones
+                <Icon name="History" size={18} className="inline-block mr-1" /> Historial
+                de Revisiones
             </button>
         </nav>
     </div>
@@ -189,7 +197,11 @@
             <div
                 class="bg-white rounded-xl border border-gray-200 p-12 text-center"
             >
-                <span class="text-6xl mb-4 block text-green-500"><Icon name="PartyPopper" size={64} /></span>
+                <span
+                    class="text-6xl mb-4 flex justify-center items-center text-green-500"
+                >
+                    <Icon name="PartyPopper" size={64} />
+                </span>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">
                     ¡No hay formularios pendientes!
                 </h3>
@@ -210,25 +222,49 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-3 mb-2">
                                         <Badge
-                                            label={statusLabels[form.status]?.label || form.status}
-                                            variant={statusLabels[form.status]?.variant || 'default'}
+                                            label={statusLabels[form.status]
+                                                ?.label || form.status}
+                                            variant={statusLabels[form.status]
+                                                ?.variant || "default"}
                                         />
-                                        <span class="text-sm text-gray-500 flex items-center gap-1">
-                                            <Icon name={form.type_person_agreement === "NAT" ? "User" : "Building2"} size={14} />
-                                            {form.type_person_agreement === "NAT"
+                                        <span
+                                            class="text-sm text-gray-500 flex items-center gap-1"
+                                        >
+                                            <Icon
+                                                name={form.type_person_agreement ===
+                                                "NAT"
+                                                    ? "User"
+                                                    : "Building2"}
+                                                size={14}
+                                            />
+                                            {form.type_person_agreement ===
+                                            "NAT"
                                                 ? "Persona Natural"
                                                 : "Persona Jurídica"}
                                         </span>
                                     </div>
 
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                                    <h3
+                                        class="text-lg font-semibold text-gray-900 mb-1"
+                                    >
                                         {getFormName(form)}
                                     </h3>
 
-                                    <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                                        <span class="flex items-center gap-1"><Icon name="FileText" size={14} /> Doc: {getFormDocNumber(form)}</span>
-                                        <span class="flex items-center gap-1"><Icon name="User" size={14} /> Creado por: {getCreatorName(form)}</span>
-                                        <span class="flex items-center gap-1"><Icon name="Calendar" size={14} /> Enviado: {formatDate(form.updated_at)}</span>
+                                    <div
+                                        class="flex flex-wrap gap-4 text-sm text-gray-600"
+                                    >
+                                        <span class="flex items-center gap-1"
+                                            ><Icon name="FileText" size={14} /> Doc:
+                                            {getFormDocNumber(form)}</span
+                                        >
+                                        <span class="flex items-center gap-1"
+                                            ><Icon name="User" size={14} /> Creado
+                                            por: {getCreatorName(form)}</span
+                                        >
+                                        <span class="flex items-center gap-1"
+                                            ><Icon name="Calendar" size={14} /> Enviado:
+                                            {formatDate(form.updated_at)}</span
+                                        >
                                     </div>
                                 </div>
 
@@ -264,7 +300,10 @@
             <div
                 class="bg-white rounded-xl border border-gray-200 p-12 text-center"
             >
-                <span class="text-6xl mb-4 block text-gray-400"><Icon name="MailX" size={64} /></span>
+                <span
+                    class="text-6xl mb-4 flex justify-center items-center text-gray-400"
+                    ><Icon name="MailX" size={64} /></span
+                >
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">
                     Sin historial
                 </h3>
@@ -329,8 +368,10 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <Badge
-                                        label={statusLabels[form.status]?.label || form.status}
-                                        variant={statusLabels[form.status]?.variant || 'default'}
+                                        label={statusLabels[form.status]
+                                            ?.label || form.status}
+                                        variant={statusLabels[form.status]
+                                            ?.variant || "default"}
                                     />
                                 </td>
                                 <td
@@ -363,14 +404,16 @@
 </section>
 
 <!-- Modal Aprobar -->
-<Modal 
-    isOpen={showApproveModal && !!selectedForm} 
-    title="Aprobar Formulario" 
+<Modal
+    isOpen={showApproveModal && !!selectedForm}
+    title="Aprobar Formulario"
     onClose={closeModals}
 >
     {#if selectedForm}
         <p class="text-gray-600 mb-4">
-            ¿Está seguro de aprobar el formulario de <strong>{getFormName(selectedForm)}</strong>?
+            ¿Está seguro de aprobar el formulario de <strong
+                >{getFormName(selectedForm)}</strong
+            >?
         </p>
 
         <form
@@ -413,7 +456,9 @@
                 />
                 <Button
                     type="submit"
-                    label={isSubmitting ? "Aprobando..." : "Confirmar Aprobación"}
+                    label={isSubmitting
+                        ? "Aprobando..."
+                        : "Confirmar Aprobación"}
                     variant="primary"
                     disabled={isSubmitting}
                     class="flex-1"
@@ -424,14 +469,16 @@
 </Modal>
 
 <!-- Modal Rechazar -->
-<Modal 
-    isOpen={showRejectModal && !!selectedForm} 
-    title="Rechazar Formulario" 
+<Modal
+    isOpen={showRejectModal && !!selectedForm}
+    title="Rechazar Formulario"
     onClose={closeModals}
 >
     {#if selectedForm}
         <p class="text-gray-600 mb-4">
-            ¿Está seguro de rechazar el formulario de <strong>{getFormName(selectedForm)}</strong>?
+            ¿Está seguro de rechazar el formulario de <strong
+                >{getFormName(selectedForm)}</strong
+            >?
         </p>
 
         <form
@@ -465,9 +512,7 @@
                     placeholder="Explique la razón del rechazo (mínimo 10 caracteres)..."
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                 ></textarea>
-                <p class="text-xs text-gray-500 mt-1">
-                    Mínimo 10 caracteres
-                </p>
+                <p class="text-xs text-gray-500 mt-1">Mínimo 10 caracteres</p>
             </div>
 
             <div class="flex gap-3">

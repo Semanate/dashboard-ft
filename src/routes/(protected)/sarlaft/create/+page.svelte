@@ -543,10 +543,10 @@
         <h1 class="text-2xl font-bold text-gray-900 mb-2">
           Formulario SARLAFT
         </h1>
-        <p class="text-gray-600">
+        <!-- <p class="text-gray-600">
           Sistema de Administración del Riesgo de Lavado de Activos y de la
           Financiación del Terrorismo
-        </p>
+        </p> -->
       </div>
 
       <div class="flex gap-2">
