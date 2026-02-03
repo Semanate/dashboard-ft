@@ -3,9 +3,10 @@ import type { RequestHandler } from './$types';
 import { getDataFromEnv } from '$lib/db/client';
 
 export const PATCH: RequestHandler = async ({ request, locals }) => {
-    const { supabaseUrl, supabaseKey } = getDataFromEnv();
+    // const { supabaseUrl, supabaseKey } = getDataFromEnv();
     const user = locals.user;
     const accessToken = locals.accessToken;
+    const supabase = locals.supabase;
 
     if (!user || !accessToken) {
         throw error(401, 'No autorizado');
@@ -16,34 +17,25 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
         const { display_name, phone } = body;
 
         // Update user metadata
-        const updateResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'apikey': supabaseKey,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                data: { display_name },
-                phone: phone || undefined
-            })
-        });
+        const { data, error } = await supabase.auth.updateUser({
+            email: user.email,
+            phone: phone || user.phone,
+        })
 
-        if (!updateResponse.ok) {
-            const errorData = await updateResponse.json().catch(() => ({}));
-            console.error('Update user error:', errorData);
-            return json({ 
-                success: false, 
-                error: 'Error al actualizar la información' 
+        if (error) {
+            console.error('Update user error:', error);
+            return json({
+                success: false,
+                error: 'Error al actualizar la información'
             }, { status: 500 });
         }
+        console.log('User update data:', data);
 
         // Update profile table
-        const supabase = locals.supabase;
         if (supabase) {
             await supabase
                 .from('profiles')
-                .update({ 
+                .update({
                     display_name: display_name || null,
                     phone: phone || null,
                     updated_at: new Date().toISOString()
@@ -55,9 +47,9 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
 
     } catch (err) {
         console.error('Profile update error:', err);
-        return json({ 
-            success: false, 
-            error: 'Error interno del servidor' 
+        return json({
+            success: false,
+            error: 'Error interno del servidor'
         }, { status: 500 });
     }
 };
@@ -71,10 +63,10 @@ export const GET: RequestHandler = async ({ locals }) => {
 
     try {
         const supabase = locals.supabase;
-        
+
         if (!supabase) {
-            return json({ 
-                success: true, 
+            return json({
+                success: true,
                 data: {
                     id: user.id,
                     email: user.email,
@@ -113,9 +105,9 @@ export const GET: RequestHandler = async ({ locals }) => {
 
     } catch (err) {
         console.error('Profile get error:', err);
-        return json({ 
-            success: false, 
-            error: 'Error interno del servidor' 
+        return json({
+            success: false,
+            error: 'Error interno del servidor'
         }, { status: 500 });
     }
 };
