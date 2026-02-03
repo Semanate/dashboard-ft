@@ -18,8 +18,10 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
 
         // Update user metadata
         const { data, error } = await supabase.auth.updateUser({
-            email: user.email,
-            phone: phone || user.phone,
+            data: {
+                display_name: display_name || null,
+                phone: phone || null
+            },
         })
 
         if (error) {
