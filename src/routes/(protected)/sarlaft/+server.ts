@@ -33,6 +33,7 @@ export const GET = async ({ cookies, url }) => {
         offset,
         status 
     });
+    console.log('Fetched sarlaft data:', data);
 
     if (!data.success) {
         return json({ error: 'Error al obtener los formularios' }, { status: 500 });
