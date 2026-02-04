@@ -143,6 +143,23 @@
               class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+          <div>
+            <label
+              for="expiration_date"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Fecha de Vencimiento
+            </label>
+            <input
+              type="date"
+              id="expiration_date"
+              name="expiration_date"
+              value={data.newsItem.expiration_date
+                ? data.newsItem.expiration_date.split("T")[0]
+                : ""}
+              class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
         </div>
 
         <div>

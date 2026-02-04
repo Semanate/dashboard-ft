@@ -4,21 +4,24 @@
 
     let { data } = $props();
 
+    console.log(data);
     const sarlaft: SarlaftForm = data.sarlaft;
 
-    // Mapeo de estados a variantes de Badge
-    const statusVariants: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'> = {
-        draft: 'default',
-        submitted: 'warning',
-        approved: 'success',
-        rejected: 'danger'
+    const statusVariants: Record<
+        string,
+        "default" | "primary" | "success" | "warning" | "danger" | "info"
+    > = {
+        draft: "default",
+        submitted: "warning",
+        approved: "success",
+        rejected: "danger",
     };
 
     const statusLabels: Record<string, string> = {
-        draft: 'Borrador',
-        submitted: 'Pendiente',
-        approved: 'Aprobado',
-        rejected: 'Rechazado'
+        draft: "Borrador",
+        submitted: "Pendiente",
+        approved: "Aprobado",
+        rejected: "Rechazado",
     };
 
     async function downloadPDF() {
@@ -75,9 +78,9 @@
             <div>
                 <span class="text-gray-500">Estado</span>
                 <div class="mt-1">
-                    <Badge 
+                    <Badge
                         label={statusLabels[sarlaft.status] || sarlaft.status}
-                        variant={statusVariants[sarlaft.status] || 'default'}
+                        variant={statusVariants[sarlaft.status] || "default"}
                     />
                 </div>
             </div>
@@ -85,8 +88,15 @@
             <div>
                 <span class="text-gray-500">Tipo de Persona</span>
                 <p class="font-medium flex items-center gap-1">
-                    <Icon name={sarlaft.typePersonAggrement === 'NAT' ? 'User' : 'Building2'} size={16} />
-                    {sarlaft.typePersonAggrement === 'NAT' ? 'Persona Natural' : 'Persona Jurídica'}
+                    <Icon
+                        name={sarlaft.typePersonAggrement === "NAT"
+                            ? "User"
+                            : "Building2"}
+                        size={16}
+                    />
+                    {sarlaft.typePersonAggrement === "NAT"
+                        ? "Persona Natural"
+                        : "Persona Jurídica"}
                 </p>
             </div>
 
@@ -486,7 +496,8 @@
                                 href={sarlaft.supportingDocuments
                                     .chamberOfCommerceCertificate}
                                 target="_blank"
-                                class="text-primary-600 underline">Ver Documento</a
+                                class="text-primary-600 underline"
+                                >Ver Documento</a
                             >
                         </p>
                     </div>
@@ -499,7 +510,8 @@
                             <a
                                 href={sarlaft.supportingDocuments.companyRut}
                                 target="_blank"
-                                class="text-primary-600 underline">Ver Documento</a
+                                class="text-primary-600 underline"
+                                >Ver Documento</a
                             >
                         </p>
                     </div>
@@ -515,7 +527,8 @@
                                 href={sarlaft.supportingDocuments
                                     .legalRepresentativeId}
                                 target="_blank"
-                                class="text-primary-600 underline">Ver Documento</a
+                                class="text-primary-600 underline"
+                                >Ver Documento</a
                             >
                         </p>
                     </div>
@@ -531,7 +544,8 @@
                                 href={sarlaft.supportingDocuments
                                     .shareholdingCompositionCertificate}
                                 target="_blank"
-                                class="text-primary-600 underline">Ver Documento</a
+                                class="text-primary-600 underline"
+                                >Ver Documento</a
                             >
                         </p>
                     </div>

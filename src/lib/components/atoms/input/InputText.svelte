@@ -1,7 +1,19 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
 
-  interface Props {
+  let {
+    label = "",
+    placeholder = "",
+    error = "",
+    value = "",
+    disabled = false,
+    type = "text",
+    size = "small",
+    id = "",
+    onchange,
+    required = false,
+    variant = "default",
+  }: {
     label?: string;
     placeholder?: string;
     type: "text" | "password" | "email" | "number";
@@ -21,21 +33,7 @@
     value?: string;
     required?: boolean;
     onchange?: (value: string) => void;
-  }
-
-  const {
-    label = "",
-    placeholder = "",
-    error = "",
-    value = "",
-    disabled = false,
-    type = "text",
-    size = "small",
-    id = "",
-    onchange,
-    required = false,
-    variant = "default",
-  }: Props = $props();
+  } = $props();
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
     const base =

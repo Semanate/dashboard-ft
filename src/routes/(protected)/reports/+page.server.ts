@@ -80,7 +80,8 @@ export const load: PageServerLoad = async ({ locals }) => {
             pending: totalPending || 0,
             approved: totalApproved || 0,
             rejected: totalRejected || 0
-        }
+        },
+        userRole: userRole || ''
     };
 };
 
@@ -98,12 +99,54 @@ export const actions: Actions = {
         const formData = await request.formData();
         const formId = formData.get('formId') as string;
         const notes = formData.get('notes') as string;
+        const signature = formData.get('signature') as string;
 
         if (!formId) {
             return fail(400, { error: 'ID de formulario requerido' });
         }
 
         const { supabase } = locals;
+        const isComplianceOfficer = userRole === 'compliance_officer';
+
+        // Get current form data to update payload
+        const { data: currentForm, error: fetchError } = await supabase
+            .from('sarlaft_forms')
+            .select('payload')
+            .eq('id', formId)
+            .single();
+
+        if (fetchError || !currentForm) {
+            return fail(400, { error: 'Formulario no encontrado' });
+        }
+
+        let payload = currentForm.payload || {};
+
+        if (isComplianceOfficer) {
+            if (!signature) {
+                return fail(400, { error: 'La firma es obligatoria para el Oficial de Cumplimiento' });
+            }
+
+            // Create verification block
+            const verificationBlock = {
+                name: (locals.user.user_metadata?.first_name || '') + ' ' + (locals.user.user_metadata?.last_name || ''),
+                signature: signature,
+                date: new Date().toLocaleDateString('es-CO'),
+                time: new Date().toLocaleTimeString('es-CO'),
+                auth: 'SI'
+            };
+
+            // Update payload with verification
+            // Assuming structure based on SarlaftForm type: verification.block1 or similar. 
+            // The requirement says "almacenando los datos correspondientes a la validación".
+            // We will put it in payload.verification.block1 for now as a primary validation block.
+            payload = {
+                ...payload,
+                verification: {
+                    ...payload.verification,
+                    block1: verificationBlock
+                }
+            };
+        }
 
         const { error } = await supabase
             .from('sarlaft_forms')
@@ -111,7 +154,8 @@ export const actions: Actions = {
                 status: 'approved',
                 reviewed_at: new Date().toISOString(),
                 reviewed_by: locals.user.id,
-                review_notes: notes || null
+                review_notes: notes || null,
+                payload: payload
             })
             .eq('id', formId)
             .eq('status', 'submitted'); // Only approve if status is submitted

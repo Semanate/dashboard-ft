@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { Alert, ButtonWithLoading, FormSection, Card, InputCheck } from "$lib/components";
+  import {
+    Alert,
+    ButtonWithLoading,
+    FormSection,
+    Card,
+    InputCheck,
+  } from "$lib/components";
   import type { NewsItem } from "$lib/types/news.js";
 
   let { form, data } = $props();
@@ -61,7 +67,7 @@
 
       <footer class="mt-8 text-sm text-gray-600">
         ¿No tienes una cuenta?
-        <a href="#" class="font-semibold text-primary hover:underline">
+        <a href="/register" class="font-semibold text-primary hover:underline">
           Crear cuenta
         </a>
       </footer>
@@ -70,31 +76,39 @@
     <!-- INFO / TRUST -->
 
     <aside class="hidden lg:flex flex-col justify-center bg-primary/5 px-12">
-      <h2 class="text-2xl font-semibold text-gray-900 mb-2">
-        Últimas noticias
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6">
+        Información de interés
       </h2>
 
-      <p class="text-gray-600 mb-6 text-sm">
-        Actualizaciones recientes sobre normativa y cumplimiento
-      </p>
+      {#if news.length > 0}
+        {@const activeNews = news[0]}
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 w-full"
+        >
+          <div
+            class="prose prose-sm prose-gray max-w-none text-gray-600 space-y-2 font-medium"
+          >
+            <div class="whitespace-pre-line leading-loose">
+              {activeNews.content}
+            </div>
+          </div>
 
-      <ul class="space-y-5">
-        {#each news as item}
-          <li class="border-l-4 border-primary pl-4">
-            <p class="text-sm font-semibold text-gray-900 leading-snug">
-              {item.title}
-            </p>
-
-            <p class="text-xs text-gray-500 mt-1">
-              {new Date(item.created_at).toLocaleDateString("es-CO")}
-            </p>
-
-            <p class="text-sm text-gray-600 mt-2 leading-relaxed line-clamp-2">
-              {item.excerpt}
-            </p>
-          </li>
-        {/each}
-      </ul>
+          <div
+            class="mt-6 text-xs text-gray-400 border-t border-gray-100 pt-3 flex justify-between items-center"
+          >
+            <span>Actualizado</span>
+            <span
+              >{new Date(
+                activeNews.updated_at || activeNews.created_at,
+              ).toLocaleDateString("es-CO")}</span
+            >
+          </div>
+        </div>
+      {:else}
+        <p class="text-gray-500 text-sm italic">
+          No hay información vigente en este momento.
+        </p>
+      {/if}
     </aside>
   </Card>
 </main>

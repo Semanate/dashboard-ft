@@ -12,7 +12,8 @@ export interface NewsItem {
     featured_image?: string;
     tags?: string[];
     slug?: string;
-    published_at?: string;
+    published_at?: string | null;
+    expiration_date?: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -25,6 +26,7 @@ export interface CreateNewsData {
     status?: 'draft' | 'published' | 'archived';
     featured_image?: string;
     tags?: string[];
+    expiration_date?: string | null;
 }
 
 export interface UpdateNewsData extends Partial<CreateNewsData> {
@@ -153,10 +155,12 @@ export async function deleteNews(id: number): Promise<ApiResponse<void>> {
 // Public API for fetching published news
 export async function fetchPublishedNews(): Promise<ApiResponse<NewsItem[]>> {
     try {
+        const now = new Date().toISOString();
         const { data, error } = await supabase
             .from('news')
             .select('*')
             .eq('status', 'published')
+            .gte('expiration_date', now)
             .order('published_at', { ascending: false });
 
         if (error) {

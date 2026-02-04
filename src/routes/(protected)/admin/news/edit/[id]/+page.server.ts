@@ -3,7 +3,7 @@ import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
     const { id } = params;
-    
+
     const { data: newsItem, error: fetchError } = await supabase
         .from('news')
         .select('*')
@@ -23,7 +23,7 @@ export const actions = {
     default: async ({ request, params }) => {
         const { id } = params;
         const formData = await request.formData();
-        
+
         const title = formData.get('title')?.toString();
         const content = formData.get('content')?.toString();
         const excerpt = formData.get('excerpt')?.toString();
@@ -31,6 +31,11 @@ export const actions = {
         const status = formData.get('status')?.toString() || 'draft';
         const featured_image = formData.get('featured_image')?.toString();
         const tags = formData.get('tags')?.toString()?.split(',').map(tag => tag.trim()).filter(Boolean) || [];
+
+        let expiration_date: string | null = formData.get('expiration_date')?.toString() || null;
+        if (expiration_date) {
+            expiration_date = new Date(`${expiration_date}T23:59:59`).toISOString();
+        }
 
         if (!title || !content || !author) {
             return {
@@ -53,7 +58,8 @@ export const actions = {
             tags,
             slug,
             published_at: status === 'published' ? new Date().toISOString() : null,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
+            expiration_date
         };
 
         const { error: updateError } = await supabase

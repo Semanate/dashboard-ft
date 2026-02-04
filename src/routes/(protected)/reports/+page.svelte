@@ -9,6 +9,7 @@
         PageHeader,
         StatCard,
     } from "$lib/components";
+    import InputSignature from "$lib/components/atoms/input/InputSignature.svelte";
 
     interface SarlaftForm {
         id: string;
@@ -30,6 +31,7 @@
                 approved: number;
                 rejected: number;
             };
+            userRole: string;
         };
         form?: {
             success?: boolean;
@@ -43,6 +45,7 @@
     let selectedForm: SarlaftForm | null = $state(null);
 
     let reviewNotes = $state("");
+    let signature = $state("");
     let showApproveModal = $state(false);
     let showRejectModal = $state(false);
     let isSubmitting = $state(false);
@@ -81,6 +84,7 @@
     function openApproveModal(form: SarlaftForm) {
         selectedForm = form;
         reviewNotes = "";
+        signature = "";
         showApproveModal = true;
     }
 
@@ -95,6 +99,7 @@
         showRejectModal = false;
         selectedForm = null;
         reviewNotes = "";
+        signature = "";
     }
 
     function formatDate(date: string): string {
@@ -429,6 +434,22 @@
             }}
         >
             <input type="hidden" name="formId" value={selectedForm.id} />
+            <input type="hidden" name="signature" value={signature} />
+
+            {#if data.userRole === "compliance_officer"}
+                <div class="mb-4">
+                    <InputSignature
+                        id="signature-pad"
+                        label="Firma de Validación *"
+                        onchange={(val) => (signature = val)}
+                    />
+                    {#if !signature}
+                        <p class="text-xs text-red-500 mt-1">
+                            La firma es obligatoria.
+                        </p>
+                    {/if}
+                </div>
+            {/if}
 
             <div class="mb-4">
                 <label
@@ -446,8 +467,7 @@
                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 ></textarea>
             </div>
-
-            <div class="flex gap-3">
+            <div>
                 <Button
                     label="Cancelar"
                     variant="secondary"
@@ -458,9 +478,12 @@
                     type="submit"
                     label={isSubmitting
                         ? "Aprobando..."
-                        : "Confirmar Aprobación"}
+                        : data.userRole === "compliance_officer"
+                          ? "Validar y Aprobar"
+                          : "Confirmar Aprobación"}
                     variant="primary"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting ||
+                        (data.userRole === "compliance_officer" && !signature)}
                     class="flex-1"
                 />
             </div>

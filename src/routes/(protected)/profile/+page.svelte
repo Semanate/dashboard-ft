@@ -1,23 +1,35 @@
 <script lang="ts">
-    import { Button, ButtonWithIcon, ButtonWithLoading, Card, Alert, Icon, PageHeader } from "$lib/components";
+    import {
+        Button,
+        ButtonWithIcon,
+        ButtonWithLoading,
+        Card,
+        Alert,
+        Icon,
+        PageHeader,
+    } from "$lib/components";
     import { ROLE_LABELS, type Role } from "$lib/types/roles";
-    import { themeStore } from "$lib/stores/theme.store";
+    import { themeState } from "$lib/stores/theme.svelte";
     import { onMount } from "svelte";
+    import { createMutation } from "@tanstack/svelte-query";
+    import * as rpc from "$lib/query";
 
     let { data } = $props();
-    
+
     let user = $state(data.user);
     let editingProfile = $state(false);
-    let isUploading = $state(false);
-    let isSaving = $state(false);
-    let alertMessage = $state<{ type: 'success' | 'error'; message: string } | null>(null);
+
+    let alertMessage = $state<{
+        type: "success" | "error";
+        message: string;
+    } | null>(null);
 
     // File input reference
     let fileInput: HTMLInputElement;
 
     // Datos temporales para edición
-    let tempDisplayName = $state(user.user_metadata?.display_name || '');
-    let tempPhone = $state(user.phone || '');
+    let tempDisplayName = $state(user.user_metadata?.display_name || "");
+    let tempPhone = $state(user.phone || "");
 
     // Preferencias
     let preferences = $state({
@@ -27,162 +39,165 @@
     });
 
     // Dark mode from store
-    let isDarkMode = $state(false);
+    let isDarkMode = $derived(themeState.current === "dark");
 
     onMount(() => {
-        themeStore.init();
-        const unsubscribe = themeStore.subscribe(theme => {
-            isDarkMode = theme === 'dark';
-        });
-        return unsubscribe;
+        themeState.init();
     });
 
     function toggleDarkMode() {
-        themeStore.toggle();
+        themeState.toggle();
     }
 
     // Avatar URL
     let avatarUrl = $derived(
-        user.user_metadata?.avatar_url || 
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_metadata?.display_name || user.email || 'U')}&background=6366f1&color=fff&size=150`
+        user.user_metadata?.avatar_url ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.user_metadata?.display_name || user.email || "U")}&background=6366f1&color=fff&size=150`,
     );
+
+    // Mutations
+    const uploadAvatarMutation = createMutation(
+        () => rpc.profile.updates.uploadAvatar.options,
+    );
+    const removeAvatarMutation = createMutation(
+        () => rpc.profile.updates.removeAvatar.options,
+    );
+    const updateProfileMutation = createMutation(
+        () => rpc.profile.updates.updateProfile.options,
+    );
+
+    // Loading states derived from mutations
+    let isUploading = $derived(
+        uploadAvatarMutation.isPending || removeAvatarMutation.isPending,
+    );
+    let isSaving = $derived(updateProfileMutation.isPending);
 
     // Handle file selection
     async function handleFileSelect(event: Event) {
         const target = event.target as HTMLInputElement;
         const file = target.files?.[0];
-        
+
         if (!file) return;
 
         // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+        ];
         if (!allowedTypes.includes(file.type)) {
-            alertMessage = { type: 'error', message: 'Tipo de archivo no permitido. Use JPEG, PNG, GIF o WEBP.' };
+            alertMessage = {
+                type: "error",
+                message:
+                    "Tipo de archivo no permitido. Use JPEG, PNG, GIF o WEBP.",
+            };
             return;
         }
 
         // Validate file size (max 5MB)
         const maxSize = 5 * 1024 * 1024;
         if (file.size > maxSize) {
-            alertMessage = { type: 'error', message: 'El archivo es muy grande. Máximo 5MB.' };
+            alertMessage = {
+                type: "error",
+                message: "El archivo es muy grande. Máximo 5MB.",
+            };
             return;
         }
 
-        await uploadAvatar(file);
-    }
-
-    async function uploadAvatar(file: File) {
-        isUploading = true;
         alertMessage = null;
-
-        try {
-            const formData = new FormData();
-            formData.append('avatar', file);
-
-            const response = await fetch('/api/profile/avatar', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
+        uploadAvatarMutation.mutate(file, {
+            onSuccess: (data) => {
                 user.user_metadata = {
                     ...user.user_metadata,
-                    avatar_url: result.data.avatarUrl
+                    avatar_url: data.avatarUrl,
                 };
-                alertMessage = { type: 'success', message: 'Foto de perfil actualizada correctamente.' };
-            } else {
-                alertMessage = { type: 'error', message: result.error || 'Error al subir la foto.' };
-            }
-        } catch (error) {
-            alertMessage = { type: 'error', message: 'Error al subir la foto de perfil.' };
-        } finally {
-            isUploading = false;
-        }
+                alertMessage = {
+                    type: "success",
+                    message: "Foto de perfil actualizada correctamente.",
+                };
+            },
+            onError: (error) => {
+                alertMessage = {
+                    type: "error",
+                    message: error.message || "Error al subir la foto.",
+                };
+            },
+        });
     }
 
     function triggerFileInput() {
         fileInput?.click();
     }
 
-    async function removeAvatar() {
-        isUploading = true;
+    function removeAvatar() {
         alertMessage = null;
-
-        try {
-            const response = await fetch('/api/profile/avatar', {
-                method: 'DELETE'
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
+        removeAvatarMutation.mutate(undefined, {
+            onSuccess: () => {
                 user.user_metadata = {
                     ...user.user_metadata,
-                    avatar_url: null
+                    avatar_url: null,
                 };
-                alertMessage = { type: 'success', message: 'Foto de perfil eliminada.' };
-            } else {
-                alertMessage = { type: 'error', message: result.error || 'Error al eliminar la foto.' };
-            }
-        } catch (error) {
-            alertMessage = { type: 'error', message: 'Error al eliminar la foto de perfil.' };
-        } finally {
-            isUploading = false;
-        }
+                alertMessage = {
+                    type: "success",
+                    message: "Foto de perfil eliminada.",
+                };
+            },
+            onError: (error) => {
+                alertMessage = {
+                    type: "error",
+                    message: error.message || "Error al eliminar la foto.",
+                };
+            },
+        });
     }
 
-    async function saveProfile() {
-        isSaving = true;
+    function saveProfile() {
         alertMessage = null;
-
-        try {
-            const response = await fetch('/api/profile', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    display_name: tempDisplayName,
-                    phone: tempPhone
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                user.user_metadata = {
-                    ...user.user_metadata,
-                    display_name: tempDisplayName
-                };
-                user.phone = tempPhone;
-                editingProfile = false;
-                alertMessage = { type: 'success', message: 'Información actualizada correctamente.' };
-            } else {
-                alertMessage = { type: 'error', message: result.error || 'Error al guardar.' };
-            }
-        } catch (error) {
-            alertMessage = { type: 'error', message: 'Error al guardar la información.' };
-        } finally {
-            isSaving = false;
-        }
+        updateProfileMutation.mutate(
+            {
+                display_name: tempDisplayName,
+                phone: tempPhone,
+            },
+            {
+                onSuccess: () => {
+                    user.user_metadata = {
+                        ...user.user_metadata,
+                        display_name: tempDisplayName,
+                    };
+                    user.phone = tempPhone;
+                    editingProfile = false;
+                    alertMessage = {
+                        type: "success",
+                        message: "Información actualizada correctamente.",
+                    };
+                },
+                onError: (error) => {
+                    alertMessage = {
+                        type: "error",
+                        message: error.message || "Error al guardar.",
+                    };
+                },
+            },
+        );
     }
 
     function cancelEdit() {
-        tempDisplayName = user.user_metadata?.display_name || '';
-        tempPhone = user.phone || '';
+        tempDisplayName = user.user_metadata?.display_name || "";
+        tempPhone = user.phone || "";
         editingProfile = false;
     }
 
     async function savePreferences() {
-        alertMessage = { type: 'success', message: 'Preferencias guardadas.' };
+        alertMessage = { type: "success", message: "Preferencias guardadas." };
     }
 
     function formatDate(dateString: string | undefined) {
-        if (!dateString) return 'No disponible';
-        return new Date(dateString).toLocaleDateString('es-CO', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+        if (!dateString) return "No disponible";
+        return new Date(dateString).toLocaleDateString("es-CO", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
         });
     }
 
@@ -191,7 +206,9 @@
     }
 </script>
 
-<section class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+<section
+    class="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8"
+>
     <div class="max-w-5xl mx-auto">
         <PageHeader
             title="Mi Perfil"
@@ -201,7 +218,10 @@
 
         {#if alertMessage}
             <div class="mb-6">
-                <Alert type={alertMessage.type} message={alertMessage.message} />
+                <Alert
+                    type={alertMessage.type}
+                    message={alertMessage.message}
+                />
             </div>
         {/if}
 
@@ -218,8 +238,14 @@
                                 class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                             />
                             {#if isUploading}
-                                <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-                                    <Icon name="Loader2" size={32} className="text-white animate-spin" />
+                                <div
+                                    class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center"
+                                >
+                                    <Icon
+                                        name="Loader2"
+                                        size={32}
+                                        className="text-white animate-spin"
+                                    />
                                 </div>
                             {:else}
                                 <button
@@ -270,17 +296,27 @@
                     <div class="p-4 space-y-3">
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-500">Rol</span>
-                            <span class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium">
+                            <span
+                                class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"
+                            >
                                 {getRoleLabel(user.role)}
                             </span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">Miembro desde</span>
-                            <span class="text-sm font-medium">{formatDate(user.created_at)}</span>
+                            <span class="text-sm text-gray-500"
+                                >Miembro desde</span
+                            >
+                            <span class="text-sm font-medium"
+                                >{formatDate(user.created_at)}</span
+                            >
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">Email verificado</span>
-                            <span class="flex items-center gap-1 text-green-600">
+                            <span class="text-sm text-gray-500"
+                                >Email verificado</span
+                            >
+                            <span
+                                class="flex items-center gap-1 text-green-600"
+                            >
                                 <Icon name="CheckCircle" size={16} />
                                 <span class="text-sm">Sí</span>
                             </span>
@@ -292,16 +328,23 @@
             <!-- Columna derecha: Información y preferencias -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Información personal -->
-                <Card 
+                <Card
                     title="Información Personal"
-                    content={editingProfile ? "Edita tu información" : "Tu información de contacto"}
+                    content={editingProfile
+                        ? "Edita tu información"
+                        : "Tu información de contacto"}
                 >
                     <div class="p-4">
                         {#if editingProfile}
                             <div class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                                >
                                     <div>
-                                        <label for="display-name" class="block text-sm font-medium text-gray-700 mb-1">
+                                        <label
+                                            for="display-name"
+                                            class="block text-sm font-medium text-gray-700 mb-1"
+                                        >
                                             Nombre completo
                                         </label>
                                         <input
@@ -312,7 +355,10 @@
                                         />
                                     </div>
                                     <div>
-                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                                        <label
+                                            for="email"
+                                            class="block text-sm font-medium text-gray-700 mb-1"
+                                        >
                                             Correo electrónico
                                         </label>
                                         <input
@@ -322,12 +368,17 @@
                                             disabled
                                             class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-500"
                                         />
-                                        <p class="text-xs text-gray-500 mt-1">El email no se puede modificar</p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            El email no se puede modificar
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <label
+                                        for="phone"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
+                                    >
                                         Teléfono
                                     </label>
                                     <input
@@ -339,7 +390,9 @@
                                     />
                                 </div>
 
-                                <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                                <div
+                                    class="flex justify-end gap-3 pt-4 border-t border-gray-200"
+                                >
                                     <Button
                                         label="Cancelar"
                                         variant="secondary"
@@ -356,23 +409,38 @@
                             </div>
                         {:else}
                             <div class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                                >
                                     <div>
-                                        <p class="text-sm text-gray-500">Nombre completo</p>
-                                        <p class="font-medium">{user.user_metadata?.display_name || 'No especificado'}</p>
+                                        <p class="text-sm text-gray-500">
+                                            Nombre completo
+                                        </p>
+                                        <p class="font-medium">
+                                            {user.user_metadata?.display_name ||
+                                                "No especificado"}
+                                        </p>
                                     </div>
                                     <div>
-                                        <p class="text-sm text-gray-500">Correo electrónico</p>
+                                        <p class="text-sm text-gray-500">
+                                            Correo electrónico
+                                        </p>
                                         <p class="font-medium">{user.email}</p>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <p class="text-sm text-gray-500">Teléfono</p>
-                                    <p class="font-medium">{user.phone || 'No especificado'}</p>
+                                    <p class="text-sm text-gray-500">
+                                        Teléfono
+                                    </p>
+                                    <p class="font-medium">
+                                        {user.phone || "No especificado"}
+                                    </p>
                                 </div>
 
-                                <div class="flex justify-end pt-4 border-t border-gray-200">
+                                <div
+                                    class="flex justify-end pt-4 border-t border-gray-200"
+                                >
                                     <ButtonWithIcon
                                         iconButton="Pencil"
                                         label="Editar información"
@@ -386,29 +454,39 @@
                 </Card>
 
                 <!-- Preferencias -->
-                <Card 
-                    title="Preferencias" 
-                    content="Personaliza tu experiencia"
-                >
+                <Card title="Preferencias" content="Personaliza tu experiencia">
                     <div class="p-4 space-y-4">
-                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div
+                            class="flex items-center justify-between py-3 border-b border-gray-100"
+                        >
                             <div>
-                                <p class="font-medium">Notificaciones por correo</p>
-                                <p class="text-sm text-gray-500">Recibe alertas sobre tu cuenta</p>
+                                <p class="font-medium">
+                                    Notificaciones por correo
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Recibe alertas sobre tu cuenta
+                                </p>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <label
+                                class="relative inline-flex items-center cursor-pointer"
+                            >
                                 <input
                                     type="checkbox"
                                     bind:checked={preferences.notifications}
                                     class="sr-only peer"
                                 />
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"
+                                ></div>
                             </label>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 py-3">
                             <div>
-                                <label for="language" class="block text-sm font-medium text-gray-700 mb-1">
+                                <label
+                                    for="language"
+                                    class="block text-sm font-medium text-gray-700 mb-1"
+                                >
                                     Idioma
                                 </label>
                                 <select
@@ -421,7 +499,10 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="timezone" class="block text-sm font-medium text-gray-700 mb-1">
+                                <label
+                                    for="timezone"
+                                    class="block text-sm font-medium text-gray-700 mb-1"
+                                >
                                     Zona horaria
                                 </label>
                                 <select
@@ -429,14 +510,22 @@
                                     bind:value={preferences.timezone}
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 >
-                                    <option value="America/Bogota">Bogotá (GMT-5)</option>
-                                    <option value="America/Mexico_City">Ciudad de México (GMT-6)</option>
-                                    <option value="America/Lima">Lima (GMT-5)</option>
+                                    <option value="America/Bogota"
+                                        >Bogotá (GMT-5)</option
+                                    >
+                                    <option value="America/Mexico_City"
+                                        >Ciudad de México (GMT-6)</option
+                                    >
+                                    <option value="America/Lima"
+                                        >Lima (GMT-5)</option
+                                    >
                                 </select>
                             </div>
                         </div>
 
-                        <div class="flex justify-end pt-4 border-t border-gray-200">
+                        <div
+                            class="flex justify-end pt-4 border-t border-gray-200"
+                        >
                             <Button
                                 label="Guardar preferencias"
                                 variant="primary"

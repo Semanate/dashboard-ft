@@ -58,6 +58,7 @@
     "@lucide/svelte": "^0.553.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.83.0",
+    "@tanstack/svelte-query": "^6.0.18",
     "exceljs": "^4.4.0",
     "pdfkit": "^0.17.2"
   }

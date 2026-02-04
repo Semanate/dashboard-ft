@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit';
 export const actions = {
     default: async ({ request }) => {
         const formData = await request.formData();
-        
+
         const title = formData.get('title')?.toString();
         const content = formData.get('content')?.toString();
         const excerpt = formData.get('excerpt')?.toString();
@@ -12,6 +12,12 @@ export const actions = {
         const status = formData.get('status')?.toString() || 'draft';
         const featured_image = formData.get('featured_image')?.toString();
         const tags = formData.get('tags')?.toString()?.split(',').map(tag => tag.trim()).filter(Boolean) || [];
+
+        let expiration_date: string | null = formData.get('expiration_date')?.toString() || null;
+        if (expiration_date) {
+            // Set to end of day so it remains active during the expiration day
+            expiration_date = new Date(`${expiration_date}T23:59:59`).toISOString();
+        }
 
         if (!title || !content || !author) {
             return {
@@ -33,7 +39,8 @@ export const actions = {
             featured_image,
             tags,
             slug,
-            published_at: status === 'published' ? new Date().toISOString() : null
+            published_at: status === 'published' ? new Date().toISOString() : null,
+            expiration_date
         };
 
         const { error } = await supabase

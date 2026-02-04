@@ -28,3 +28,5 @@ storybook-static
 package-lock.json
 .vscode/settings.json
 .env
+.agent
+.agents/
