@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import {
     Alert,
     ButtonWithLoading,
@@ -10,6 +11,7 @@
 
   let { form, data } = $props();
   let loading = $state(false);
+  let loginMode = $state("password"); // 'password' or 'magic'
   const { news }: { news: NewsItem[] } = data;
 </script>
 
@@ -23,41 +25,97 @@
     <section class="p-10 lg:p-14 flex flex-col justify-center">
       <header class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900">¡Bienvenido!</h1>
-        <p class="text-gray-500 mt-1">Inicia sesión para continuar</p>
+        <p class="text-gray-500 mt-1">
+          {loginMode === "password"
+            ? "Inicia sesión con tu cuenta"
+            : "Ingresa tu correo para recibir un enlace de acceso"}
+        </p>
       </header>
 
-      <form method="POST" class="space-y-6">
+      <div class="flex p-1 bg-gray-100 rounded-xl mb-8">
+        <button
+          class="flex-1 py-2 text-sm font-medium rounded-lg transition-all {loginMode ===
+          'password'
+            ? 'bg-white shadow-sm text-primary'
+            : 'text-gray-500'}"
+          onclick={() => (loginMode = "password")}
+        >
+          Contraseña
+        </button>
+        <button
+          class="flex-1 py-2 text-sm font-medium rounded-lg transition-all {loginMode ===
+          'magic'
+            ? 'bg-white shadow-sm text-primary'
+            : 'text-gray-500'}"
+          onclick={() => (loginMode = "magic")}
+        >
+          Magic Link
+        </button>
+      </div>
+
+      <form
+        method="POST"
+        action={loginMode === "password" ? "?/login" : "?/magic"}
+        use:enhance={() => {
+          loading = true;
+          return async ({ update }) => {
+            await update();
+            loading = false;
+          };
+        }}
+        class="space-y-6"
+      >
         <FormSection
-          fields={[
-            {
-              id: "email",
-              type: "email",
-              label: "Correo electrónico",
-              placeholder: "correo@ejemplo.com",
-              value: "",
-            },
-            {
-              id: "password",
-              type: "password",
-              label: "Contraseña",
-              placeholder: "••••••••",
-              value: "",
-            },
-          ]}
+          fields={loginMode === "password"
+            ? [
+                {
+                  id: "email",
+                  type: "email",
+                  label: "Correo electrónico",
+                  placeholder: "correo@ejemplo.com",
+                  value: "",
+                },
+                {
+                  id: "password",
+                  type: "password",
+                  label: "Contraseña",
+                  placeholder: "••••••••",
+                  value: "",
+                },
+              ]
+            : [
+                {
+                  id: "email",
+                  type: "email",
+                  label: "Correo electrónico",
+                  placeholder: "correo@ejemplo.com",
+                  value: "",
+                },
+              ]}
         />
 
-        <div class="flex items-center justify-between text-sm text-gray-500">
-          <InputCheck id="remember" label="Recordarme" />
-          <a href="#" class="hover:underline">¿Olvidaste tu contraseña?</a>
-        </div>
+        {#if loginMode === "password"}
+          <div class="flex items-center justify-between text-sm text-gray-500">
+            <InputCheck id="remember" label="Recordarme" />
+            <a href="/forgot-password" class="hover:underline"
+              >¿Olvidaste tu contraseña?</a
+            >
+          </div>
+        {/if}
 
-        {#if form?.code}
+        {#if form?.code || form?.error}
           <Alert variant="danger" message={form.message} />
+        {/if}
+
+        {#if form?.success}
+          <Alert variant="success" message={form.message} />
         {/if}
 
         <ButtonWithLoading
           type="submit"
-          label="Iniciar sesión"
+          label={loginMode === "password"
+            ? "Iniciar sesión"
+            : "Enviar enlace mágico"}
           variant="primary"
           size="large"
           class="w-full items-center justify-center"

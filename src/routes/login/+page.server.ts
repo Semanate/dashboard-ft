@@ -13,7 +13,7 @@ export async function load() {
 
 
 export const actions = {
-    default: async ({ request, cookies }) => {
+    login: async ({ request, cookies }) => {
         const form = await request.formData();
         const email = String(form.get('email'));
         const password = String(form.get('password'));
@@ -63,5 +63,27 @@ export const actions = {
         });
 
         throw redirect(303, '/dashboard');
+    },
+    magic: async ({ request, url }) => {
+        const form = await request.formData();
+        const email = String(form.get('email'));
+
+        if (!email) {
+            return fail(400, { error: true, message: 'El correo electrónico es obligatorio' });
+        }
+
+        const { error } = await supabase.auth.signInWithOtp({
+            email,
+            options: {
+                emailRedirectTo: `${url.origin}/dashboard`
+            }
+        });
+
+        if (error) {
+            console.error('Error sending magic link:', error);
+            return fail(500, { error: true, message: 'Error al enviar el enlace mágico' });
+        }
+
+        return { success: true, message: '¡Enviado! Revisa tu correo electrónico para entrar.' };
     }
 };

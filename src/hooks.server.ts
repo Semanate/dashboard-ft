@@ -3,10 +3,10 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { supabase } from '$lib/db/client';
 import { isValidRole, canAccessRoute, ROLES, type Role } from '$lib/types/roles';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/'];
+const PUBLIC_ROUTES = ['/login', '/register', '/', '/forgot-password', '/update-password', '/api/auth/set-session'];
 
 export const handle: Handle = async ({ event, resolve }) => {
-  const pathName = event.url.pathname;
+    const pathName = event.url.pathname;
     if (PUBLIC_ROUTES.includes(pathName)) {
         return resolve(event);
     }
@@ -42,7 +42,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Validar que el rol sea válido
     const userRole: Role = isValidRole(profile.role) ? profile.role : ROLES.USER;
-    
+
     // Agregar el rol al usuario
     const userWithRole = { ...user, role: userRole };
     event.locals.user = userWithRole;
