@@ -257,8 +257,13 @@
   function handleSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
-    
-    console.log("Submit attempt - Current step:", activeVisible, "of", visibleIndexes.length - 1);
+
+    console.log(
+      "Submit attempt - Current step:",
+      activeVisible,
+      "of",
+      visibleIndexes.length - 1,
+    );
 
     // CRÍTICO: Solo procesar el submit si estamos en el último paso
     if (activeVisible !== visibleIndexes.length - 1) {
@@ -306,8 +311,8 @@
 </script>
 
 {#if isVisible}
-  <form 
-    onsubmit={handleSubmit} 
+  <form
+    onsubmit={handleSubmit}
     onkeydown={handleKeyDown}
     class="w-full space-y-6"
   >
@@ -422,7 +427,7 @@
         label="Anterior"
         onclick={prev}
         disabled={activeVisible === 0}
-        variant="ghost"
+        variant="primary"
         type="button"
       />
 
@@ -430,7 +435,7 @@
         <Button
           onclick={next}
           label="Siguiente"
-          variant="ghost"
+          variant="primary"
           type="button"
         />
       {/if}
