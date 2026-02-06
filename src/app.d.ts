@@ -9,20 +9,22 @@ declare global {
 			message: string;
 			code?: string;
 		}
-		
+
 		interface Locals {
 			user: (User & { role: Role }) | null;
 			accessToken: string | null;
+			refreshToken: string | null;
 			supabase: SupabaseClient;
 		}
-		
+
 		interface PageData {
 			user?: User & { role: Role };
 		}
-		
+
 		// interface PageState {}
 		// interface Platform {}
 	}
 }
 
-export {};
+
+export { };

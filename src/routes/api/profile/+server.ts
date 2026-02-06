@@ -1,6 +1,5 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getDataFromEnv } from '$lib/db/client';
 
 export const PATCH: RequestHandler = async ({ request, locals }) => {
     // const { supabaseUrl, supabaseKey } = getDataFromEnv();
@@ -31,7 +30,6 @@ export const PATCH: RequestHandler = async ({ request, locals }) => {
                 error: 'Error al actualizar la información'
             }, { status: 500 });
         }
-        console.log('User update data:', data);
 
         // Update profile table
         if (supabase) {

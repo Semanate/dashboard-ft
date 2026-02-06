@@ -19,14 +19,14 @@ ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
 -- 3. RLS Policies
 -- Users can view their own notifications
-DROP POLICY IF EXISTS "notifications_select_own" ON public.notifications;
-CREATE POLICY "notifications_select_own" ON public.notifications
-    FOR SELECT USING (auth.uid() = user_id);
+-- DROP POLICY IF EXISTS "notifications_select_own" ON public.notifications;
+-- CREATE POLICY "notifications_select_own" ON public.notifications
+--     FOR SELECT USING (auth.uid() = user_id);
 
 -- Users can update their own notifications (to mark as read)
-DROP POLICY IF EXISTS "notifications_update_own" ON public.notifications;
-CREATE POLICY "notifications_update_own" ON public.notifications
-    FOR UPDATE USING (auth.uid() = user_id);
+-- DROP POLICY IF EXISTS "notifications_update_own" ON public.notifications;
+-- CREATE POLICY "notifications_update_own" ON public.notifications
+--     FOR UPDATE USING (auth.uid() = user_id);
 
 -- 4. Trigger Function
 CREATE OR REPLACE FUNCTION public.handle_new_form_notification()

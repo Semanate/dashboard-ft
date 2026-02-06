@@ -30,6 +30,8 @@
     value: any;
     content: string;
     onchange?: (value: any) => void;
+    min?: string | number;
+    max?: string | number;
   }
 
   interface Props {
@@ -39,10 +41,10 @@
 </script>
 
 <div class="w-full">
-  {#if field.type === "text" || field.type === "password" || field.type === "email" || field.type === "number"}
-    <InputText {...{ ...field, type: field.type }} />
-  {:else if field.type === "select" && Object.values(field.options ?? {}).length > 0}
+  {#if field.type === "select" && Object.values(field.options ?? {}).length > 0}
     <InputSelect {...field} />
+  {:else if field.type === "text" || field.type === "password" || field.type === "email" || field.type === "number"}
+    <InputText {...field as any} />
   {:else if field.type === "checkbox"}
     <InputCheck {...field} />
   {:else if field.type === "date"}

@@ -20,7 +20,7 @@
     value?: File | null;
     size?: "small" | "medium" | "large";
     placeholder?: string;
-    onchange?: (file: File | null) => void; // ⚡ IMPORTANTE: Callback del padre
+    onchange?: (file: File | null) => void;
   }
 
   let {
@@ -32,24 +32,19 @@
     error = "",
     disabled = false,
     placeholder = "",
-    value = $bindable(null), // ⚡ USAR $bindable para sincronización bidireccional
-    onchange, // ⚡ Callback del padre
+    value = $bindable(null),
+    onchange,
   }: Props = $props();
 
-  // ⚡ CRITICAL: Llamar al onchange del padre cuando cambie el archivo
   function handleChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const selectedFile = target.files?.[0] ?? null;
-    
-    // ⚡ 1. Actualizar el value local (si es bindable)
+
     value = selectedFile;
-    
-    // ⚡ 2. Llamar al callback del padre (si existe)
+
     if (onchange) {
       onchange(selectedFile);
     }
-    
-    console.log("📎 Archivo seleccionado:", selectedFile?.name || "ninguno");
   }
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
@@ -87,7 +82,7 @@
       err ? "border-red-500" : "",
       dis
         ? "disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-        : ""
+        : "",
     );
   }
 </script>
@@ -97,7 +92,7 @@
     <p
       class={cn(
         "block mb-1 text-sm font-medium",
-        !error ? "text-gray-700" : "text-red-600"
+        !error ? "text-gray-700" : "text-red-600",
       )}
     >
       {label}

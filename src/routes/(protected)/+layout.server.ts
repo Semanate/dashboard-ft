@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { Role } from '$lib/types/roles';
+import { env } from '$env/dynamic/private';
 
 export const load = async ({ locals }) => {
     if (!locals.user) {
@@ -27,8 +28,19 @@ export const load = async ({ locals }) => {
         })
         .filter((code): code is string => typeof code === 'string');
 
+    console.log('📦 Layout Server - Passing data to client:');
+    console.log('  - User ID:', locals.user.id);
+    console.log('  - User Role:', (locals.user as any).role);
+    console.log('  - Access Token present:', !!locals.accessToken);
+    console.log('  - Refresh Token present:', !!locals.refreshToken);
+    console.log('  - Supabase URL present:', !!env.SUPABASE_URL);
+
     return {
         user: locals.user as typeof locals.user & { role: Role },
-        userPermissions
+        userPermissions,
+        supabaseUrl: env.SUPABASE_URL,
+        supabaseAnonKey: env.SUPABASE_PUBLISHABLE_DEFAULT_KEY ?? env.SUPABASE_ANON_KEY ?? env.SUPABASE_KEY,
+        accessToken: locals.accessToken,
+        refreshToken: locals.refreshToken
     };
 };

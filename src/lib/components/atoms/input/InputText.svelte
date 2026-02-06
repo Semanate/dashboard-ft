@@ -13,6 +13,8 @@
     onchange,
     required = false,
     variant = "default",
+    min,
+    max,
   }: {
     label?: string;
     placeholder?: string;
@@ -33,6 +35,8 @@
     value?: string;
     required?: boolean;
     onchange?: (value: string) => void;
+    min?: string | number;
+    max?: string | number;
   } = $props();
 
   function inputClass(sz = size, vr = variant, err = error, dis = disabled) {
@@ -75,6 +79,25 @@
       dis && "opacity-60",
     );
   }
+
+  let internalError = $state("");
+
+  function handleInput(e: Event & { currentTarget: HTMLInputElement }) {
+    const val = e.currentTarget.value;
+
+    if (type === "number") {
+      const n = Number(val);
+      if (max !== undefined && n > Number(max)) {
+        internalError = `El valor máximo es ${max}`;
+      } else if (min !== undefined && n < Number(min)) {
+        internalError = `El valor mínimo es ${min}`;
+      } else {
+        internalError = "";
+      }
+    }
+
+    if (onchange) onchange(val);
+  }
 </script>
 
 <div class="flex flex-col gap-1">
@@ -93,14 +116,16 @@
     name={id}
     aria-label={label}
     {type}
-    class={inputClass(size, variant, error, disabled)}
+    class={inputClass(size, variant, error || internalError, disabled)}
     {placeholder}
     {disabled}
-    onchange={(e) => onchange && onchange(e.currentTarget.value)}
+    oninput={handleInput}
     {value}
+    {min}
+    {max}
   />
 
-  {#if error}
-    <p class="text-red-500 text-xs">{error}</p>
+  {#if error || internalError}
+    <p class="text-red-500 text-xs">{error || internalError}</p>
   {/if}
 </div>

@@ -255,7 +255,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.lastName1",
                 type: "text",
                 label: "Primer Apellido",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -263,7 +263,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.lastName2",
                 type: "text",
                 label: "Segundo Apellido",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -273,7 +273,7 @@ export const sarlaftCategories = [
                 label: "Tipo de documento",
                 options: documentTypesArray,
                 placeholder: "Seleccione un tipo de documento",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -281,7 +281,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.docNumber",
                 type: "number",
                 label: "Número de documento",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -291,7 +291,7 @@ export const sarlaftCategories = [
                 label: "Fecha de nacimiento",
                 mode: "birthdate",
                 placeholder: "MM/DD/AAAA",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -299,7 +299,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.placeOfBirth",
                 type: "text",
                 label: "Lugar de nacimiento",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -307,7 +307,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.phone",
                 type: "number",
                 label: "Teléfono",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -315,7 +315,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.email",
                 type: "text",
                 label: "Email",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -325,7 +325,7 @@ export const sarlaftCategories = [
                 label: "Ciudad",
                 placeholder: "Seleccione una ciudad",
                 options: citysArray,
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -333,7 +333,7 @@ export const sarlaftCategories = [
                 name: "naturalPerson.address",
                 type: "text",
                 label: "Dirección",
-                required: false,
+                required: true,
                 value: "",
             },
 
@@ -343,7 +343,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Codigo CIIU - Principal actividad económica",
                 placeholder: "Ej: CIIU 4711 - Comercio al por mayor de vehículos automotores",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -352,7 +352,7 @@ export const sarlaftCategories = [
                 type: "text",
                 label: "Codigo CIIU - Secundario",
                 placeholder: "Ej: CIIU 4791 - Comercio al por menor de prendas de vestir y calzado en establecimientos especializados",
-                required: false,
+                required: true,
                 value: "",
             },
         ],
@@ -370,7 +370,7 @@ export const sarlaftCategories = [
                 name: "juridicalPerson.businessName",
                 type: "text",
                 label: "Razón Social",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -378,7 +378,7 @@ export const sarlaftCategories = [
                 name: "juridicalPerson.nit",
                 type: "text",
                 label: "NIT",
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -386,23 +386,23 @@ export const sarlaftCategories = [
                 name: "juridicalPerson.phone",
                 type: "number",
                 label: "Teléfono",
-                required: false,
+                required: true,
                 value: "",
             },
             {
                 id: "jurEmail",
                 name: "juridicalPerson.email",
                 type: "text",
-                label: "Email 1",
-                required: false,
+                label: "Email Persona Jurídica",
+                required: true,
                 value: "",
             },
             {
                 id: "jurEmail2",
                 name: "juridicalPerson.email2",
                 type: "text",
-                label: "Email 2",
-                required: false,
+                label: "Email Corporativo",
+                required: true,
                 value: "",
             },
             {
@@ -412,7 +412,7 @@ export const sarlaftCategories = [
                 label: "Ciudad",
                 placeholder: "Seleccione una ciudad",
                 options: citysArray,
-                required: false,
+                required: true,
                 value: "",
             },
             {
@@ -420,23 +420,23 @@ export const sarlaftCategories = [
                 name: "juridicalPerson.phone2",
                 type: "text",
                 label: "Celular",
-                required: false,
+                required: true,
                 value: "",
             },
             {
                 id: "jurAddress",
                 name: "juridicalPerson.address",
                 type: "text",
-                label: "Dirección",
-                required: false,
+                label: "Dirección Persona Jurídica",
+                required: true,
                 value: "",
             },
             {
                 id: "jurAddress2",
                 name: "juridicalPerson.address2",
                 type: "text",
-                label: "Dirección 2",
-                required: false,
+                label: "Dirección Corporativa",
+                required: true,
                 value: "",
             },
             {
@@ -444,7 +444,7 @@ export const sarlaftCategories = [
                 name: "juridicalPerson.activitySector",
                 type: "text",
                 label: "Sector de actividad",
-                required: false,
+                required: true,
                 value: "",
             },
         ],
@@ -675,53 +675,53 @@ export const signaturesSarlaftSection = [
         ],
     },
 
-    {
-        label: "Autorización PEP — Oficial de Cumplimiento",
-        fields: [
-            {
-                id: "pepA2Name",
-                name: "pepAuthorization.block.name",
-                type: "text",
-                label: "Nombre",
-                required: false,
-                value: "",
-            },
-            {
-                id: "pepA2Sign",
-                name: "pepAuthorization.block.signature",
-                type: "signature",
-                label: "Firma",
-                required: false,
-                value: "",
-            },
-            {
-                id: "pepA2Date",
-                name: "pepAuthorization.block.date",
-                type: "date",
-                label: "Fecha",
-                placeholder: "MM/DD/AAAA",
-                required: false,
-                value: new Date().toLocaleDateString(),
-            },
-            {
-                id: "pepA2Time",
-                name: "pepAuthorization.block.time",
-                type: "text",
-                label: "Hora",
-                placeholder: "HH:MM",
-                required: false,
-                value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            },
-            {
-                id: "pepA2Auth",
-                name: "pepAuthorization.block.auth",
-                type: "checkbox",
-                label: "Autorización Cumplimiento LAFT",
-                required: false,
-                value: false,
-            },
-        ],
-    },
+    // {
+    //     label: "Autorización PEP — Oficial de Cumplimiento",
+    //     fields: [
+    //         {
+    //             id: "pepA2Name",
+    //             name: "pepAuthorization.block.name",
+    //             type: "text",
+    //             label: "Nombre",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: "pepA2Sign",
+    //             name: "pepAuthorization.block.signature",
+    //             type: "signature",
+    //             label: "Firma",
+    //             required: false,
+    //             value: "",
+    //         },
+    //         {
+    //             id: "pepA2Date",
+    //             name: "pepAuthorization.block.date",
+    //             type: "date",
+    //             label: "Fecha",
+    //             placeholder: "MM/DD/AAAA",
+    //             required: false,
+    //             value: new Date().toLocaleDateString(),
+    //         },
+    //         {
+    //             id: "pepA2Time",
+    //             name: "pepAuthorization.block.time",
+    //             type: "text",
+    //             label: "Hora",
+    //             placeholder: "HH:MM",
+    //             required: false,
+    //             value: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    //         },
+    //         {
+    //             id: "pepA2Auth",
+    //             name: "pepAuthorization.block.auth",
+    //             type: "checkbox",
+    //             label: "Autorización Cumplimiento LAFT",
+    //             required: false,
+    //             value: false,
+    //         },
+    //     ],
+    // },
 ];
 
 export const filesSarlaftSection = {
@@ -771,6 +771,7 @@ export const filesSarlaftSection = {
         },
     ],
 };
+
 export { typesPersonArray, deepGet, typesForeignCurrencyArray, entityAccountFinancialsArray, activitySectorsArray, citys, citysArray, documentTypes, documentTypesArray, accountTypes, accountTypesArray };
 
 

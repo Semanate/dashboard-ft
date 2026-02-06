@@ -282,6 +282,8 @@
               label: "% Participación",
               placeholder: "Ingrese el porcentaje de participación",
               value: "",
+              min: "0",
+              max: "100",
             },
             {
               id: `relActAdmin_${i}`,

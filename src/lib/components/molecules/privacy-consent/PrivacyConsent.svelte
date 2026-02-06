@@ -24,7 +24,6 @@
   function toggle(e: Event) {
     onChange((e.target as HTMLInputElement).checked);
   }
-  console.log(policyUrl);
 </script>
 
 <div class="w-full space-y-3 rounded-md border p-4 bg-gray-50">
@@ -45,12 +44,7 @@
   </div>
 
   <label class="flex items-center gap-2 text-sm">
-    <input
-      type="checkbox"
-      checked={value}
-      onchange={toggle}
-      class="h-4 w-4"
-    />
+    <input type="checkbox" checked={value} onchange={toggle} class="h-4 w-4" />
     {checkboxLabel}
   </label>
 

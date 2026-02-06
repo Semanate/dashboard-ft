@@ -1,5 +1,6 @@
 // src/hooks.server.ts
 import { redirect, type Handle } from '@sveltejs/kit';
+import '$lib/db/server'; // Initialize global supabase on server
 import { supabase } from '$lib/db/client';
 import { isValidRole, canAccessRoute, ROLES, type Role } from '$lib/types/roles';
 
@@ -12,6 +13,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     const accessToken = event.cookies.get('sb-access-token');
+    const refreshToken = event.cookies.get('sb-refresh-token');
 
     if (!accessToken) {
         event.locals.user = null;
@@ -29,7 +31,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(303, '/login');
     }
 
-    // Obtener el perfil con el rol
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -40,18 +41,16 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(303, '/login');
     }
 
-    // Validar que el rol sea válido
     const userRole: Role = isValidRole(profile.role) ? profile.role : ROLES.USER;
 
-    // Agregar el rol al usuario
     const userWithRole = { ...user, role: userRole };
     event.locals.user = userWithRole;
     event.locals.accessToken = accessToken;
+    event.locals.refreshToken = refreshToken ?? null;
     event.locals.supabase = supabase;
 
-    // Verificar acceso a la ruta
+
     if (!canAccessRoute(userRole, pathName)) {
-        // Redirigir según el rol
         if (userRole === ROLES.ADMIN) {
             throw redirect(303, '/admin');
         } else if (userRole === ROLES.COMPLIANCE_OFFICER) {

@@ -9,6 +9,7 @@
       type:
         | "text"
         | "select"
+        | "number"
         | "date"
         | "file"
         | "textarea"
@@ -25,6 +26,8 @@
       content?: string;
       onchange?: (value: any) => void;
       accept?: string;
+      min?: string | number;
+      max?: string | number;
     }>;
   }
 

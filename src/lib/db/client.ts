@@ -1,54 +1,48 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { env } from '$env/dynamic/private';
+import { browser } from '$app/environment';
 
 let cachedClient: SupabaseClient | null = null;
+let currentUrl: string = '';
+let currentKey: string = '';
 
-export function getDataFromEnv(): { supabaseUrl: string; supabaseKey: string } {
-    const supabaseUrl = env.SUPABASE_URL ?? '';
-    const supabaseKey =
-        env.SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
-        env.SUPABASE_ANON_KEY ??
-        env.SUPABASE_KEY ??
-        '';
-
-    return { supabaseUrl: supabaseUrl, supabaseKey: supabaseKey };
-}
-
-
-export function createSupabaseClient(): SupabaseClient {
-    const supabaseUrl = env.SUPABASE_URL ?? '';
-    const supabaseKey =
-        env.SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
-        env.SUPABASE_ANON_KEY ??
-        env.SUPABASE_KEY ??
-        '';
-
-    // console.log("Supabase URL:", supabaseUrl ? "Loaded" : "Missing");
-    // console.log("Supabase Key:", supabaseKey ? "Loaded" : "Missing");
-    if (!supabaseUrl) {
-        throw new Error('Missing Supabase URL. Set SUPABASE_URL or SUPABASE_URL.');
+/**
+ * Initializes the global Supabase client singleton.
+ */
+export function initSupabase(url: string, key: string): SupabaseClient {
+    if (!cachedClient || currentUrl !== url || currentKey !== key) {
+        currentUrl = url;
+        currentKey = key;
+        cachedClient = createClient(url, key);
     }
-    if (!supabaseKey) {
-        throw new Error(
-            'Missing Supabase key. Set SUPABASE_PUBLISHABLE_DEFAULT_KEY, SUPABASE_ANON_KEY, or SUPABASE_KEY.'
-        );
-    }
-
-    return createClient(supabaseUrl, supabaseKey,);
-}
-
-export function getSupabaseClient(): SupabaseClient {
-    if (!cachedClient) cachedClient = createSupabaseClient();
     return cachedClient;
 }
 
-// Preserve the existing API (import { supabase } ...) without
-// instantiating the client at module-evaluation time (which breaks Docker builds).
+/**
+ * Gets the current environment configuration.
+ * Only safe to call on server or after initialization.
+ */
+export function getDataFromEnv(): { supabaseUrl: string; supabaseKey: string } {
+    return {
+        supabaseUrl: currentUrl,
+        supabaseKey: currentKey
+    };
+}
+
+/**
+ * Global Supabase singleton.
+ * Be sure to initialize it on the client side during onMount
+ * or manually on the server.
+ */
 export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
     get(_target, prop) {
-        const client = getSupabaseClient();
-        const value = (client as any)[prop];
-        return typeof value === 'function' ? value.bind(client) : value;
+        if (!cachedClient) {
+            if (browser) {
+                console.warn('Accessing supabase before initialization in browser.');
+            }
+            return undefined;
+        }
+        const value = (cachedClient as any)[prop];
+        return typeof value === 'function' ? value.bind(cachedClient) : value;
     }
 });

@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { ButtonWithIcon, PageHeader, Button, Modal, Icon } from "$lib/components";
+  import {
+    ButtonWithIcon,
+    PageHeader,
+    Button,
+    Modal,
+    Icon,
+  } from "$lib/components";
   import { createDataTable } from "$lib/components/organisms/data-table/DataTable.headless.svelte";
   import DataTable from "$lib/components/organisms/data-table/DataTable.svelte";
   import type { FormDataType } from "$lib/types";
@@ -16,7 +22,7 @@
   );
 
   let FormList: FormDataType[] = $state([]);
-  
+
   // Delete confirmation modal state
   let showDeleteModal = $state(false);
   let formToDelete = $state<FormDataType | null>(null);
@@ -71,9 +77,8 @@
   }
 
   async function confirmDelete() {
-
     if (!formToDelete) return;
-    
+
     isDeleting = true;
     try {
       const res = await fetch("/sarlaft", {
@@ -82,7 +87,6 @@
         body: JSON.stringify({ id: formToDelete.id }),
       });
 
-      console.log("Delete response:", res);
       if (res.ok) {
         await loadForms();
       }
@@ -137,25 +141,25 @@
       subtitle="Sistema de Administración del Riesgo de Lavado de Activos y de la Financiación del Terrorismo"
       icon="FileText"
     >
-        {#if permissions.canCreateSarlaft}
-          <ButtonWithIcon
-            label="Crear"
-            iconButton="Upload"
-            variant="secondary"
-            size="medium"
-            onclick={() => (window.location.href = "/sarlaft/create")}
-          />
-        {/if}
-
+      {#if permissions.canCreateSarlaft}
         <ButtonWithIcon
-          label="Recargar"
-          iconButton="RefreshCcw"
-          variant="primary"
+          label="Crear"
+          iconButton="Upload"
+          variant="secondary"
           size="medium"
-          onclick={() => {
-            loadForms();
-          }}
+          onclick={() => (window.location.href = "/sarlaft/create")}
         />
+      {/if}
+
+      <ButtonWithIcon
+        label="Recargar"
+        iconButton="RefreshCcw"
+        variant="primary"
+        size="medium"
+        onclick={() => {
+          loadForms();
+        }}
+      />
     </PageHeader>
     <div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
       <article class="w-full">
@@ -188,7 +192,7 @@
                     onclick: (row: any) => {
                       openDeleteModal(row);
                     },
-                    visible: (row: any) => row.rawStatus === "draft",
+                    visible: (row: any) => row.rawStatus !== "draft",
                   },
                 ]
               : []),
@@ -208,7 +212,9 @@
 >
   <div class="p-4">
     <div class="flex items-center gap-4 mb-4">
-      <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+      <div
+        class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center"
+      >
         <Icon name="AlertTriangle" class="w-6 h-6 text-red-600" />
       </div>
       <div>
@@ -216,16 +222,19 @@
         <p class="text-sm text-gray-500">Esta acción no se puede deshacer.</p>
       </div>
     </div>
-    
+
     <p class="text-gray-700 mb-4">
-      Estás a punto de eliminar el formulario 
+      Estás a punto de eliminar el formulario
       <span class="font-semibold">#{formToDelete?.id?.slice(0, 8)}...</span>
       junto con todos sus documentos asociados.
     </p>
 
     <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
       <div class="flex gap-2">
-        <Icon name="AlertCircle" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <Icon
+          name="AlertCircle"
+          class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"
+        />
         <div class="text-sm text-amber-800">
           <p class="font-medium">Se eliminarán permanentemente:</p>
           <ul class="list-disc list-inside mt-1 space-y-0.5">
@@ -245,11 +254,7 @@
       >
         Cancelar
       </Button>
-      <Button
-        variant="danger"
-        onclick={confirmDelete}
-        disabled={isDeleting}
-      >
+      <Button variant="danger" onclick={confirmDelete} disabled={isDeleting}>
         {#if isDeleting}
           Eliminando...
         {:else}

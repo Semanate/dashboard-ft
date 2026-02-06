@@ -25,6 +25,8 @@
     value: any;
     required?: boolean;
     error?: string;
+    min?: string | number;
+    max?: string | number;
   }
 
   interface SubsectionItem {
@@ -258,20 +260,9 @@
     event.preventDefault();
     event.stopPropagation();
 
-    console.log(
-      "Submit attempt - Current step:",
-      activeVisible,
-      "of",
-      visibleIndexes.length - 1,
-    );
-
-    // CRÍTICO: Solo procesar el submit si estamos en el último paso
     if (activeVisible !== visibleIndexes.length - 1) {
-      console.log("❌ Not on last step, ignoring submit");
       return;
     }
-
-    console.log("✅ On last step, processing submit...");
 
     visibleIndexes.forEach((i) => {
       attemptedSteps[i] = true;
@@ -288,10 +279,7 @@
       ) &&
       callbackOnSubmit
     ) {
-      console.log("✅ Form is valid, calling callback");
       callbackOnSubmit(getValuesRobust(formData));
-    } else {
-      console.log("❌ Form validation failed");
     }
   }
 
@@ -304,7 +292,6 @@
       // Permitir Enter solo en textareas
       if (target.tagName !== "TEXTAREA") {
         event.preventDefault();
-        console.log("🚫 Enter key blocked - not on last step");
       }
     }
   }
@@ -378,6 +365,8 @@
                               field.type === "file"
                                 ? (field as any).accept
                                 : undefined,
+                            min: (field as any).min,
+                            max: (field as any).max,
                           }))}
                         />
                       </div>
@@ -387,6 +376,7 @@
                       <div class="flex justify-end mt-4">
                         <ButtonWithIcon
                           type="button"
+                          variant="primary"
                           iconButton="BadgePlus"
                           onclick={subsection.addButton.action}
                           label={subsection.addButton.label}
@@ -414,6 +404,8 @@
                   },
                   accept:
                     field.type === "file" ? (field as any).accept : undefined,
+                  min: (field as any).min,
+                  max: (field as any).max,
                 })) || []}
               />
             {/if}

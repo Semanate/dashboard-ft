@@ -163,32 +163,52 @@ export function validateStep(
     let isValid = true;
     const newErrors: Record<string, string> = {};
 
-    // Función auxiliar para validar un campo individual
+    // Function to validate a single field
     const validateField = (field: any) => {
-        if (field.required === false || field.type === "file") {
-            newErrors[field.name] = "";
-            return;
-        }
         const value = formData[index]?.[field.name];
-        const isEmpty =
+
+        // Better empty check including FileList
+        let isEmpty =
             value === null ||
             value === undefined ||
             (typeof value === "string" && value.trim() === "") ||
             (Array.isArray(value) && value.length === 0);
+
+        if (!isEmpty && typeof window !== 'undefined' && value instanceof FileList) {
+            isEmpty = value.length === 0;
+        }
+
         if (isEmpty) {
-            newErrors[field.name] = "Este campo es requerido";
-            isValid = false;
+            if (field.required !== false) {
+                newErrors[field.name] = "Este campo es requerido";
+                isValid = false;
+            } else {
+                newErrors[field.name] = "";
+            }
         } else {
-            newErrors[field.name] = "";
+            if (field.type === "number") {
+                const n = Number(value);
+                if (field.max !== undefined && n > Number(field.max)) {
+                    newErrors[field.name] = `El valor máximo es ${field.max}`;
+                    isValid = false;
+                } else if (field.min !== undefined && n < Number(field.min)) {
+                    newErrors[field.name] = `El valor mínimo es ${field.min}`;
+                    isValid = false;
+                } else {
+                    newErrors[field.name] = "";
+                }
+            } else {
+                newErrors[field.name] = "";
+            }
         }
     };
 
-    // Si la categoría tiene campos directos (estructura antigua)
+    // If the category has fields (old structure)
     if (currentCategory.fields && Array.isArray(currentCategory.fields)) {
         currentCategory.fields.forEach(validateField);
     }
 
-    // Si la categoría tiene subsecciones (estructura nueva)
+    // If the category has subsections (new structure)
     if (currentCategory.subsections && Array.isArray(currentCategory.subsections)) {
         currentCategory.subsections.forEach((subsection: any) => {
             if (subsection.items && Array.isArray(subsection.items)) {
